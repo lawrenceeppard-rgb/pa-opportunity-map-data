@@ -1,0 +1,156 @@
+HOW TO HOST YOUR MAP DATA EXTERNALLY
+=====================================
+
+Your map is now split into 3 parts:
+1. HTML file (25 KB) - Opens instantly in browser
+2. Tract data JSON (1.3 MB) - Loads from web
+3. GeoJSON boundaries (29 MB) - Loads from web
+
+This approach makes the map FAST and fixes the browser crash!
+
+====================================================================================
+OPTION 1: GITHUB (FREE & RECOMMENDED)
+====================================================================================
+
+STEP 1: Create a GitHub account (if you don't have one)
+   - Go to: https://github.com/signup
+   - Free account is perfect
+
+STEP 2: Create a new repository
+   - Click "+ New repository" button
+   - Name: "pa-opportunity-map-data"
+   - Make it PUBLIC (required for direct file access)
+   - Click "Create repository"
+
+STEP 3: Upload your data files
+   - Click "uploading an existing file"
+   - Upload these 2 files:
+     ✓ tract_data_lightweight.json (1.3 MB)
+     ✓ tl_2025_42_tract_compressed.json (23.4 MB) ← Use the COMPRESSED version!
+   - Click "Commit changes"
+
+STEP 4: Get the raw file URLs
+   - Click on "tract_data_lightweight.json"
+   - Click the "Raw" button
+   - Copy the URL (looks like: https://raw.githubusercontent.com/YOUR_USERNAME/pa-opportunity-map-data/main/tract_data_lightweight.json)
+   
+   - Do the same for "tl_2025_42_tract_compressed.json"
+
+STEP 5: Update the HTML file
+   - Open "pa_map_external_data.html" in a text editor
+   - Find this section near the top of the <script>:
+   
+     const DATA_URLS = {
+         tractData: 'YOUR_TRACT_DATA_URL_HERE',
+         geoJSON: 'YOUR_GEOJSON_URL_HERE'
+     };
+   
+   - Replace 'YOUR_TRACT_DATA_URL_HERE' with your tract data URL
+   - Replace 'YOUR_GEOJSON_URL_HERE' with your GeoJSON URL
+   - Save the file
+
+STEP 6: Open and use!
+   - Double-click the HTML file
+   - It will load the data from GitHub
+   - Map loads in 2-3 seconds!
+
+====================================================================================
+OPTION 2: DROPBOX
+====================================================================================
+
+STEP 1: Upload files to Dropbox
+   - Upload tract_data_lightweight.json
+   - Upload tl_2025_42_tract.json
+
+STEP 2: Get share links
+   - Right-click each file → "Share" → "Create link"
+   - Copy the link
+   - Change "?dl=0" at the end to "?raw=1"
+   
+   Example:
+   https://www.dropbox.com/s/abc123/file.json?dl=0
+   Change to:
+   https://www.dropbox.com/s/abc123/file.json?raw=1
+
+STEP 3: Update HTML with these URLs (same as Step 5 above)
+
+====================================================================================
+OPTION 3: GOOGLE DRIVE
+====================================================================================
+
+STEP 1: Upload files to Google Drive
+STEP 2: Right-click → Share → "Anyone with the link can view"
+STEP 3: Copy the file ID from the share link
+   
+   Link looks like: https://drive.google.com/file/d/FILE_ID_HERE/view
+   
+STEP 4: Convert to direct link format:
+   https://drive.google.com/uc?export=download&id=FILE_ID_HERE
+
+STEP 5: Update HTML with these URLs
+
+====================================================================================
+EXAMPLE OF CONFIGURED HTML
+====================================================================================
+
+After you get your URLs, the HTML should look like this:
+
+const DATA_URLS = {
+    tractData: 'https://raw.githubusercontent.com/yourusername/pa-opportunity-map-data/main/tract_data_lightweight.json',
+    geoJSON: 'https://raw.githubusercontent.com/yourusername/pa-opportunity-map-data/main/tl_2025_42_tract.json'
+};
+
+====================================================================================
+FILES YOU NEED TO UPLOAD:
+====================================================================================
+
+These files are provided:
+
+1. pa_map_external_data.html (25 KB)
+   - The map interface
+   - Edit to add your data URLs
+   - This is what you open in your browser
+
+2. tract_data_lightweight.json (1.3 MB)
+   - Census tract data with school scores
+   - Upload to GitHub/Dropbox/Drive
+   
+3. tl_2025_42_tract_compressed.json (23.4 MB) ← COMPRESSED VERSION!
+   - Census tract boundaries
+   - Fits GitHub's 25 MB limit
+   - Upload to GitHub/Dropbox/Drive
+   
+NOTE: The compressed GeoJSON reduces coordinate precision from 15 to 4 decimal places.
+This is still accurate to ~11 meters, which is MORE than enough for Census tracts!
+Your map will look identical.
+
+====================================================================================
+WHY THIS IS BETTER:
+====================================================================================
+
+✓ HTML file is tiny (25 KB) - opens instantly
+✓ Data loads from web - browser doesn't crash
+✓ Can update data without changing HTML
+✓ Can share the HTML file easily
+✓ Still works offline once data is cached
+
+====================================================================================
+TROUBLESHOOTING:
+====================================================================================
+
+Problem: "Failed to load tract data"
+Solution: Check that your URLs are correct and files are publicly accessible
+
+Problem: "CORS error"
+Solution: Make sure you're using the RAW file URLs (GitHub) or proper share links (Dropbox)
+
+Problem: Slow loading
+Solution: Normal! GeoJSON is 29 MB. First load takes 5-10 seconds, then it's cached
+
+====================================================================================
+NEED HELP?
+====================================================================================
+
+GitHub is the easiest and most reliable option. Follow Option 1 above!
+
+Once configured, you'll have a fast, professional mapping application!
