@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pennsylvania Census Tracts - Interactive Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow: hidden;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        #sidebar {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 350px;
+            max-height: calc(100vh - 20px);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            overflow-y: auto;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        #sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .sidebar-content {
+            padding: 20px;
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #1f2937;
+            font-weight: 500;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            left: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000;
+            font-size: 12px;
+        }
+        
+        .legend h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #1f2937;
+        }
+        
+        .legend-item {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 18px;
+            margin-right: 8px;
+            border: 1px solid #999;
+            border-radius: 3px;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 2000;
+            text-align: center;
+        }
+        
+        .loading h3 {
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .leaflet-popup-content {
+            margin: 15px;
+            font-size: 14px;
+        }
+        
+        .leaflet-popup-content h3 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #f3f4f6;
+            border-radius: 2px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <button class="close-btn" onclick="closeSidebar()">×</button>
+            <h2 id="tract-title">Select a Census Tract</h2>
+            <p id="tract-subtitle">Click on any tract to view details</p>
+        </div>
+        <div class="sidebar-content" id="tract-info">
+            <p style="color: #6b7280; text-align: center; padding: 40px 20px;">
+                Click on a census tract on the map to see its information here.
+            </p>
+        </div>
+    </div>
+    
+    <div class="legend">
+        <h4>Pennsylvania Census Tracts</h4>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #93c5fd;"></div>
+            <span>Census Tract</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #fbbf24;"></div>
+            <span>Selected Tract</span>
+        </div>
+        <p style="margin-top: 10px; color: #6b7280;">
+            Total Tracts: <strong id="tract-count">3,446</strong>
+        </p>
+    </div>
+    
+    <div class="loading" id="loading">
+        <h3>Loading Census Tracts...</h3>
+        <div class="spinner"></div>
+        <p style="margin-top: 10px; color: #6b7280;">Downloading data from GitHub</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // CONFIGURATION: Replace this URL with your GitHub raw file URL
+        // Format: https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/pa_tracts_compressed.geojson
+        const GEOJSON_URL = 'https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/pa_tracts_compressed.geojson';
+        
+        // Initialize map centered on Pennsylvania
+        const map = L.map('map').setView([40.8781, -77.7996], 7);
+        
+        // Add base map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+        
+        let currentLayer = null;
+        let tractLayers = {};
+        let selectedTract = null;
+        
+        // Load GeoJSON data from GitHub
+        fetch(GEOJSON_URL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
+                }
+                
+                // Show progress
+                const contentLength = response.headers.get('content-length');
+                if (contentLength) {
+                    const total = parseInt(contentLength, 10);
+                    let loaded = 0;
+                    
+                    const reader = response.body.getReader();
+                    const chunks = [];
+                    
+                    return new ReadableStream({
+                        start(controller) {
+                            function push() {
+                                reader.read().then(({ done, value }) => {
+                                    if (done) {
+                                        controller.close();
+                                        return;
+                                    }
+                                    loaded += value.length;
+                                    const progress = (loaded / total) * 100;
+                                    document.getElementById('progress').style.width = progress + '%';
+                                    chunks.push(value);
+                                    controller.enqueue(value);
+                                    push();
+                                });
+                            }
+                            push();
+                        }
+                    });
+                }
+                return response;
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                
+                // Style function
+                function style(feature) {
+                    return {
+                        fillColor: '#93c5fd',
+                        weight: 1,
+                        opacity: 1,
+                        color: '#3b82f6',
+                        fillOpacity: 0.5
+                    };
+                }
+                
+                function highlightStyle(feature) {
+                    return {
+                        fillColor: '#fbbf24',
+                        weight: 2,
+                        opacity: 1,
+                        color: '#f59e0b',
+                        fillOpacity: 0.7
+                    };
+                }
+                
+                // Add each feature to map
+                const geojsonLayer = L.geoJSON(data, {
+                    style: style,
+                    onEachFeature: function(feature, layer) {
+                        tractLayers[feature.properties.GEOID] = layer;
+                        
+                        // Hover effects
+                        layer.on('mouseover', function(e) {
+                            if (selectedTract !== feature.properties.GEOID) {
+                                layer.setStyle({
+                                    weight: 2,
+                                    fillOpacity: 0.7
+                                });
+                            }
+                        });
+                        
+                        layer.on('mouseout', function(e) {
+                            if (selectedTract !== feature.properties.GEOID) {
+                                layer.setStyle(style(feature));
+                            }
+                        });
+                        
+                        // Click handler
+                        layer.on('click', function(e) {
+                            // Reset previous selection
+                            if (selectedTract && tractLayers[selectedTract]) {
+                                tractLayers[selectedTract].setStyle(style(feature));
+                            }
+                            
+                            // Highlight new selection
+                            selectedTract = feature.properties.GEOID;
+                            layer.setStyle(highlightStyle(feature));
+                            
+                            // Zoom to tract
+                            const bounds = layer.getBounds();
+                            map.fitBounds(bounds, { padding: [100, 100] });
+                            
+                            // Update sidebar
+                            updateSidebar(feature.properties);
+                            openSidebar();
+                            
+                            // Prevent click from propagating to map
+                            L.DomEvent.stopPropagation(e);
+                        });
+                        
+                        // Bind popup
+                        layer.bindPopup(`
+                            <div>
+                                <h3>${feature.properties.NAMELSAD}</h3>
+                                <p><strong>Tract Number:</strong> ${feature.properties.NAME}</p>
+                                <p><strong>GEOID:</strong> ${feature.properties.GEOID}</p>
+                                <p style="margin-top: 10px; font-size: 12px; color: #6b7280;">
+                                    Click to zoom and view details
+                                </p>
+                            </div>
+                        `);
+                    }
+                }).addTo(map);
+                
+                console.log(`Loaded ${data.features.length} census tracts from GitHub`);
+            })
+            .catch(error => {
+                console.error('Error loading GeoJSON:', error);
+                document.getElementById('loading').innerHTML = `
+                    <h3 style="color: #dc2626;">Error Loading Data</h3>
+                    <p style="color: #6b7280; margin-top: 10px;">
+                        Failed to load census tract data from GitHub.
+                    </p>
+                    <p style="color: #6b7280; margin-top: 10px; font-size: 12px;">
+                        ${error.message}
+                    </p>
+                    <p style="color: #6b7280; margin-top: 15px; font-size: 12px;">
+                        Make sure you've updated the GEOJSON_URL in the HTML file with your GitHub repository URL.
+                    </p>
+                `;
+            });
+        
+        function updateSidebar(properties) {
+            document.getElementById('tract-title').textContent = properties.NAMELSAD;
+            document.getElementById('tract-subtitle').textContent = `GEOID: ${properties.GEOID}`;
+            
+            document.getElementById('tract-info').innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">Tract Number</div>
+                    <div class="info-value">${properties.NAME}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">${properties.NAMELSAD}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Geographic ID (GEOID)</div>
+                    <div class="info-value">${properties.GEOID}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">County Code</div>
+                    <div class="info-value">${properties.COUNTYFP}</div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: #f3f4f6; border-radius: 6px;">
+                    <p style="font-size: 12px; color: #6b7280; margin: 0;">
+                        <strong>About Census Tracts:</strong> Census tracts are small geographic areas 
+                        defined by the U.S. Census Bureau for statistical purposes. They typically 
+                        contain between 1,200 and 8,000 people.
+                    </p>
+                </div>
+            `;
+        }
+        
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+        }
+        
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            
+            // Reset selected tract styling
+            if (selectedTract && tractLayers[selectedTract]) {
+                tractLayers[selectedTract].setStyle({
+                    fillColor: '#93c5fd',
+                    weight: 1,
+                    opacity: 1,
+                    color: '#3b82f6',
+                    fillOpacity: 0.5
+                });
+                selectedTract = null;
+            }
+        }
+        
+        // Close sidebar when clicking on map
+        map.on('click', function() {
+            closeSidebar();
+        });
+        
+        // Keyboard shortcut to close sidebar
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>
