@@ -1,0 +1,404 @@
+{
+  "003": {
+    "name": "Allegheny",
+    "file": "county_003.geojson",
+    "tractCount": 394,
+    "size": 2690866
+  },
+  "029": {
+    "name": "Chester",
+    "file": "county_029.geojson",
+    "tractCount": 124,
+    "size": 1217108
+  },
+  "061": {
+    "name": "Huntingdon",
+    "file": "county_061.geojson",
+    "tractCount": 13,
+    "size": 179447
+  },
+  "101": {
+    "name": "Philadelphia",
+    "file": "county_101.geojson",
+    "tractCount": 408,
+    "size": 840311
+  },
+  "049": {
+    "name": "Erie",
+    "file": "county_049.geojson",
+    "tractCount": 74,
+    "size": 344411
+  },
+  "065": {
+    "name": "Jefferson",
+    "file": "county_065.geojson",
+    "tractCount": 13,
+    "size": 181999
+  },
+  "019": {
+    "name": "Butler",
+    "file": "county_019.geojson",
+    "tractCount": 47,
+    "size": 405605
+  },
+  "021": {
+    "name": "Cambria",
+    "file": "county_021.geojson",
+    "tractCount": 42,
+    "size": 455261
+  },
+  "045": {
+    "name": "Delaware",
+    "file": "county_045.geojson",
+    "tractCount": 152,
+    "size": 964632
+  },
+  "035": {
+    "name": "Clinton",
+    "file": "county_035.geojson",
+    "tractCount": 10,
+    "size": 126897
+  },
+  "131": {
+    "name": "Wyoming",
+    "file": "county_131.geojson",
+    "tractCount": 7,
+    "size": 89550
+  },
+  "117": {
+    "name": "Tioga",
+    "file": "county_117.geojson",
+    "tractCount": 10,
+    "size": 91105
+  },
+  "095": {
+    "name": "Northampton",
+    "file": "county_095.geojson",
+    "tractCount": 74,
+    "size": 470075
+  },
+  "067": {
+    "name": "Juniata",
+    "file": "county_067.geojson",
+    "tractCount": 6,
+    "size": 79887
+  },
+  "077": {
+    "name": "Lehigh",
+    "file": "county_077.geojson",
+    "tractCount": 81,
+    "size": 484545
+  },
+  "027": {
+    "name": "Centre",
+    "file": "county_027.geojson",
+    "tractCount": 41,
+    "size": 305594
+  },
+  "063": {
+    "name": "Indiana",
+    "file": "county_063.geojson",
+    "tractCount": 24,
+    "size": 209060
+  },
+  "081": {
+    "name": "Lycoming",
+    "file": "county_081.geojson",
+    "tractCount": 32,
+    "size": 292266
+  },
+  "017": {
+    "name": "Bucks",
+    "file": "county_017.geojson",
+    "tractCount": 147,
+    "size": 812799
+  },
+  "103": {
+    "name": "Pike",
+    "file": "county_103.geojson",
+    "tractCount": 25,
+    "size": 384318
+  },
+  "051": {
+    "name": "Fayette",
+    "file": "county_051.geojson",
+    "tractCount": 36,
+    "size": 630711
+  },
+  "079": {
+    "name": "Luzerne",
+    "file": "county_079.geojson",
+    "tractCount": 101,
+    "size": 680798
+  },
+  "075": {
+    "name": "Lebanon",
+    "file": "county_075.geojson",
+    "tractCount": 33,
+    "size": 300632
+  },
+  "089": {
+    "name": "Monroe",
+    "file": "county_089.geojson",
+    "tractCount": 51,
+    "size": 550009
+  },
+  "059": {
+    "name": "Greene",
+    "file": "county_059.geojson",
+    "tractCount": 10,
+    "size": 176580
+  },
+  "069": {
+    "name": "Lackawanna",
+    "file": "county_069.geojson",
+    "tractCount": 60,
+    "size": 480384
+  },
+  "007": {
+    "name": "Beaver",
+    "file": "county_007.geojson",
+    "tractCount": 53,
+    "size": 422269
+  },
+  "129": {
+    "name": "Westmoreland",
+    "file": "county_129.geojson",
+    "tractCount": 113,
+    "size": 1715778
+  },
+  "099": {
+    "name": "Perry",
+    "file": "county_099.geojson",
+    "tractCount": 10,
+    "size": 295235
+  },
+  "071": {
+    "name": "Lancaster",
+    "file": "county_071.geojson",
+    "tractCount": 116,
+    "size": 1808769
+  },
+  "013": {
+    "name": "Blair",
+    "file": "county_013.geojson",
+    "tractCount": 38,
+    "size": 382491
+  },
+  "097": {
+    "name": "Northumberland",
+    "file": "county_097.geojson",
+    "tractCount": 25,
+    "size": 333922
+  },
+  "091": {
+    "name": "Montgomery",
+    "file": "county_091.geojson",
+    "tractCount": 219,
+    "size": 1184741
+  },
+  "133": {
+    "name": "York",
+    "file": "county_133.geojson",
+    "tractCount": 108,
+    "size": 1215677
+  },
+  "043": {
+    "name": "Dauphin",
+    "file": "county_043.geojson",
+    "tractCount": 67,
+    "size": 627527
+  },
+  "055": {
+    "name": "Franklin",
+    "file": "county_055.geojson",
+    "tractCount": 33,
+    "size": 515893
+  },
+  "107": {
+    "name": "Schuylkill",
+    "file": "county_107.geojson",
+    "tractCount": 42,
+    "size": 284004
+  },
+  "057": {
+    "name": "Fulton",
+    "file": "county_057.geojson",
+    "tractCount": 3,
+    "size": 62804
+  },
+  "011": {
+    "name": "Berks",
+    "file": "county_011.geojson",
+    "tractCount": 107,
+    "size": 855007
+  },
+  "001": {
+    "name": "Adams",
+    "file": "county_001.geojson",
+    "tractCount": 27,
+    "size": 745645
+  },
+  "093": {
+    "name": "Montour",
+    "file": "county_093.geojson",
+    "tractCount": 4,
+    "size": 85881
+  },
+  "121": {
+    "name": "Venango",
+    "file": "county_121.geojson",
+    "tractCount": 17,
+    "size": 327511
+  },
+  "125": {
+    "name": "Washington",
+    "file": "county_125.geojson",
+    "tractCount": 62,
+    "size": 941276
+  },
+  "033": {
+    "name": "Clearfield",
+    "file": "county_033.geojson",
+    "tractCount": 20,
+    "size": 459517
+  },
+  "047": {
+    "name": "Elk",
+    "file": "county_047.geojson",
+    "tractCount": 9,
+    "size": 103693
+  },
+  "025": {
+    "name": "Carbon",
+    "file": "county_025.geojson",
+    "tractCount": 17,
+    "size": 213852
+  },
+  "015": {
+    "name": "Bradford",
+    "file": "county_015.geojson",
+    "tractCount": 15,
+    "size": 128141
+  },
+  "119": {
+    "name": "Union",
+    "file": "county_119.geojson",
+    "tractCount": 11,
+    "size": 152126
+  },
+  "111": {
+    "name": "Somerset",
+    "file": "county_111.geojson",
+    "tractCount": 24,
+    "size": 622404
+  },
+  "109": {
+    "name": "Snyder",
+    "file": "county_109.geojson",
+    "tractCount": 8,
+    "size": 142419
+  },
+  "037": {
+    "name": "Columbia",
+    "file": "county_037.geojson",
+    "tractCount": 16,
+    "size": 209175
+  },
+  "031": {
+    "name": "Clarion",
+    "file": "county_031.geojson",
+    "tractCount": 13,
+    "size": 191604
+  },
+  "087": {
+    "name": "Mifflin",
+    "file": "county_087.geojson",
+    "tractCount": 13,
+    "size": 120699
+  },
+  "053": {
+    "name": "Forest",
+    "file": "county_053.geojson",
+    "tractCount": 2,
+    "size": 39592
+  },
+  "073": {
+    "name": "Lawrence",
+    "file": "county_073.geojson",
+    "tractCount": 28,
+    "size": 223171
+  },
+  "085": {
+    "name": "Mercer",
+    "file": "county_085.geojson",
+    "tractCount": 35,
+    "size": 333362
+  },
+  "127": {
+    "name": "Wayne",
+    "file": "county_127.geojson",
+    "tractCount": 17,
+    "size": 231678
+  },
+  "123": {
+    "name": "Warren",
+    "file": "county_123.geojson",
+    "tractCount": 13,
+    "size": 133440
+  },
+  "005": {
+    "name": "Armstrong",
+    "file": "county_005.geojson",
+    "tractCount": 19,
+    "size": 216019
+  },
+  "041": {
+    "name": "Cumberland",
+    "file": "county_041.geojson",
+    "tractCount": 55,
+    "size": 638806
+  },
+  "105": {
+    "name": "Potter",
+    "file": "county_105.geojson",
+    "tractCount": 7,
+    "size": 46364
+  },
+  "115": {
+    "name": "Susquehanna",
+    "file": "county_115.geojson",
+    "tractCount": 12,
+    "size": 92212
+  },
+  "023": {
+    "name": "Cameron",
+    "file": "county_023.geojson",
+    "tractCount": 2,
+    "size": 17603
+  },
+  "009": {
+    "name": "Bedford",
+    "file": "county_009.geojson",
+    "tractCount": 12,
+    "size": 225327
+  },
+  "113": {
+    "name": "Sullivan",
+    "file": "county_113.geojson",
+    "tractCount": 4,
+    "size": 53715
+  },
+  "083": {
+    "name": "McKean",
+    "file": "county_083.geojson",
+    "tractCount": 12,
+    "size": 209190
+  },
+  "039": {
+    "name": "Crawford",
+    "file": "county_039.geojson",
+    "tractCount": 23,
+    "size": 324478
+  }
+}
