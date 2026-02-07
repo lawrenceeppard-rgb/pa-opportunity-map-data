@@ -1,0 +1,276 @@
+{
+  "state": {
+    "name": "Pennsylvania",
+    "bachelors_or_higher": 26.4
+  },
+  "counties": {
+    "42001": {
+      "name": "Adams",
+      "bachelors_or_higher": 25.8
+    },
+    "42003": {
+      "name": "Allegheny",
+      "bachelors_or_higher": 45.8
+    },
+    "42005": {
+      "name": "Armstrong",
+      "bachelors_or_higher": 19.0
+    },
+    "42007": {
+      "name": "Beaver",
+      "bachelors_or_higher": 28.7
+    },
+    "42009": {
+      "name": "Bedford",
+      "bachelors_or_higher": 16.1
+    },
+    "42011": {
+      "name": "Berks",
+      "bachelors_or_higher": 27.7
+    },
+    "42013": {
+      "name": "Blair",
+      "bachelors_or_higher": 24.4
+    },
+    "42015": {
+      "name": "Bradford",
+      "bachelors_or_higher": 20.6
+    },
+    "42017": {
+      "name": "Bucks",
+      "bachelors_or_higher": 44.8
+    },
+    "42019": {
+      "name": "Butler",
+      "bachelors_or_higher": 39.4
+    },
+    "42021": {
+      "name": "Cambria",
+      "bachelors_or_higher": 23.9
+    },
+    "42023": {
+      "name": "Cameron",
+      "bachelors_or_higher": 12.6
+    },
+    "42025": {
+      "name": "Carbon",
+      "bachelors_or_higher": 19.2
+    },
+    "42027": {
+      "name": "Centre",
+      "bachelors_or_higher": 46.2
+    },
+    "42029": {
+      "name": "Chester",
+      "bachelors_or_higher": 57.1
+    },
+    "42031": {
+      "name": "Clarion",
+      "bachelors_or_higher": 23.6
+    },
+    "42033": {
+      "name": "Clearfield",
+      "bachelors_or_higher": 20.2
+    },
+    "42035": {
+      "name": "Clinton",
+      "bachelors_or_higher": 21.5
+    },
+    "42037": {
+      "name": "Columbia",
+      "bachelors_or_higher": 26.6
+    },
+    "42039": {
+      "name": "Crawford",
+      "bachelors_or_higher": 21.1
+    },
+    "42041": {
+      "name": "Cumberland",
+      "bachelors_or_higher": 40.0
+    },
+    "42043": {
+      "name": "Dauphin",
+      "bachelors_or_higher": 34.4
+    },
+    "42045": {
+      "name": "Delaware",
+      "bachelors_or_higher": 41.9
+    },
+    "42047": {
+      "name": "Elk",
+      "bachelors_or_higher": 20.6
+    },
+    "42049": {
+      "name": "Erie",
+      "bachelors_or_higher": 30.3
+    },
+    "42051": {
+      "name": "Fayette",
+      "bachelors_or_higher": 19.1
+    },
+    "42053": {
+      "name": "Forest",
+      "bachelors_or_higher": 12.3
+    },
+    "42055": {
+      "name": "Franklin",
+      "bachelors_or_higher": 24.7
+    },
+    "42057": {
+      "name": "Fulton",
+      "bachelors_or_higher": 17.7
+    },
+    "42059": {
+      "name": "Greene",
+      "bachelors_or_higher": 21.7
+    },
+    "42061": {
+      "name": "Huntingdon",
+      "bachelors_or_higher": 19.2
+    },
+    "42063": {
+      "name": "Indiana",
+      "bachelors_or_higher": 27.0
+    },
+    "42065": {
+      "name": "Jefferson",
+      "bachelors_or_higher": 18.4
+    },
+    "42067": {
+      "name": "Juniata",
+      "bachelors_or_higher": 15.0
+    },
+    "42069": {
+      "name": "Lackawanna",
+      "bachelors_or_higher": 30.6
+    },
+    "42071": {
+      "name": "Lancaster",
+      "bachelors_or_higher": 32.4
+    },
+    "42073": {
+      "name": "Lawrence",
+      "bachelors_or_higher": 23.4
+    },
+    "42075": {
+      "name": "Lebanon",
+      "bachelors_or_higher": 24.3
+    },
+    "42077": {
+      "name": "Lehigh",
+      "bachelors_or_higher": 34.2
+    },
+    "42079": {
+      "name": "Luzerne",
+      "bachelors_or_higher": 25.3
+    },
+    "42081": {
+      "name": "Lycoming",
+      "bachelors_or_higher": 24.8
+    },
+    "42083": {
+      "name": "McKean",
+      "bachelors_or_higher": 20.8
+    },
+    "42085": {
+      "name": "Mercer",
+      "bachelors_or_higher": 25.6
+    },
+    "42087": {
+      "name": "Mifflin",
+      "bachelors_or_higher": 14.9
+    },
+    "42089": {
+      "name": "Monroe",
+      "bachelors_or_higher": 27.4
+    },
+    "42091": {
+      "name": "Montgomery",
+      "bachelors_or_higher": 53.0
+    },
+    "42093": {
+      "name": "Montour",
+      "bachelors_or_higher": 38.7
+    },
+    "42095": {
+      "name": "Northampton",
+      "bachelors_or_higher": 34.7
+    },
+    "42097": {
+      "name": "Northumberland",
+      "bachelors_or_higher": 19.4
+    },
+    "42099": {
+      "name": "Perry",
+      "bachelors_or_higher": 20.2
+    },
+    "42101": {
+      "name": "Philadelphia",
+      "bachelors_or_higher": 35.4
+    },
+    "42103": {
+      "name": "Pike",
+      "bachelors_or_higher": 29.7
+    },
+    "42105": {
+      "name": "Potter",
+      "bachelors_or_higher": 18.2
+    },
+    "42107": {
+      "name": "Schuylkill",
+      "bachelors_or_higher": 19.9
+    },
+    "42109": {
+      "name": "Snyder",
+      "bachelors_or_higher": 20.6
+    },
+    "42111": {
+      "name": "Somerset",
+      "bachelors_or_higher": 17.9
+    },
+    "42113": {
+      "name": "Sullivan",
+      "bachelors_or_higher": 21.5
+    },
+    "42115": {
+      "name": "Susquehanna",
+      "bachelors_or_higher": 19.5
+    },
+    "42117": {
+      "name": "Tioga",
+      "bachelors_or_higher": 22.3
+    },
+    "42119": {
+      "name": "Union",
+      "bachelors_or_higher": 26.5
+    },
+    "42121": {
+      "name": "Venango",
+      "bachelors_or_higher": 19.1
+    },
+    "42123": {
+      "name": "Warren",
+      "bachelors_or_higher": 19.9
+    },
+    "42125": {
+      "name": "Washington",
+      "bachelors_or_higher": 32.9
+    },
+    "42127": {
+      "name": "Wayne",
+      "bachelors_or_higher": 23.4
+    },
+    "42129": {
+      "name": "Westmoreland",
+      "bachelors_or_higher": 32.8
+    },
+    "42131": {
+      "name": "Wyoming",
+      "bachelors_or_higher": 22.1
+    },
+    "42133": {
+      "name": "York",
+      "bachelors_or_higher": 27.6
+    }
+  }
+}
