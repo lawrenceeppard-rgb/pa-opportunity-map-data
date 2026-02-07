@@ -1,0 +1,276 @@
+{
+  "state": {
+    "name": "Pennsylvania",
+    "teen_birth_rate": 12.5
+  },
+  "counties": {
+    "42101": {
+      "name": "Philadelphia",
+      "teen_birth_rate": 28.0
+    },
+    "42023": {
+      "name": "Cameron",
+      "teen_birth_rate": 19.0
+    },
+    "42035": {
+      "name": "Clinton",
+      "teen_birth_rate": 17.9
+    },
+    "42043": {
+      "name": "Dauphin",
+      "teen_birth_rate": 17.6
+    },
+    "42057": {
+      "name": "Fulton",
+      "teen_birth_rate": 16.5
+    },
+    "42055": {
+      "name": "Franklin",
+      "teen_birth_rate": 16.0
+    },
+    "42087": {
+      "name": "Mifflin",
+      "teen_birth_rate": 15.9
+    },
+    "42081": {
+      "name": "Lycoming",
+      "teen_birth_rate": 15.7
+    },
+    "42049": {
+      "name": "Erie",
+      "teen_birth_rate": 15.7
+    },
+    "42015": {
+      "name": "Bradford",
+      "teen_birth_rate": 15.3
+    },
+    "42105": {
+      "name": "Potter",
+      "teen_birth_rate": 15.3
+    },
+    "42009": {
+      "name": "Bedford",
+      "teen_birth_rate": 15.2
+    },
+    "42061": {
+      "name": "Huntingdon",
+      "teen_birth_rate": 14.9
+    },
+    "42011": {
+      "name": "Berks",
+      "teen_birth_rate": 14.4
+    },
+    "42099": {
+      "name": "Perry",
+      "teen_birth_rate": 14.4
+    },
+    "42075": {
+      "name": "Lebanon",
+      "teen_birth_rate": 14.3
+    },
+    "42117": {
+      "name": "Tioga",
+      "teen_birth_rate": 14.2
+    },
+    "42001": {
+      "name": "Adams",
+      "teen_birth_rate": 14.2
+    },
+    "42133": {
+      "name": "York",
+      "teen_birth_rate": 13.9
+    },
+    "42121": {
+      "name": "Venango",
+      "teen_birth_rate": 13.8
+    },
+    "42051": {
+      "name": "Fayette",
+      "teen_birth_rate": 13.6
+    },
+    "42083": {
+      "name": "McKean",
+      "teen_birth_rate": 13.5
+    },
+    "42115": {
+      "name": "Susquehanna",
+      "teen_birth_rate": 13.4
+    },
+    "42093": {
+      "name": "Montour",
+      "teen_birth_rate": 13.4
+    },
+    "42073": {
+      "name": "Lawrence",
+      "teen_birth_rate": 13.4
+    },
+    "42013": {
+      "name": "Blair",
+      "teen_birth_rate": 13.2
+    },
+    "42097": {
+      "name": "Northumberland",
+      "teen_birth_rate": 13.0
+    },
+    "42039": {
+      "name": "Crawford",
+      "teen_birth_rate": 13.0
+    },
+    "42071": {
+      "name": "Lancaster",
+      "teen_birth_rate": 12.9
+    },
+    "42067": {
+      "name": "Juniata",
+      "teen_birth_rate": 12.7
+    },
+    "42077": {
+      "name": "Lehigh",
+      "teen_birth_rate": 12.6
+    },
+    "42085": {
+      "name": "Mercer",
+      "teen_birth_rate": 12.6
+    },
+    "42005": {
+      "name": "Armstrong",
+      "teen_birth_rate": 12.3
+    },
+    "42109": {
+      "name": "Snyder",
+      "teen_birth_rate": 12.3
+    },
+    "42065": {
+      "name": "Jefferson",
+      "teen_birth_rate": 12.2
+    },
+    "42123": {
+      "name": "Warren",
+      "teen_birth_rate": 12.1
+    },
+    "42025": {
+      "name": "Carbon",
+      "teen_birth_rate": 11.9
+    },
+    "42107": {
+      "name": "Schuylkill",
+      "teen_birth_rate": 11.7
+    },
+    "42131": {
+      "name": "Wyoming",
+      "teen_birth_rate": 11.7
+    },
+    "42045": {
+      "name": "Delaware",
+      "teen_birth_rate": 11.6
+    },
+    "42059": {
+      "name": "Greene",
+      "teen_birth_rate": 11.6
+    },
+    "42033": {
+      "name": "Clearfield",
+      "teen_birth_rate": 11.5
+    },
+    "42095": {
+      "name": "Northampton",
+      "teen_birth_rate": 11.5
+    },
+    "42037": {
+      "name": "Columbia",
+      "teen_birth_rate": 11.1
+    },
+    "42127": {
+      "name": "Wayne",
+      "teen_birth_rate": 10.9
+    },
+    "42021": {
+      "name": "Cambria",
+      "teen_birth_rate": 10.9
+    },
+    "42089": {
+      "name": "Monroe",
+      "teen_birth_rate": 10.9
+    },
+    "42007": {
+      "name": "Beaver",
+      "teen_birth_rate": 10.9
+    },
+    "42003": {
+      "name": "Allegheny",
+      "teen_birth_rate": 10.8
+    },
+    "42111": {
+      "name": "Somerset",
+      "teen_birth_rate": 10.5
+    },
+    "42031": {
+      "name": "Clarion",
+      "teen_birth_rate": 10.4
+    },
+    "42079": {
+      "name": "Luzerne",
+      "teen_birth_rate": 10.2
+    },
+    "42041": {
+      "name": "Cumberland",
+      "teen_birth_rate": 9.9
+    },
+    "42103": {
+      "name": "Pike",
+      "teen_birth_rate": 9.6
+    },
+    "42047": {
+      "name": "Elk",
+      "teen_birth_rate": 9.4
+    },
+    "42063": {
+      "name": "Indiana",
+      "teen_birth_rate": 9.2
+    },
+    "42069": {
+      "name": "Lackawanna",
+      "teen_birth_rate": 9.2
+    },
+    "42019": {
+      "name": "Butler",
+      "teen_birth_rate": 8.7
+    },
+    "42125": {
+      "name": "Washington",
+      "teen_birth_rate": 8.5
+    },
+    "42119": {
+      "name": "Union",
+      "teen_birth_rate": 8.4
+    },
+    "42027": {
+      "name": "Centre",
+      "teen_birth_rate": 8.1
+    },
+    "42129": {
+      "name": "Westmoreland",
+      "teen_birth_rate": 7.9
+    },
+    "42017": {
+      "name": "Bucks",
+      "teen_birth_rate": 7.1
+    },
+    "42029": {
+      "name": "Chester",
+      "teen_birth_rate": 7.1
+    },
+    "42091": {
+      "name": "Montgomery",
+      "teen_birth_rate": 6.9
+    },
+    "42113": {
+      "name": "Sullivan",
+      "teen_birth_rate": 13.7
+    },
+    "42053": {
+      "name": "Forest",
+      "teen_birth_rate": 10.3
+    }
+  }
+}
