@@ -1,0 +1,344 @@
+{
+  "state": {
+    "name": "Pennsylvania",
+    "median_hh_income": 71789,
+    "unemployment_rate": 5.574999999999999
+  },
+  "counties": {
+    "42001": {
+      "name": "Adams, PA",
+      "median_hh_income": 76554,
+      "unemployment_rate": 4.125
+    },
+    "42003": {
+      "name": "Allegheny, PA",
+      "median_hh_income": 71973,
+      "unemployment_rate": 5.4
+    },
+    "42005": {
+      "name": "Armstrong, PA",
+      "median_hh_income": 57609,
+      "unemployment_rate": 6.35
+    },
+    "42007": {
+      "name": "Beaver, PA",
+      "median_hh_income": 67135,
+      "unemployment_rate": 6.449999999999999
+    },
+    "42009": {
+      "name": "Bedford, PA",
+      "median_hh_income": 55517,
+      "unemployment_rate": 5.5
+    },
+    "42011": {
+      "name": "Berks, PA",
+      "median_hh_income": 72157,
+      "unemployment_rate": 5.699999999999999
+    },
+    "42013": {
+      "name": "Blair, PA",
+      "median_hh_income": 57884,
+      "unemployment_rate": 5.4
+    },
+    "42015": {
+      "name": "Bradford, PA",
+      "median_hh_income": 63529,
+      "unemployment_rate": 4.925
+    },
+    "42017": {
+      "name": "Bucks, PA",
+      "median_hh_income": 105202,
+      "unemployment_rate": 4.9
+    },
+    "42019": {
+      "name": "Butler, PA",
+      "median_hh_income": 81507,
+      "unemployment_rate": 4.95
+    },
+    "42021": {
+      "name": "Cambria, PA",
+      "median_hh_income": 54612,
+      "unemployment_rate": 6.225
+    },
+    "42023": {
+      "name": "Cameron, PA",
+      "median_hh_income": 50338,
+      "unemployment_rate": 7.3999999999999995
+    },
+    "42025": {
+      "name": "Carbon, PA",
+      "median_hh_income": 64766,
+      "unemployment_rate": 6.074999999999999
+    },
+    "42027": {
+      "name": "Centre, PA",
+      "median_hh_income": 67654,
+      "unemployment_rate": 4.0
+    },
+    "42029": {
+      "name": "Chester, PA",
+      "median_hh_income": 117326,
+      "unemployment_rate": 3.925
+    },
+    "42031": {
+      "name": "Clarion, PA",
+      "median_hh_income": 57844,
+      "unemployment_rate": 5.8
+    },
+    "42033": {
+      "name": "Clearfield, PA",
+      "median_hh_income": 59318,
+      "unemployment_rate": 6.074999999999999
+    },
+    "42035": {
+      "name": "Clinton, PA",
+      "median_hh_income": 58892,
+      "unemployment_rate": 5.925
+    },
+    "42037": {
+      "name": "Columbia, PA",
+      "median_hh_income": 59127,
+      "unemployment_rate": 5.275
+    },
+    "42039": {
+      "name": "Crawford, PA",
+      "median_hh_income": 54774,
+      "unemployment_rate": 5.7749999999999995
+    },
+    "42041": {
+      "name": "Cumberland, PA",
+      "median_hh_income": 81295,
+      "unemployment_rate": 4.175
+    },
+    "42043": {
+      "name": "Dauphin, PA",
+      "median_hh_income": 67813,
+      "unemployment_rate": 5.35
+    },
+    "42045": {
+      "name": "Delaware, PA",
+      "median_hh_income": 83856,
+      "unemployment_rate": 5.475
+    },
+    "42047": {
+      "name": "Elk, PA",
+      "median_hh_income": 57570,
+      "unemployment_rate": 6.55
+    },
+    "42049": {
+      "name": "Erie, PA",
+      "median_hh_income": 56489,
+      "unemployment_rate": 6.2
+    },
+    "42051": {
+      "name": "Fayette, PA",
+      "median_hh_income": 51494,
+      "unemployment_rate": 7.45
+    },
+    "42053": {
+      "name": "Forest, PA",
+      "median_hh_income": 43362,
+      "unemployment_rate": 7.3
+    },
+    "42055": {
+      "name": "Franklin, PA",
+      "median_hh_income": 73709,
+      "unemployment_rate": 4.625
+    },
+    "42057": {
+      "name": "Fulton, PA",
+      "median_hh_income": 64405,
+      "unemployment_rate": 6.1
+    },
+    "42059": {
+      "name": "Greene, PA",
+      "median_hh_income": 63082,
+      "unemployment_rate": 6.25
+    },
+    "42061": {
+      "name": "Huntingdon, PA",
+      "median_hh_income": 58170,
+      "unemployment_rate": 6.625
+    },
+    "42063": {
+      "name": "Indiana, PA",
+      "median_hh_income": 53040,
+      "unemployment_rate": 6.1
+    },
+    "42065": {
+      "name": "Jefferson, PA",
+      "median_hh_income": 54248,
+      "unemployment_rate": 5.7250000000000005
+    },
+    "42067": {
+      "name": "Juniata, PA",
+      "median_hh_income": 62661,
+      "unemployment_rate": 4.7749999999999995
+    },
+    "42069": {
+      "name": "Lackawanna, PA",
+      "median_hh_income": 61168,
+      "unemployment_rate": 5.95
+    },
+    "42071": {
+      "name": "Lancaster, PA",
+      "median_hh_income": 82434,
+      "unemployment_rate": 4.475
+    },
+    "42073": {
+      "name": "Lawrence, PA",
+      "median_hh_income": 58730,
+      "unemployment_rate": 6.575
+    },
+    "42075": {
+      "name": "Lebanon, PA",
+      "median_hh_income": 69490,
+      "unemployment_rate": 4.775
+    },
+    "42077": {
+      "name": "Lehigh, PA",
+      "median_hh_income": 72590,
+      "unemployment_rate": 5.825000000000001
+    },
+    "42079": {
+      "name": "Luzerne, PA",
+      "median_hh_income": 59358,
+      "unemployment_rate": 6.8999999999999995
+    },
+    "42081": {
+      "name": "Lycoming, PA",
+      "median_hh_income": 61729,
+      "unemployment_rate": 5.675000000000001
+    },
+    "42083": {
+      "name": "McKean, PA",
+      "median_hh_income": 58112,
+      "unemployment_rate": 6.35
+    },
+    "42085": {
+      "name": "Mercer, PA",
+      "median_hh_income": 57702,
+      "unemployment_rate": 6.125
+    },
+    "42087": {
+      "name": "Mifflin, PA",
+      "median_hh_income": 57096,
+      "unemployment_rate": 5.449999999999999
+    },
+    "42089": {
+      "name": "Monroe, PA",
+      "median_hh_income": 79824,
+      "unemployment_rate": 7.049999999999999
+    },
+    "42091": {
+      "name": "Montgomery, PA",
+      "median_hh_income": 106743,
+      "unemployment_rate": 4.5
+    },
+    "42093": {
+      "name": "Montour, PA",
+      "median_hh_income": 76229,
+      "unemployment_rate": 4.0249999999999995
+    },
+    "42095": {
+      "name": "Northampton, PA",
+      "median_hh_income": 75468,
+      "unemployment_rate": 5.3999999999999995
+    },
+    "42097": {
+      "name": "Northumberland, PA",
+      "median_hh_income": 57822,
+      "unemployment_rate": 6.0
+    },
+    "42099": {
+      "name": "Perry, PA",
+      "median_hh_income": 67834,
+      "unemployment_rate": 4.325
+    },
+    "42101": {
+      "name": "Philadelphia/city, PA",
+      "median_hh_income": 56385,
+      "unemployment_rate": 7.425
+    },
+    "42103": {
+      "name": "Pike, PA",
+      "median_hh_income": 81886,
+      "unemployment_rate": 6.725
+    },
+    "42105": {
+      "name": "Potter, PA",
+      "median_hh_income": 53935,
+      "unemployment_rate": 6.45
+    },
+    "42107": {
+      "name": "Schuylkill, PA",
+      "median_hh_income": 63680,
+      "unemployment_rate": 5.975
+    },
+    "42109": {
+      "name": "Snyder, PA",
+      "median_hh_income": 62382,
+      "unemployment_rate": 4.8999999999999995
+    },
+    "42111": {
+      "name": "Somerset, PA",
+      "median_hh_income": 50516,
+      "unemployment_rate": 6.125
+    },
+    "42113": {
+      "name": "Sullivan, PA",
+      "median_hh_income": 59957,
+      "unemployment_rate": 6.0
+    },
+    "42115": {
+      "name": "Susquehanna, PA",
+      "median_hh_income": 63413,
+      "unemployment_rate": 4.824999999999999
+    },
+    "42117": {
+      "name": "Tioga, PA",
+      "median_hh_income": 61190,
+      "unemployment_rate": 5.8500000000000005
+    },
+    "42119": {
+      "name": "Union, PA",
+      "median_hh_income": 65521,
+      "unemployment_rate": 4.375
+    },
+    "42121": {
+      "name": "Venango, PA",
+      "median_hh_income": 52449,
+      "unemployment_rate": 5.975
+    },
+    "42123": {
+      "name": "Warren, PA",
+      "median_hh_income": 56707,
+      "unemployment_rate": 5.55
+    },
+    "42125": {
+      "name": "Washington, PA",
+      "median_hh_income": 70751,
+      "unemployment_rate": 5.725
+    },
+    "42127": {
+      "name": "Wayne, PA",
+      "median_hh_income": 56973,
+      "unemployment_rate": 5.8999999999999995
+    },
+    "42129": {
+      "name": "Westmoreland, PA",
+      "median_hh_income": 71152,
+      "unemployment_rate": 5.65
+    },
+    "42131": {
+      "name": "Wyoming, PA",
+      "median_hh_income": 67643,
+      "unemployment_rate": 5.575
+    },
+    "42133": {
+      "name": "York, PA",
+      "median_hh_income": 79938,
+      "unemployment_rate": 4.85
+    }
+  }
+}
