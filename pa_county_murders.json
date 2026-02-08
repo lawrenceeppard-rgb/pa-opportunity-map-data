@@ -1,0 +1,114 @@
+{
+  "42101": {
+    "county_name": "Philadelphia",
+    "total_murders": 547
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "total_murders": 203
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "total_murders": 40
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "total_murders": 19
+  },
+  "42011": {
+    "county_name": "Berks",
+    "total_murders": 19
+  },
+  "42049": {
+    "county_name": "Erie",
+    "total_murders": 13
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "total_murders": 11
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "total_murders": 11
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "total_murders": 11
+  },
+  "42125": {
+    "county_name": "Washington",
+    "total_murders": 9
+  },
+  "42019": {
+    "county_name": "Butler",
+    "total_murders": 9
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "total_murders": 8
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "total_murders": 8
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "total_murders": 7
+  },
+  "42013": {
+    "county_name": "Blair",
+    "total_murders": 7
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "total_murders": 6
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "total_murders": 6
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "total_murders": 6
+  },
+  "42133": {
+    "county_name": "York",
+    "total_murders": 5
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "total_murders": 5
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "total_murders": 5
+  },
+  "42029": {
+    "county_name": "Chester",
+    "total_murders": 3
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "total_murders": 3
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "total_murders": 3
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "total_murders": 2
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "total_murders": 2
+  },
+  "42001": {
+    "county_name": "Adams",
+    "total_murders": 2
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "total_murders": 1
+  }
+}
