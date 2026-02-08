@@ -1,0 +1,337 @@
+{
+  "42017": {
+    "county_name": "Bucks",
+    "total_murders_2024": null,
+    "total_murders_2018": 20
+  },
+  "42029": {
+    "county_name": "Chester",
+    "total_murders_2024": 3,
+    "total_murders_2018": 15
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "total_murders_2024": null,
+    "total_murders_2018": 39
+  },
+  "42091": {
+    "county_name": "Montgomery",
+    "total_murders_2024": null,
+    "total_murders_2018": 18
+  },
+  "42101": {
+    "county_name": "Philadelphia",
+    "total_murders_2024": 547,
+    "total_murders_2018": 355
+  },
+  "42011": {
+    "county_name": "Berks",
+    "total_murders_2024": 19,
+    "total_murders_2018": 23
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "total_murders_2024": 11,
+    "total_murders_2018": 4
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "total_murders_2024": 8,
+    "total_murders_2018": 13
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "total_murders_2024": 11,
+    "total_murders_2018": 17
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "total_murders_2024": null,
+    "total_murders_2018": 6
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "total_murders_2024": 6,
+    "total_murders_2018": 3
+  },
+  "42103": {
+    "county_name": "Pike",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "total_murders_2024": 8,
+    "total_murders_2018": 5
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "total_murders_2024": null,
+    "total_murders_2018": 5
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42001": {
+    "county_name": "Adams",
+    "total_murders_2024": 2,
+    "total_murders_2018": 3
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "total_murders_2024": 19,
+    "total_murders_2018": 2
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "total_murders_2024": 40,
+    "total_murders_2018": 19
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "total_murders_2024": 5,
+    "total_murders_2018": 3
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "total_murders_2024": 11,
+    "total_murders_2018": 12
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "total_murders_2024": 3,
+    "total_murders_2018": 4
+  },
+  "42099": {
+    "county_name": "Perry",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42133": {
+    "county_name": "York",
+    "total_murders_2024": 5,
+    "total_murders_2018": 23
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "total_murders_2024": null,
+    "total_murders_2018": 2
+  },
+  "42013": {
+    "county_name": "Blair",
+    "total_murders_2024": 7,
+    "total_murders_2018": 2
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "total_murders_2024": 5,
+    "total_murders_2018": 5
+  },
+  "42027": {
+    "county_name": "Centre",
+    "total_murders_2024": null,
+    "total_murders_2018": 2
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "total_murders_2024": null,
+    "total_murders_2018": 4
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "total_murders_2024": 3,
+    "total_murders_2018": 3
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  },
+  "42093": {
+    "county_name": "Montour",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "total_murders_2024": null,
+    "total_murders_2018": 2
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "total_murders_2024": 2,
+    "total_murders_2018": 3
+  },
+  "42119": {
+    "county_name": "Union",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "total_murders_2024": 203,
+    "total_murders_2018": 93
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "total_murders_2024": 6,
+    "total_murders_2018": 0
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "total_murders_2024": 7,
+    "total_murders_2018": 6
+  },
+  "42019": {
+    "county_name": "Butler",
+    "total_murders_2024": 9,
+    "total_murders_2018": 4
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "total_murders_2024": null,
+    "total_murders_2018": 14
+  },
+  "42059": {
+    "county_name": "Greene",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "total_murders_2024": 1,
+    "total_murders_2018": 1
+  },
+  "42125": {
+    "county_name": "Washington",
+    "total_murders_2024": 9,
+    "total_murders_2018": 4
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "total_murders_2024": 6,
+    "total_murders_2018": 8
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "total_murders_2024": null,
+    "total_murders_2018": 2
+  },
+  "42047": {
+    "county_name": "Elk",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  },
+  "42049": {
+    "county_name": "Erie",
+    "total_murders_2024": 13,
+    "total_murders_2018": 17
+  },
+  "42053": {
+    "county_name": "Forest",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "total_murders_2024": null,
+    "total_murders_2018": 3
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "total_murders_2024": 2,
+    "total_murders_2018": 4
+  },
+  "42083": {
+    "county_name": "McKean",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "total_murders_2024": null,
+    "total_murders_2018": 6
+  },
+  "42105": {
+    "county_name": "Potter",
+    "total_murders_2024": null,
+    "total_murders_2018": 0
+  },
+  "42121": {
+    "county_name": "Venango",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  },
+  "42123": {
+    "county_name": "Warren",
+    "total_murders_2024": null,
+    "total_murders_2018": 1
+  }
+}
