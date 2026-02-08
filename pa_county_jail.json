@@ -1,0 +1,270 @@
+{
+  "42101": {
+    "county_name": "Philadelphia",
+    "jail_prison_rate": 3.3
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "jail_prison_rate": 2.48
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "jail_prison_rate": 1.41
+  },
+  "42133": {
+    "county_name": "York",
+    "jail_prison_rate": 1.37
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "jail_prison_rate": 1.35
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "jail_prison_rate": 1.32
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "jail_prison_rate": 1.3
+  },
+  "42121": {
+    "county_name": "Venango",
+    "jail_prison_rate": 1.29
+  },
+  "42099": {
+    "county_name": "Perry",
+    "jail_prison_rate": 1.28
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "jail_prison_rate": 1.27
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "jail_prison_rate": 1.26
+  },
+  "42013": {
+    "county_name": "Blair",
+    "jail_prison_rate": 1.25
+  },
+  "42123": {
+    "county_name": "Warren",
+    "jail_prison_rate": 1.24
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "jail_prison_rate": 1.23
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "jail_prison_rate": 1.21
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "jail_prison_rate": 1.18
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "jail_prison_rate": 1.17
+  },
+  "42103": {
+    "county_name": "Pike",
+    "jail_prison_rate": 1.15
+  },
+  "42011": {
+    "county_name": "Berks",
+    "jail_prison_rate": 1.13
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "jail_prison_rate": 1.13
+  },
+  "42049": {
+    "county_name": "Erie",
+    "jail_prison_rate": 1.12
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "jail_prison_rate": 1.09
+  },
+  "42001": {
+    "county_name": "Adams",
+    "jail_prison_rate": 1.07
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "jail_prison_rate": 1.06
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "jail_prison_rate": 1.04
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "jail_prison_rate": 1.03
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "jail_prison_rate": 1.03
+  },
+  "42059": {
+    "county_name": "Greene",
+    "jail_prison_rate": 1.02
+  },
+  "42019": {
+    "county_name": "Butler",
+    "jail_prison_rate": 0.96
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "jail_prison_rate": 0.96
+  },
+  "42047": {
+    "county_name": "Elk",
+    "jail_prison_rate": 0.95
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "jail_prison_rate": 0.91
+  },
+  "42029": {
+    "county_name": "Chester",
+    "jail_prison_rate": 0.9
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "jail_prison_rate": 0.88
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "jail_prison_rate": 0.88
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "jail_prison_rate": 0.87
+  },
+  "42093": {
+    "county_name": "Montour",
+    "jail_prison_rate": 0.85
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "jail_prison_rate": 0.84
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "jail_prison_rate": 0.84
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "jail_prison_rate": 0.83
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "jail_prison_rate": 0.83
+  },
+  "42083": {
+    "county_name": "McKean",
+    "jail_prison_rate": 0.83
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "jail_prison_rate": 0.8
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "jail_prison_rate": 0.8
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "jail_prison_rate": 0.8
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "jail_prison_rate": 0.77
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "jail_prison_rate": 0.77
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "jail_prison_rate": 0.75
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "jail_prison_rate": 0.75
+  },
+  "42091": {
+    "county_name": "Montgomery",
+    "jail_prison_rate": 0.75
+  },
+  "42017": {
+    "county_name": "Bucks",
+    "jail_prison_rate": 0.74
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "jail_prison_rate": 0.74
+  },
+  "42105": {
+    "county_name": "Potter",
+    "jail_prison_rate": 0.71
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "jail_prison_rate": 0.71
+  },
+  "42119": {
+    "county_name": "Union",
+    "jail_prison_rate": 0.7
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "jail_prison_rate": 0.68
+  },
+  "42027": {
+    "county_name": "Centre",
+    "jail_prison_rate": 0.67
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "jail_prison_rate": 0.67
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "jail_prison_rate": 0.65
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "jail_prison_rate": 0.61
+  },
+  "42125": {
+    "county_name": "Washington",
+    "jail_prison_rate": 0.58
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "jail_prison_rate": 0.55
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "jail_prison_rate": 0.53
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "jail_prison_rate": 0.47
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "jail_prison_rate": 0.46
+  },
+  "42053": {
+    "county_name": "Forest",
+    "jail_prison_rate": 1.65
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "jail_prison_rate": 0.52
+  }
+}

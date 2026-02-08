@@ -1,0 +1,270 @@
+{
+  "42091": {
+    "county_name": "Montgomery",
+    "upward_mobility": 18.75
+  },
+  "42017": {
+    "county_name": "Bucks",
+    "upward_mobility": 18.51
+  },
+  "42103": {
+    "county_name": "Pike",
+    "upward_mobility": 17.91
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "upward_mobility": 16.45
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "upward_mobility": 16.43
+  },
+  "42059": {
+    "county_name": "Greene",
+    "upward_mobility": 16.32
+  },
+  "42029": {
+    "county_name": "Chester",
+    "upward_mobility": 15.93
+  },
+  "42125": {
+    "county_name": "Washington",
+    "upward_mobility": 15.66
+  },
+  "42019": {
+    "county_name": "Butler",
+    "upward_mobility": 14.66
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "upward_mobility": 14.46
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "upward_mobility": 14.35
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "upward_mobility": 13.78
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "upward_mobility": 13.72
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "upward_mobility": 13.67
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "upward_mobility": 13.5
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "upward_mobility": 13.5
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "upward_mobility": 13.49
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "upward_mobility": 13.35
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "upward_mobility": 13.28
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "upward_mobility": 13.0
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "upward_mobility": 12.97
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "upward_mobility": 12.95
+  },
+  "42027": {
+    "county_name": "Centre",
+    "upward_mobility": 12.64
+  },
+  "42093": {
+    "county_name": "Montour",
+    "upward_mobility": 12.42
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "upward_mobility": 12.11
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "upward_mobility": 12.1
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "upward_mobility": 12.05
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "upward_mobility": 11.99
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "upward_mobility": 11.99
+  },
+  "42105": {
+    "county_name": "Potter",
+    "upward_mobility": 11.92
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "upward_mobility": 11.88
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "upward_mobility": 11.43
+  },
+  "42011": {
+    "county_name": "Berks",
+    "upward_mobility": 11.4
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "upward_mobility": 11.33
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "upward_mobility": 11.33
+  },
+  "42119": {
+    "county_name": "Union",
+    "upward_mobility": 11.19
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "upward_mobility": 11.0
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "upward_mobility": 10.99
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "upward_mobility": 10.93
+  },
+  "42047": {
+    "county_name": "Elk",
+    "upward_mobility": 10.48
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "upward_mobility": 10.44
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "upward_mobility": 10.33
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "upward_mobility": 10.32
+  },
+  "42001": {
+    "county_name": "Adams",
+    "upward_mobility": 10.28
+  },
+  "42123": {
+    "county_name": "Warren",
+    "upward_mobility": 10.25
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "upward_mobility": 10.08
+  },
+  "42133": {
+    "county_name": "York",
+    "upward_mobility": 10.01
+  },
+  "42013": {
+    "county_name": "Blair",
+    "upward_mobility": 9.99
+  },
+  "42083": {
+    "county_name": "McKean",
+    "upward_mobility": 9.94
+  },
+  "42099": {
+    "county_name": "Perry",
+    "upward_mobility": 9.94
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "upward_mobility": 9.89
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "upward_mobility": 9.81
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "upward_mobility": 9.8
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "upward_mobility": 9.68
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "upward_mobility": 9.61
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "upward_mobility": 9.38
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "upward_mobility": 9.32
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "upward_mobility": 9.18
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "upward_mobility": 9.13
+  },
+  "42121": {
+    "county_name": "Venango",
+    "upward_mobility": 8.54
+  },
+  "42101": {
+    "county_name": "Philadelphia",
+    "upward_mobility": 8.15
+  },
+  "42049": {
+    "county_name": "Erie",
+    "upward_mobility": 8.11
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "upward_mobility": 7.94
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "upward_mobility": 7.49
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "upward_mobility": 5.51
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "upward_mobility": 15.8
+  },
+  "42053": {
+    "county_name": "Forest",
+    "upward_mobility": 9.11
+  }
+}
