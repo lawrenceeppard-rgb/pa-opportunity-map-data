@@ -1,0 +1,538 @@
+{
+  "42001": {
+    "county_name": "Adams",
+    "dentist_visit": 64.1,
+    "insufficient_sleep": 39.7,
+    "tooth_loss_65plus": 15.9,
+    "mammogram_50_74": 73.4,
+    "colorectal_screening": 59.2
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "dentist_visit": 65.0,
+    "insufficient_sleep": 37.0,
+    "tooth_loss_65plus": 11.8,
+    "mammogram_50_74": 79.5,
+    "colorectal_screening": 61.1
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "dentist_visit": 60.3,
+    "insufficient_sleep": 38.3,
+    "tooth_loss_65plus": 17.7,
+    "mammogram_50_74": 79.5,
+    "colorectal_screening": 59.0
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "dentist_visit": 65.5,
+    "insufficient_sleep": 36.7,
+    "tooth_loss_65plus": 15.9,
+    "mammogram_50_74": 77.9,
+    "colorectal_screening": 61.3
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "dentist_visit": 60.4,
+    "insufficient_sleep": 39.8,
+    "tooth_loss_65plus": 21.9,
+    "mammogram_50_74": 75.3,
+    "colorectal_screening": 58.6
+  },
+  "42011": {
+    "county_name": "Berks",
+    "dentist_visit": 63.1,
+    "insufficient_sleep": 41.4,
+    "tooth_loss_65plus": 16.5,
+    "mammogram_50_74": 77.7,
+    "colorectal_screening": 57.5
+  },
+  "42013": {
+    "county_name": "Blair",
+    "dentist_visit": 60.5,
+    "insufficient_sleep": 42.2,
+    "tooth_loss_65plus": 16.7,
+    "mammogram_50_74": 73.0,
+    "colorectal_screening": 59.6
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "dentist_visit": 63.1,
+    "insufficient_sleep": 38.8,
+    "tooth_loss_65plus": 20.6,
+    "mammogram_50_74": 75.1,
+    "colorectal_screening": 59.2
+  },
+  "42017": {
+    "county_name": "Bucks",
+    "dentist_visit": 67.1,
+    "insufficient_sleep": 38.6,
+    "tooth_loss_65plus": 12.3,
+    "mammogram_50_74": 75.3,
+    "colorectal_screening": 64.0
+  },
+  "42019": {
+    "county_name": "Butler",
+    "dentist_visit": 69.8,
+    "insufficient_sleep": 37.7,
+    "tooth_loss_65plus": 14.0,
+    "mammogram_50_74": 77.9,
+    "colorectal_screening": 63.8
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "dentist_visit": 60.5,
+    "insufficient_sleep": 40.3,
+    "tooth_loss_65plus": 15.3,
+    "mammogram_50_74": 78.6,
+    "colorectal_screening": 60.0
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "dentist_visit": 56.0,
+    "insufficient_sleep": 41.4,
+    "tooth_loss_65plus": 19.8,
+    "mammogram_50_74": 73.3,
+    "colorectal_screening": 56.8
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "dentist_visit": 62.6,
+    "insufficient_sleep": 38.8,
+    "tooth_loss_65plus": 13.4,
+    "mammogram_50_74": 73.8,
+    "colorectal_screening": 58.9
+  },
+  "42027": {
+    "county_name": "Centre",
+    "dentist_visit": 62.4,
+    "insufficient_sleep": 37.3,
+    "tooth_loss_65plus": 17.5,
+    "mammogram_50_74": 76.8,
+    "colorectal_screening": 61.1
+  },
+  "42029": {
+    "county_name": "Chester",
+    "dentist_visit": 71.1,
+    "insufficient_sleep": 32.6,
+    "tooth_loss_65plus": 8.7,
+    "mammogram_50_74": 81.0,
+    "colorectal_screening": 67.0
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "dentist_visit": 60.6,
+    "insufficient_sleep": 38.1,
+    "tooth_loss_65plus": 16.6,
+    "mammogram_50_74": 77.1,
+    "colorectal_screening": 57.7
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "dentist_visit": 59.0,
+    "insufficient_sleep": 41.7,
+    "tooth_loss_65plus": 15.7,
+    "mammogram_50_74": 76.0,
+    "colorectal_screening": 61.7
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "dentist_visit": 59.2,
+    "insufficient_sleep": 42.9,
+    "tooth_loss_65plus": 20.5,
+    "mammogram_50_74": 72.9,
+    "colorectal_screening": 57.7
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "dentist_visit": 62.8,
+    "insufficient_sleep": 38.3,
+    "tooth_loss_65plus": 16.5,
+    "mammogram_50_74": 75.4,
+    "colorectal_screening": 58.8
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "dentist_visit": 59.8,
+    "insufficient_sleep": 37.6,
+    "tooth_loss_65plus": 15.9,
+    "mammogram_50_74": 74.6,
+    "colorectal_screening": 60.1
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "dentist_visit": 66.7,
+    "insufficient_sleep": 36.4,
+    "tooth_loss_65plus": 10.9,
+    "mammogram_50_74": 75.0,
+    "colorectal_screening": 66.8
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "dentist_visit": 60.4,
+    "insufficient_sleep": 43.1,
+    "tooth_loss_65plus": 14.8,
+    "mammogram_50_74": 77.3,
+    "colorectal_screening": 62.1
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "dentist_visit": 68.5,
+    "insufficient_sleep": 41.6,
+    "tooth_loss_65plus": 16.3,
+    "mammogram_50_74": 78.3,
+    "colorectal_screening": 59.1
+  },
+  "42047": {
+    "county_name": "Elk",
+    "dentist_visit": 63.4,
+    "insufficient_sleep": 38.4,
+    "tooth_loss_65plus": 15.0,
+    "mammogram_50_74": 76.6,
+    "colorectal_screening": 60.3
+  },
+  "42049": {
+    "county_name": "Erie",
+    "dentist_visit": 61.1,
+    "insufficient_sleep": 37.8,
+    "tooth_loss_65plus": 15.5,
+    "mammogram_50_74": 78.8,
+    "colorectal_screening": 61.2
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "dentist_visit": 59.0,
+    "insufficient_sleep": 39.8,
+    "tooth_loss_65plus": 18.3,
+    "mammogram_50_74": 76.2,
+    "colorectal_screening": 57.3
+  },
+  "42053": {
+    "county_name": "Forest",
+    "dentist_visit": 52.4,
+    "insufficient_sleep": 42.7,
+    "tooth_loss_65plus": 19.6,
+    "mammogram_50_74": 74.1,
+    "colorectal_screening": 57.9
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "dentist_visit": 61.1,
+    "insufficient_sleep": 39.7,
+    "tooth_loss_65plus": 13.4,
+    "mammogram_50_74": 75.4,
+    "colorectal_screening": 62.4
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "dentist_visit": 62.8,
+    "insufficient_sleep": 40.2,
+    "tooth_loss_65plus": 12.9,
+    "mammogram_50_74": 75.7,
+    "colorectal_screening": 58.8
+  },
+  "42059": {
+    "county_name": "Greene",
+    "dentist_visit": 61.2,
+    "insufficient_sleep": 40.4,
+    "tooth_loss_65plus": 15.8,
+    "mammogram_50_74": 78.3,
+    "colorectal_screening": 60.6
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "dentist_visit": 59.7,
+    "insufficient_sleep": 39.4,
+    "tooth_loss_65plus": 15.5,
+    "mammogram_50_74": 75.4,
+    "colorectal_screening": 62.4
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "dentist_visit": 63.1,
+    "insufficient_sleep": 39.2,
+    "tooth_loss_65plus": 9.4,
+    "mammogram_50_74": 79.0,
+    "colorectal_screening": 58.9
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "dentist_visit": 59.3,
+    "insufficient_sleep": 38.9,
+    "tooth_loss_65plus": 16.2,
+    "mammogram_50_74": 74.5,
+    "colorectal_screening": 58.0
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "dentist_visit": 60.2,
+    "insufficient_sleep": 38.2,
+    "tooth_loss_65plus": 20.3,
+    "mammogram_50_74": 73.8,
+    "colorectal_screening": 56.7
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "dentist_visit": 63.8,
+    "insufficient_sleep": 41.4,
+    "tooth_loss_65plus": 16.8,
+    "mammogram_50_74": 75.6,
+    "colorectal_screening": 63.1
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "dentist_visit": 64.9,
+    "insufficient_sleep": 39.1,
+    "tooth_loss_65plus": 16.2,
+    "mammogram_50_74": 72.5,
+    "colorectal_screening": 59.8
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "dentist_visit": 61.7,
+    "insufficient_sleep": 46.0,
+    "tooth_loss_65plus": 14.1,
+    "mammogram_50_74": 76.1,
+    "colorectal_screening": 56.2
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "dentist_visit": 63.5,
+    "insufficient_sleep": 36.7,
+    "tooth_loss_65plus": 12.8,
+    "mammogram_50_74": 76.5,
+    "colorectal_screening": 59.1
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "dentist_visit": 61.4,
+    "insufficient_sleep": 36.8,
+    "tooth_loss_65plus": 18.7,
+    "mammogram_50_74": 76.5,
+    "colorectal_screening": 59.9
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "dentist_visit": 61.1,
+    "insufficient_sleep": 40.3,
+    "tooth_loss_65plus": 17.1,
+    "mammogram_50_74": 76.6,
+    "colorectal_screening": 57.9
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "dentist_visit": 65.2,
+    "insufficient_sleep": 37.7,
+    "tooth_loss_65plus": 13.8,
+    "mammogram_50_74": 76.8,
+    "colorectal_screening": 61.7
+  },
+  "42083": {
+    "county_name": "McKean",
+    "dentist_visit": 63.7,
+    "insufficient_sleep": 37.5,
+    "tooth_loss_65plus": 12.9,
+    "mammogram_50_74": 75.0,
+    "colorectal_screening": 58.7
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "dentist_visit": 61.3,
+    "insufficient_sleep": 40.6,
+    "tooth_loss_65plus": 15.9,
+    "mammogram_50_74": 80.8,
+    "colorectal_screening": 57.4
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "dentist_visit": 56.9,
+    "insufficient_sleep": 41.6,
+    "tooth_loss_65plus": 24.5,
+    "mammogram_50_74": 74.0,
+    "colorectal_screening": 58.6
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "dentist_visit": 63.0,
+    "insufficient_sleep": 42.7,
+    "tooth_loss_65plus": 11.1,
+    "mammogram_50_74": 80.1,
+    "colorectal_screening": 61.3
+  },
+  "42091": {
+    "county_name": "Montgomery",
+    "dentist_visit": 70.2,
+    "insufficient_sleep": 37.2,
+    "tooth_loss_65plus": 6.9,
+    "mammogram_50_74": 78.3,
+    "colorectal_screening": 63.5
+  },
+  "42093": {
+    "county_name": "Montour",
+    "dentist_visit": 63.0,
+    "insufficient_sleep": 38.0,
+    "tooth_loss_65plus": 9.9,
+    "mammogram_50_74": 80.4,
+    "colorectal_screening": 61.5
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "dentist_visit": 64.5,
+    "insufficient_sleep": 37.1,
+    "tooth_loss_65plus": 14.3,
+    "mammogram_50_74": 77.9,
+    "colorectal_screening": 61.0
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "dentist_visit": 60.1,
+    "insufficient_sleep": 40.4,
+    "tooth_loss_65plus": 17.3,
+    "mammogram_50_74": 76.7,
+    "colorectal_screening": 60.7
+  },
+  "42099": {
+    "county_name": "Perry",
+    "dentist_visit": 62.1,
+    "insufficient_sleep": 38.1,
+    "tooth_loss_65plus": 14.7,
+    "mammogram_50_74": 77.3,
+    "colorectal_screening": 63.8
+  },
+  "42101": {
+    "county_name": "Philadelphia",
+    "dentist_visit": 55.3,
+    "insufficient_sleep": 42.7,
+    "tooth_loss_65plus": 22.2,
+    "mammogram_50_74": 77.0,
+    "colorectal_screening": 62.5
+  },
+  "42103": {
+    "county_name": "Pike",
+    "dentist_visit": 65.8,
+    "insufficient_sleep": 39.5,
+    "tooth_loss_65plus": 10.4,
+    "mammogram_50_74": 78.1,
+    "colorectal_screening": 61.9
+  },
+  "42105": {
+    "county_name": "Potter",
+    "dentist_visit": 61.3,
+    "insufficient_sleep": 39.4,
+    "tooth_loss_65plus": 9.4,
+    "mammogram_50_74": 76.1,
+    "colorectal_screening": 62.5
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "dentist_visit": 58.4,
+    "insufficient_sleep": 42.0,
+    "tooth_loss_65plus": 13.6,
+    "mammogram_50_74": 77.2,
+    "colorectal_screening": 61.2
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "dentist_visit": 66.3,
+    "insufficient_sleep": 36.4,
+    "tooth_loss_65plus": 15.9,
+    "mammogram_50_74": 76.5,
+    "colorectal_screening": 57.4
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "dentist_visit": 59.1,
+    "insufficient_sleep": 37.4,
+    "tooth_loss_65plus": 12.2,
+    "mammogram_50_74": 75.7,
+    "colorectal_screening": 59.9
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "dentist_visit": 55.9,
+    "insufficient_sleep": 40.7,
+    "tooth_loss_65plus": 15.1,
+    "mammogram_50_74": 75.5,
+    "colorectal_screening": 60.2
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "dentist_visit": 65.6,
+    "insufficient_sleep": 38.4,
+    "tooth_loss_65plus": 13.1,
+    "mammogram_50_74": 78.8,
+    "colorectal_screening": 58.9
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "dentist_visit": 61.9,
+    "insufficient_sleep": 41.1,
+    "tooth_loss_65plus": 13.5,
+    "mammogram_50_74": 77.4,
+    "colorectal_screening": 60.8
+  },
+  "42119": {
+    "county_name": "Union",
+    "dentist_visit": 60.2,
+    "insufficient_sleep": 39.4,
+    "tooth_loss_65plus": 15.3,
+    "mammogram_50_74": 73.3,
+    "colorectal_screening": 60.7
+  },
+  "42121": {
+    "county_name": "Venango",
+    "dentist_visit": 61.8,
+    "insufficient_sleep": 38.8,
+    "tooth_loss_65plus": 12.1,
+    "mammogram_50_74": 77.7,
+    "colorectal_screening": 59.0
+  },
+  "42123": {
+    "county_name": "Warren",
+    "dentist_visit": 59.5,
+    "insufficient_sleep": 41.3,
+    "tooth_loss_65plus": 16.6,
+    "mammogram_50_74": 75.0,
+    "colorectal_screening": 59.4
+  },
+  "42125": {
+    "county_name": "Washington",
+    "dentist_visit": 65.3,
+    "insufficient_sleep": 38.4,
+    "tooth_loss_65plus": 12.6,
+    "mammogram_50_74": 79.6,
+    "colorectal_screening": 62.8
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "dentist_visit": 59.7,
+    "insufficient_sleep": 40.7,
+    "tooth_loss_65plus": 14.8,
+    "mammogram_50_74": 77.0,
+    "colorectal_screening": 58.3
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "dentist_visit": 67.2,
+    "insufficient_sleep": 38.6,
+    "tooth_loss_65plus": 14.3,
+    "mammogram_50_74": 76.9,
+    "colorectal_screening": 65.0
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "dentist_visit": 61.1,
+    "insufficient_sleep": 39.3,
+    "tooth_loss_65plus": 15.5,
+    "mammogram_50_74": 78.9,
+    "colorectal_screening": 59.4
+  },
+  "42133": {
+    "county_name": "York",
+    "dentist_visit": 64.4,
+    "insufficient_sleep": 39.9,
+    "tooth_loss_65plus": 14.5,
+    "mammogram_50_74": 73.9,
+    "colorectal_screening": 60.6
+  }
+}
