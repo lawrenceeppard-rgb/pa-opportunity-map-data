@@ -1,0 +1,2990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PA Opportunity Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
+        #map { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
+        #sidebar { position: absolute; top: 10px; right: 10px; width: 350px; max-height: calc(100vh - 20px); background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; overflow-y: auto; z-index: 1000; transition: transform 0.3s ease-in-out; }
+        #sidebar.closed { transform: translateX(400px); }
+        
+        /* Comparison sidebar - positioned RIGHT next to main sidebar */
+        #comparison-sidebar { position: absolute; top: 10px; right: 370px; width: 350px; max-height: calc(100vh - 20px); background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 8px; overflow-y: auto; z-index: 999; display: none; }
+        #comparison-sidebar.active { display: block; }
+        .compare-close-btn { position: absolute; top: 15px; right: 15px; background: rgba(220, 38, 38, 0.9); border: none; color: white; font-size: 24px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 2; font-weight: 700; }
+        .compare-close-btn:hover { background: rgba(185, 28, 28, 1); transform: scale(1.1); }
+        .compare-tracts-btn { width: 100%; padding: 12px; margin-top: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .compare-tracts-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+        .sidebar-header { padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; position: sticky; top: 0; z-index: 1; }
+        .sidebar-header h2 { font-size: 20px; margin-bottom: 5px; }
+        .sidebar-header p { font-size: 14px; opacity: 0.9; }
+        .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .close-btn:hover { background: rgba(255,255,255,0.3); }
+        .search-container { padding: 15px; border-bottom: 2px solid #e5e7eb; background: #f9fafb; }
+        .search-box { width: 100%; padding: 10px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 14px; transition: border-color 0.2s; }
+        .search-box:focus { outline: none; border-color: #667eea; }
+        .search-help { font-size: 11px; color: #6b7280; margin-top: 8px; line-height: 1.4; }
+        .sidebar-content { padding: 20px; }
+        
+        /* Desktop: Ensure comparison sidebar spacer elements match exactly */
+        @media (min-width: 769px) {
+            #comparison-sidebar .search-container {
+                padding: 15px !important;
+            }
+            
+            #comparison-sidebar .search-box {
+                padding: 10px !important;
+                font-size: 14px !important;
+            }
+            
+            #comparison-sidebar .search-help {
+                font-size: 11px !important;
+                margin-top: 8px !important;
+            }
+            
+            #comparison-sidebar .compare-tracts-btn {
+                padding: 12px !important;
+                margin-top: 15px !important;
+            }
+        }
+        
+        .info-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb; }
+        .info-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .info-label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; font-weight: 600; }
+        .info-value { font-size: 16px; color: #1f2937; font-weight: 500; }
+        .income-highlight { font-size: 24px; color: #059669; font-weight: 700; }
+        .search-result-item:hover { background: #e5e7eb !important; }
+        .legend { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 12px; width: 250px; }
+        .legend h4 { margin: 0 0 10px 0; font-size: 14px; color: #1f2937; }
+        .legend-item { margin: 5px 0; display: flex; align-items: center; }
+        .legend-color { width: 30px; height: 18px; margin-right: 8px; border: 1px solid #999; border-radius: 3px; }
+        .legend-refresh-btn { width: 100%; margin-top: 10px; padding: 8px 12px; background: white; border: 2px solid #667eea; color: #667eea; font-weight: 600; cursor: pointer; font-size: 12px; border-radius: 6px; transition: all 0.2s; }
+        .legend-refresh-btn:hover { background: #667eea; color: white; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(102,126,234,0.3); }
+        .legend-zoom-controls { display: flex; gap: 5px; margin-top: 8px; }
+        .legend-zoom-btn { flex: 1; padding: 8px; background: white; border: 2px solid #374151; color: #374151; font-weight: 700; cursor: pointer; font-size: 16px; border-radius: 6px; transition: all 0.2s; }
+        .legend-zoom-btn:hover { background: #374151; color: white; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(55,65,81,0.3); }
+        .left-controls-container { position: absolute; left: 10px; top: 10px; bottom: 10px; display: flex; flex-direction: column; justify-content: flex-start; gap: 20px; z-index: 1000; pointer-events: none; }
+        .left-controls-container > * { pointer-events: auto; }
+        .logo-link { display: block; }
+        .ship-logo-link { display: block; }
+        .logo { width: 100px; height: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); cursor: pointer; transition: transform 0.2s; }
+        .logo:hover { transform: scale(1.05); }
+        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000; text-align: center; }
+        .loading h3 { margin-bottom: 10px; color: #1f2937; }
+        .spinner { border: 3px solid #f3f4f6; border-top: 3px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .leaflet-popup-content { margin: 15px; font-size: 14px; }
+        .leaflet-popup-content h3 { margin: 0 0 10px 0; color: #667eea; }
+        .leaflet-popup-content-wrapper { overflow: visible !important; }
+        .leaflet-popup { overflow: visible !important; }
+        .mobile-popup-close { display: none; }
+        details summary span { transition: transform 0.2s; display: inline-block; }
+        details[open] summary span { transform: rotate(90deg); }
+        .roi-chart { transition: all 0.3s ease; cursor: pointer; position: relative; }
+        .roi-chart:hover { transform: scale(2.5); z-index: 10000; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+        #welcome-splash { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        .welcome-card { background: white; border-radius: 16px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; }
+        .welcome-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 16px 16px 0 0; text-align: center; }
+        .welcome-header h1 { font-size: 28px; margin: 0 0 12px 0; font-weight: 700; }
+        .welcome-header p { font-size: 16px; margin: 0; opacity: 0.95; }
+        .welcome-body { padding: 22px; }
+        .welcome-image-container { width: 100%; height: 210px; border-radius: 8px; margin-bottom: 20px; overflow: hidden; position: relative; }
+        .welcome-image { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+        .welcome-zoom { animation: slowZoom 15s ease-in-out forwards; }
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.5); }
+        }
+        .welcome-logo-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 160px; height: auto; z-index: 2; filter: brightness(0) invert(1) drop-shadow(0 4px 12px rgba(0,0,0,0.5)); pointer-events: none; }
+        .welcome-logo:hover { transform: scale(1.05); }
+        .welcome-text { font-size: 18px; line-height: 1.8; color: #1f2937; text-align: center; margin-bottom: 32px; }
+        .welcome-text a { color: #667eea; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .welcome-text a:hover { color: #764ba2; }
+        .explore-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 18px 40px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.3s; box-shadow: 0 4px 12px rgba(102,126,234,0.3); pointer-events: auto; }
+        .explore-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+        
+        /* Mobile-only UI elements (hidden on desktop) */
+        .mobile-backdrop { display: none; }
+        .mobile-search-bar { display: none; }
+        .mobile-expand-btn { display: none; }
+        
+        /* Mobile-specific styles - ONLY applies to screens 768px and below */
+        @media (max-width: 768px) {
+            /* Hide logos on mobile */
+            .logo-link, .ship-logo-link {
+                display: none !important;
+            }
+            
+            /* Mobile comparison - when active, BOTH sidebars are side-by-side */
+            body.comparison-mode #comparison-sidebar.active {
+                display: block !important;
+                position: fixed !important;
+                width: calc(50% - 10px) !important;
+                left: 5px !important;
+                right: auto !important;
+                top: 70px !important;
+                bottom: auto !important;
+                height: calc(100vh - 80px) !important;
+                max-height: calc(100vh - 80px) !important;
+                font-size: 11px;
+                z-index: 1001;
+                transform: none !important;
+                /* Scroll performance optimizations */
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                will-change: scroll-position;
+            }
+            
+            /* When comparison is active, force main sidebar to right side */
+            body.comparison-mode #sidebar {
+                position: fixed !important;
+                width: calc(50% - 10px) !important;
+                left: auto !important;
+                right: 5px !important;
+                top: 70px !important;
+                bottom: auto !important;
+                height: calc(100vh - 80px) !important;
+                max-height: calc(100vh - 80px) !important;
+                font-size: 11px;
+                z-index: 1001;
+                transform: none !important;
+                border-radius: 8px !important;
+                /* Scroll performance optimizations */
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                will-change: scroll-position;
+            }
+            
+            #comparison-sidebar .sidebar-header h2,
+            #sidebar .sidebar-header h2 {
+                font-size: 14px;
+            }
+            
+            #comparison-sidebar .sidebar-header p,
+            #sidebar .sidebar-header p {
+                font-size: 11px;
+            }
+            
+            #comparison-sidebar .search-container,
+            #sidebar .search-container {
+                padding: 10px;
+            }
+            
+            #comparison-sidebar .search-box,
+            #sidebar .search-box {
+                font-size: 12px;
+                padding: 8px;
+            }
+            
+            #comparison-sidebar .search-help,
+            #sidebar .search-help {
+                font-size: 9px;
+            }
+            
+            /* Mobile-specific spacer adjustments for perfect alignment */
+            body.comparison-mode #comparison-sidebar .search-container {
+                padding: 10px !important;
+            }
+            
+            body.comparison-mode #comparison-sidebar .search-box {
+                font-size: 12px !important;
+                padding: 8px !important;
+            }
+            
+            body.comparison-mode #comparison-sidebar .search-help {
+                font-size: 9px !important;
+            }
+            
+            #comparison-sidebar .sidebar-content,
+            #sidebar .sidebar-content {
+                padding: 10px;
+                font-size: 11px;
+            }
+            
+            #comparison-sidebar .info-item,
+            #sidebar .info-item {
+                padding: 10px !important;
+                margin-bottom: 10px;
+            }
+            
+            #comparison-sidebar .info-label,
+            #sidebar .info-label {
+                font-size: 10px !important;
+            }
+            
+            #comparison-sidebar .info-value,
+            #sidebar .info-value {
+                font-size: 12px !important;
+            }
+            
+            /* Hide mobile-only elements when in comparison mode */
+            body.comparison-mode #mobileExpandBtn,
+            body.comparison-mode .mobile-search-bar,
+            body.comparison-mode .mobile-backdrop {
+                display: none !important;
+            }
+            
+            /* Mobile Backdrop */
+            .mobile-backdrop {
+                display: none !important;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            
+            .mobile-backdrop.visible {
+                display: block !important;
+                opacity: 1;
+            }
+            
+            /* Mobile Search Bar */
+            .mobile-search-bar {
+                display: block !important;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                z-index: 1001;
+                background: white;
+                padding: 8px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            
+            .mobile-search-input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                font-size: 14px;
+            }
+            
+            /* Mobile Expand Button */
+            .mobile-expand-btn {
+                display: flex !important;
+                position: fixed;
+                top: 70px;
+                left: 10px;
+                right: 10px;
+                z-index: 1001;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 14px 16px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+                cursor: pointer;
+                justify-content: space-between;
+                align-items: center;
+                font-weight: 600;
+                font-size: 14px;
+                transition: all 0.3s;
+            }
+            
+            .mobile-expand-btn:active {
+                transform: scale(0.98);
+            }
+            
+            .mobile-expand-arrow {
+                font-size: 12px;
+                transition: transform 0.3s;
+            }
+            
+            .mobile-expand-btn.expanded .mobile-expand-arrow {
+                transform: rotate(180deg);
+            }
+            
+            /* Hide desktop sidebar on mobile, show as bottom sheet when expanded */
+            #sidebar {
+                position: fixed !important;
+                left: 0 !important;
+                right: 0 !important;
+                top: auto !important;
+                bottom: -100% !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 70vh !important;
+                max-height: 70vh !important;
+                border-radius: 20px 20px 0 0 !important;
+                transition: bottom 0.3s ease-in-out !important;
+                overflow-y: auto !important;
+            }
+            
+            #sidebar.mobile-expanded {
+                bottom: 0 !important;
+            }
+            
+            .sidebar-header h2 {
+                font-size: 18px !important;
+            }
+            
+            .sidebar-content {
+                font-size: 13px !important;
+            }
+            
+            /* On mobile, remove legend from flex container and position at bottom-left */
+            .left-controls-container {
+                gap: 10px !important;
+            }
+            
+            .legend {
+                position: fixed !important;
+                bottom: 10px !important;
+                left: 10px !important;
+                width: auto !important;
+                max-width: 180px !important;
+                padding: 10px !important;
+            }
+            
+            .legend h4 {
+                font-size: 12px !important;
+                margin-bottom: 6px !important;
+            }
+            
+            .legend-item {
+                font-size: 10px !important;
+                margin: 3px 0 !important;
+            }
+            
+            .legend-color {
+                width: 14px !important;
+                height: 14px !important;
+            }
+            
+            .legend p {
+                font-size: 9px !important;
+                margin-top: 6px !important;
+            }
+            
+            .legend-refresh-btn {
+                font-size: 10px !important;
+                padding: 6px 8px !important;
+                margin-top: 8px !important;
+            }
+            
+            .legend-zoom-controls {
+                margin-top: 6px !important;
+                gap: 4px !important;
+            }
+            
+            .legend-zoom-btn {
+                font-size: 14px !important;
+                padding: 6px !important;
+            }
+            
+            /* Smaller search box */
+            .search-box {
+                font-size: 13px !important;
+                padding: 8px !important;
+            }
+            
+            /* Mobile popup adjustments */
+            /* CRITICAL: Force popups above EVERYTHING */
+            .leaflet-pane {
+                z-index: auto !important; /* Reset pane stacking */
+            }
+            
+            /* Marker pane above overlay pane (so markers are above tracts) */
+            .leaflet-marker-pane {
+                z-index: 700 !important; /* Above tracts */
+            }
+            
+            .leaflet-overlay-pane {
+                z-index: 400 !important; /* Tract polygons */
+            }
+            
+            .leaflet-popup-pane {
+                z-index: 10000 !important; /* Popup container above all */
+            }
+            
+            .leaflet-popup {
+                z-index: 10001 !important; /* Individual popup */
+            }
+            
+            .leaflet-popup-content-wrapper {
+                max-width: 90vw !important;
+                max-height: 70vh !important;
+                overflow-y: auto !important;
+                z-index: 10002 !important;
+            }
+            
+            .leaflet-popup-tip {
+                z-index: 10001 !important; /* Arrow pointing to marker */
+            }
+            
+            .leaflet-popup-content {
+                margin: 10px !important;
+                font-size: 12px !important;
+            }
+            
+            /* Make college popups stack vertically on mobile */
+            .leaflet-popup-content > div {
+                flex-direction: column !important;
+                min-width: auto !important;
+            }
+            
+            /* Disable hover zoom on mobile and center ROI charts */
+            .leaflet-popup-content .roi-chart {
+                max-width: 150px !important;
+                display: block !important;
+                margin: 0 auto 10px auto !important;
+            }
+            
+            .leaflet-popup-content .roi-chart:hover {
+                transform: none !important;
+                z-index: auto !important;
+                box-shadow: none !important;
+            }
+            
+            /* College popup mobile layout - graphs at bottom */
+            .college-popup-container {
+                flex-direction: column !important;
+            }
+            
+            .college-charts-section {
+                order: 2 !important;
+                margin-top: 15px !important;
+            }
+            
+            .college-info-section {
+                order: 1 !important;
+            }
+            
+            /* Legend and controls go BEHIND popups on mobile */
+            .legend {
+                z-index: 900 !important; /* Well below popups */
+            }
+            
+            .left-controls-container {
+                z-index: 900 !important; /* Same as legend */
+            }
+            
+            /* Make sure map container doesn't interfere */
+            #map {
+                z-index: 0 !important;
+            }
+            
+            /* Show close button on mobile */
+            .mobile-popup-close {
+                display: block !important;
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                width: 24px;
+                height: 24px;
+                background: #dc2626;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                z-index: 10001;
+                line-height: 1;
+                padding: 0;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            
+            .mobile-popup-close:active {
+                background: #b91c1c;
+                transform: scale(0.95);
+            }
+            
+            .search-help {
+                font-size: 10px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="left-controls-container">
+        <a href="https://connorsinstitute.substack.com/" target="_blank" rel="noopener noreferrer" class="logo-link">
+            <img src="https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/connors_logo_green.png" alt="Connors Institute" class="logo">
+        </a>
+        <a href="https://www.ship.edu/" target="_blank" rel="noopener noreferrer" class="ship-logo-link">
+            <img src="https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/shippensburg_logo_transparent.png" alt="Shippensburg University" class="logo">
+        </a>
+        <div class="legend">
+            <h4>PA Opportunity Map</h4>
+            <div class="legend-item"><div class="legend-color" style="background: #93c5fd;"></div><span>Census Tract</span></div>
+            <div class="legend-item"><div class="legend-color" style="background: #fbbf24;"></div><span>Selected Tract</span></div>
+            <div class="legend-item"><div class="legend-color" style="background: #dc2626; width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3z"/></svg></div><span>Schools (zoom in)</span></div>
+            <div class="legend-item"><div class="legend-color" style="background: #2563eb; width: 20px; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg></div><span>Colleges (zoom in)</span></div>
+            <p style="margin-top: 10px; color: #6b7280;"><strong>Total:</strong> 3,446 tracts, 2,900+ schools, 124 colleges</p>
+            <button class="legend-refresh-btn" onclick="resetMap()">🔄 Refresh Map</button>
+            <div class="legend-zoom-controls">
+                <button class="legend-zoom-btn" onclick="map.zoomIn()">+</button>
+                <button class="legend-zoom-btn" onclick="map.zoomOut()">−</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile-only UI elements -->
+    <div class="mobile-backdrop" id="mobileBackdrop"></div>
+    <div class="mobile-search-bar">
+        <input type="text" id="mobileSearchBox" class="mobile-search-input" placeholder="Search location, tract, or school...">
+    </div>
+    <div class="mobile-expand-btn" id="mobileExpandBtn" style="display: none;">
+        <span id="mobileExpandText">📍 Tap to explore this location</span>
+        <span class="mobile-expand-arrow">▼</span>
+    </div>
+    
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <button class="close-btn" onclick="toggleSidebar()">×</button>
+            <h2 id="tract-title">PA Opportunity Map</h2>
+            <p id="tract-subtitle">Search or click on map</p>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchBox" class="search-box" placeholder="Search by address, city, tract, or school name">
+            <div class="search-help">
+                Examples: "123 Main St, Harrisburg", "Shippensburg", "Lancaster", "502", or school/college name
+            </div>
+        </div>
+        <div style="padding: 15px 20px 0 20px;">
+            <button class="compare-tracts-btn" id="compareTractsBtn2" onclick="startComparison()" style="display: none;">Compare Tracts</button>
+        </div>
+        <div class="sidebar-content" id="tract-info">
+            <p style="color: #6b7280; text-align: center; padding: 40px 20px;">Enter a city name or tract number above, or click on a census tract on the map to view details.</p>
+        </div>
+        <div style="padding: 0 20px 20px 20px;">
+            <button class="compare-tracts-btn" id="compareTractsBtn" onclick="startComparison()" style="display: none;">Compare Tracts</button>
+        </div>
+    </div>
+    
+    <!-- Comparison Sidebar -->
+    <div id="comparison-sidebar">
+        <div class="sidebar-header">
+            <button class="compare-close-btn" onclick="closeComparison()">×</button>
+            <h2 id="comparison-tract-title">Comparison Tract</h2>
+            <p id="comparison-tract-subtitle">GEOID: ...</p>
+        </div>
+        <!-- Spacer to align with search bar on right sidebar -->
+        <div class="search-container">
+            <input type="text" class="search-box" disabled style="visibility: hidden; cursor: default;" value="Spacer">
+            <div class="search-help" style="visibility: hidden;">Examples: "123 Main St, Harrisburg", "Shippensburg", "Lancaster", "502", or school/college name</div>
+        </div>
+        <div style="padding: 15px 20px 0 20px;">
+            <button class="compare-tracts-btn" disabled style="visibility: hidden; cursor: default; pointer-events: none;">Compare Tracts</button>
+        </div>
+        <div class="sidebar-content" id="comparison-tract-info">
+            <!-- Content will be copied from main sidebar -->
+        </div>
+    </div>
+    
+    <div class="loading" id="loading">
+        <h3>Loading...</h3>
+        <div class="spinner"></div>
+        <p style="margin-top: 10px; color: #6b7280;">Loading map data, 2,900+ schools, and 124 colleges</p>
+    </div>
+    
+    <div id="welcome-splash">
+        <div class="welcome-card">
+            <div class="welcome-header">
+                <h1>Welcome to the Pennsylvania Opportunity Map</h1>
+                <p>Explore Economic Opportunity Across the Commonwealth</p>
+            </div>
+            <div class="welcome-body">
+                <div class="welcome-image-container">
+                    <img src="https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/old_main.jpg" alt="Old Main Building" class="welcome-image welcome-zoom">
+                    <img src="https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/connors_logo_green.png" alt="Connors Institute Logo" class="welcome-logo-overlay">
+                </div>
+                <div class="welcome-text">
+                    Brought to you by the <a href="https://connorsinstitute.substack.com/" target="_blank" rel="noopener noreferrer">Connors Institute</a> for Nonpartisan Research & Civic Engagement at Shippensburg University.
+                </div>
+                <button class="explore-btn" id="welcomeExploreBtn">CLICK TO EXPLORE PA OPPORTUNITY INDICATORS</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Welcome splash control - Make function global
+        let welcomeTimer;
+        
+        window.closeWelcome = function() {
+            console.log('closeWelcome called');
+            const splash = document.getElementById('welcome-splash');
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 500);
+            }
+            if (welcomeTimer) clearTimeout(welcomeTimer);
+        };
+        
+        // Immediately attach event listener to button
+        const attachButtonListener = function() {
+            const exploreBtn = document.getElementById('welcomeExploreBtn');
+            if (exploreBtn) {
+                exploreBtn.onclick = function() {
+                    console.log('Button clicked!');
+                    window.closeWelcome();
+                    return false;
+                };
+                console.log('Welcome button listener attached');
+            } else {
+                console.error('Welcome button not found!');
+            }
+        };
+        
+        // Auto-dismiss after 15 seconds
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                attachButtonListener();
+                welcomeTimer = setTimeout(window.closeWelcome, 15000);
+            });
+        } else {
+            attachButtonListener();
+            welcomeTimer = setTimeout(window.closeWelcome, 15000);
+        }
+        
+        const GEOJSON_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tracts_compressed.geojson';
+        const INCOME_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_income.json';
+        const LOOKUP_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_lookup.json';
+        const SOCIAL_CAPITAL_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_social_capital.json';
+        const SINGLE_PARENT_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_single_parent_2024.json';
+        const POVERTY_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_poverty_2021.json';
+        const UPWARD_MOBILITY_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_upward_mobility.json';
+        const TEEN_BIRTH_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_teen_birth.json';
+        const COMMUTE_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_commute.json';
+        const WAGE_GROWTH_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_wage_growth.json';
+        const RACE_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_race.json';
+        const MATH_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_3rd_grade_math.json';
+        const MARRIED_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_married.json';
+        const PRISON_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_prison.json';
+        const LIFE_EXPECTANCY_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_tract_life_expectancy.json';
+        const COUNTY_LIFE_EXP_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_life_expectancy.json';
+        const SCHOOL_SPENDING_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_school_spending.json';
+        const SCHOOLS_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_schools_complete.json';
+        const SCHOOL_SOCIAL_CAPITAL_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_school_social_capital.json';
+        const SCHOOL_GRADUATION_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_school_graduation.json';
+        const SCHOOL_INFO_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_school_info_by_name_COMPLETE.json';
+        const COLLEGES_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_colleges.json';
+        const PUBLIC_ROI_CHART_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/median-roi-public.svg';
+        const PRIVATE_ROI_CHART_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/median-roi-private.svg';
+        const COUNTY_ECONOMIC_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_economic.json';
+        const COUNTY_EDUCATION_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_education.json';
+        const COUNTY_SINGLE_PARENT_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_single_parent.json';
+        const COUNTY_TEEN_BIRTH_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_teen_birth.json';
+        const COUNTY_MURDERS_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_murders.json';
+        const COUNTY_CRIMES_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_crimes.json';
+        const COUNTY_MOBILITY_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_mobility.json';
+        const COUNTY_JAIL_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_jail.json';
+        const COUNTY_MARRIAGE_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_marriage.json';
+        const COUNTY_RACE_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_race.json';
+        const COUNTY_MATH_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_math.json';
+        const COUNTY_WAGE_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_wage.json';
+        const COUNTY_INCOME35_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_income35.json';
+        const COUNTY_HEALTH_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_health.json';
+        const COUNTY_HEALTH_INDICATORS_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_county_health_indicators.json';
+        const CITIES_URL = 'https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/pa_cities.json';
+        
+        const map = L.map('map', { zoomControl: false }).setView([40.8781, -77.7996], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap contributors', maxZoom: 18}).addTo(map);
+        
+        // Mobile popup handlers - hide legend when popup opens, show when closes
+        map.on('popupopen', function() {
+            if (window.innerWidth <= 768) {
+                const legend = document.querySelector('.legend');
+                if (legend) {
+                    legend.style.display = 'none';
+                }
+            }
+        });
+        
+        map.on('popupclose', function() {
+            if (window.innerWidth <= 768) {
+                const legend = document.querySelector('.legend');
+                if (legend) {
+                    legend.style.display = 'block';
+                }
+            }
+        });
+        
+        let tractLayers = {};
+        let selectedTract = null;
+        let incomeData = {};
+        let tractLookupData = {};
+        let socialCapitalData = {};
+        let singleParentData = {};
+        let povertyData = {};
+        let upwardMobilityData = {};
+        let teenBirthData = {};
+        let commuteData = {};
+        let wageGrowthData = {};
+        let raceData = {};
+        let mathData = {};
+        let marriedData = {};
+        let prisonData = {};
+        let lifeExpectancyData = {};
+        let countyLifeExpData = {};
+        let schoolSpendingData = {};
+        let schoolsData = [];
+        let schoolSocialCapitalData = {};
+        let schoolGraduationData = {};
+        let schoolInfoData = {};
+        let collegesData = [];
+        let countyEconomicData = {};
+        let countyEducationData = {};
+        let countySingleParentData = {};
+        let countyTeenBirthData = {};
+        let countyMurderData = {};
+        let countyCrimeData = {};
+        let countyMobilityData = {};
+        let countyJailData = {};
+        let countyMarriageData = {};
+        let countyRaceData = {};
+        let countyMathData = {};
+        let countyWageData = {};
+        let countyIncome35Data = {};
+        let countyHealthData = {};
+        let countyHealthIndicators = {};
+        let schoolMarkers = L.layerGroup();
+        let collegeMarkers = L.layerGroup();
+        let PA_CITIES = {};
+        let sidebarOpen = true;
+        
+        Promise.all([
+            fetch(GEOJSON_URL).then(r => r.json()),
+            fetch(INCOME_URL).then(r => r.json()),
+            fetch(LOOKUP_URL).then(r => r.json()),
+            fetch(SOCIAL_CAPITAL_URL).then(r => r.json()),
+            fetch(SINGLE_PARENT_URL).then(r => r.json()),
+            fetch(POVERTY_URL).then(r => r.json()),
+            fetch(UPWARD_MOBILITY_URL).then(r => r.json()),
+            fetch(TEEN_BIRTH_URL).then(r => r.json()),
+            fetch(COMMUTE_URL).then(r => r.json()),
+            fetch(WAGE_GROWTH_URL).then(r => r.json()),
+            fetch(RACE_URL).then(r => r.json()),
+            fetch(MATH_URL).then(r => r.json()),
+            fetch(MARRIED_URL).then(r => r.json()),
+            fetch(PRISON_URL).then(r => r.json()),
+            fetch(LIFE_EXPECTANCY_URL).then(r => r.json()),
+            fetch(COUNTY_LIFE_EXP_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(SCHOOL_SPENDING_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(SCHOOLS_URL).then(r => r.ok ? r.json() : []).catch(() => []),
+            fetch(SCHOOL_SOCIAL_CAPITAL_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(SCHOOL_GRADUATION_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(SCHOOL_INFO_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COLLEGES_URL).then(r => r.ok ? r.json() : []).catch(() => []),
+            fetch(COUNTY_ECONOMIC_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_EDUCATION_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_SINGLE_PARENT_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_TEEN_BIRTH_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_MURDERS_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_CRIMES_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_MOBILITY_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_JAIL_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_MARRIAGE_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_RACE_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_MATH_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_WAGE_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_INCOME35_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_HEALTH_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(COUNTY_HEALTH_INDICATORS_URL).then(r => r.ok ? r.json() : {}).catch(() => {}),
+            fetch(CITIES_URL).then(r => r.json())
+        ])
+        .then(([geoData, incData, lookupData, socialCapData, singleParentData_loaded, povertyData_loaded, upwardMobilityData_loaded, teenBirthData_loaded, commuteData_loaded, wageGrowthData_loaded, raceData_loaded, mathData_loaded, marriedData_loaded, prisonData_loaded, lifeExpectancyData_loaded, countyLifeExpData_loaded, schoolSpendingData_loaded, schoolsData_loaded, schoolSocialCapitalData_loaded, schoolGraduationData_loaded, schoolInfoData_loaded, collegesData_loaded, countyEconomicData_loaded, countyEducationData_loaded, countySingleParentData_loaded, countyTeenBirthData_loaded, countyMurderData_loaded, countyCrimeData_loaded, countyMobilityData_loaded, countyJailData_loaded, countyMarriageData_loaded, countyRaceData_loaded, countyMathData_loaded, countyWageData_loaded, countyIncome35Data_loaded, countyHealthData_loaded, countyHealthIndicators_loaded, citiesData]) => {
+            incomeData = incData;
+            tractLookupData = lookupData;
+            socialCapitalData = socialCapData;
+            singleParentData = singleParentData_loaded;
+            povertyData = povertyData_loaded;
+            upwardMobilityData = upwardMobilityData_loaded;
+            teenBirthData = teenBirthData_loaded;
+            commuteData = commuteData_loaded;
+            wageGrowthData = wageGrowthData_loaded;
+            raceData = raceData_loaded;
+            mathData = mathData_loaded;
+            marriedData = marriedData_loaded;
+            prisonData = prisonData_loaded;
+            lifeExpectancyData = lifeExpectancyData_loaded;
+            countyLifeExpData = countyLifeExpData_loaded || {};
+            schoolSpendingData = schoolSpendingData_loaded || {};
+            schoolsData = schoolsData_loaded || [];
+            schoolSocialCapitalData = schoolSocialCapitalData_loaded || {};
+            schoolGraduationData = schoolGraduationData_loaded || {};
+            schoolInfoData = schoolInfoData_loaded || {};
+            collegesData = collegesData_loaded || [];
+            countyEconomicData = countyEconomicData_loaded || {};
+            countyEducationData = countyEducationData_loaded || {};
+            countySingleParentData = countySingleParentData_loaded || {};
+            countyTeenBirthData = countyTeenBirthData_loaded || {};
+            countyMurderData = countyMurderData_loaded || {};
+            countyCrimeData = countyCrimeData_loaded || {};
+            countyMobilityData = countyMobilityData_loaded || {};
+            countyJailData = countyJailData_loaded || {};
+            countyMarriageData = countyMarriageData_loaded || {};
+            countyRaceData = countyRaceData_loaded || {};
+            countyMathData = countyMathData_loaded || {};
+            countyWageData = countyWageData_loaded || {};
+            countyIncome35Data = countyIncome35Data_loaded || {};
+            countyHealthData = countyHealthData_loaded || {};
+            countyHealthIndicators = countyHealthIndicators_loaded || {};
+            PA_CITIES = citiesData;
+            
+            console.log('Loaded', schoolsData.length, 'schools');
+            document.getElementById('loading').style.display = 'none';
+            
+            function style(feature) {
+                return {fillColor: '#93c5fd', weight: 1, opacity: 1, color: '#3b82f6', fillOpacity: 0.5};
+            }
+            
+            function highlightStyle(feature) {
+                return {fillColor: '#fbbf24', weight: 2, opacity: 1, color: '#f59e0b', fillOpacity: 0.7};
+            }
+            
+            L.geoJSON(geoData, {
+                style: style,
+                onEachFeature: function(feature, layer) {
+                    tractLayers[feature.properties.GEOID] = layer;
+                    
+                    layer.on('mouseover', function(e) {
+                        if (selectedTract !== feature.properties.GEOID) {
+                            layer.setStyle({weight: 2, fillOpacity: 0.7});
+                        }
+                    });
+                    
+                    layer.on('mouseout', function(e) {
+                        if (selectedTract !== feature.properties.GEOID) {
+                            layer.setStyle(style(feature));
+                        }
+                    });
+                    
+                    layer.on('click', function(e) {
+                        if (selectedTract && tractLayers[selectedTract]) {
+                            tractLayers[selectedTract].setStyle(style(feature));
+                        }
+                        selectedTract = feature.properties.GEOID;
+                        layer.setStyle(highlightStyle(feature));
+                        
+                        // Fit bounds first
+                        map.fitBounds(layer.getBounds(), {padding: [100, 100], maxZoom: 13});
+                        
+                        // On mobile, ensure we're zoomed in enough to see schools (zoom 11+)
+                        setTimeout(() => {
+                            const currentZoom = map.getZoom();
+                            const isMobile = window.innerWidth <= 768;
+                            if (isMobile && currentZoom < 12) {
+                                // Force zoom to 12 on mobile to ensure schools appear
+                                map.setZoom(12);
+                                // Trigger school marker update
+                                setTimeout(() => updateSchoolMarkers(), 50);
+                            } else if (!isMobile && currentZoom < 11) {
+                                // Desktop: ensure at least zoom 11
+                                map.setZoom(11);
+                                setTimeout(() => updateSchoolMarkers(), 50);
+                            }
+                        }, 100);
+                        
+                        // Always update main (right) sidebar, even in comparison mode
+                        updateSidebar(feature.properties, 'main');
+                        openSidebar();
+                        L.DomEvent.stopPropagation(e);
+                    });
+                    
+                    layer.bindPopup('<div><h3>' + feature.properties.NAMELSAD + '</h3><p><strong>Tract:</strong> ' + feature.properties.NAME + '</p><p><strong>GEOID:</strong> ' + feature.properties.GEOID + '</p><p style="font-size: 11px; color: #6b7280; margin-top: 8px;">Click for details</p></div>');
+                }
+            }).addTo(map);
+            
+            // Create school markers (only visible at zoom >= 11)
+            const schoolIcon = L.divIcon({
+                html: '<div style="background: #dc2626; border-radius: 4px; padding: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg></div>',
+                className: 'school-marker',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+            
+            // Create college markers with graduation cap icon
+            const collegeIcon = L.divIcon({
+                html: '<div style="background: #2563eb; border-radius: 4px; padding: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg></div>',
+                className: 'college-marker',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+            
+            // Helper function to determine if a school is a high school
+            function isHighSchool(schoolName) {
+                if (!schoolName) return false;
+                const name = schoolName.trim();
+                
+                // Exclude junior high, elementary, middle schools
+                if (/Junior High/i.test(name) || /\bMS\b/i.test(name) || /\bEl\b/i.test(name) || 
+                    /Elementary/i.test(name) || /Middle School/i.test(name)) {
+                    return false;
+                }
+                
+                // Include if contains "High School" or "Senior High" or ends with HS/SHS
+                if (/High School/i.test(name) || /Senior High/i.test(name) || /\b(SHS|HS)\s*$/i.test(name)) {
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            function updateSchoolMarkers() {
+                const zoom = map.getZoom();
+                if (zoom >= 11) {
+                    if (!map.hasLayer(schoolMarkers)) {
+                        // Group schools by coordinates
+                        const schoolsByLocation = {};
+                        schoolsData.forEach(school => {
+                            const key = `${school.lat.toFixed(6)},${school.lon.toFixed(6)}`;
+                            if (!schoolsByLocation[key]) {
+                                schoolsByLocation[key] = [];
+                            }
+                            schoolsByLocation[key].push(school);
+                        });
+                        
+                        // Create markers for each location
+                        Object.entries(schoolsByLocation).forEach(([key, schools]) => {
+                            const [lat, lon] = key.split(',').map(Number);
+                            const marker = L.marker([lat, lon], { icon: schoolIcon });
+                            
+                            // Store all school names with this marker
+                            marker.schoolNames = schools.map(s => s.name);
+                            
+                            // If multiple schools at same location, create combined popup
+                            if (schools.length > 1) {
+                                // Sort schools alphabetically by name
+                                schools.sort((a, b) => a.name.localeCompare(b.name));
+                                
+                                let perfHtml = '<div style="position: relative; min-width: 320px; max-height: 500px; overflow-y: auto;">';
+                                perfHtml += '<button class="mobile-popup-close" onclick="map.closePopup()">×</button>';
+                                perfHtml += '<h3 style="margin: 0 0 10px 0; color: #dc2626;">' + schools.length + ' Schools at this location</h3>';
+                                
+                                schools.forEach((school, idx) => {
+                                    
+                                    if (idx > 0) perfHtml += '<div style="border-top: 2px solid #e5e7eb; margin: 15px 0 0 0;"></div>';
+                                    
+                                    // Use details/summary for collapsible school info
+                                    perfHtml += '<details style="margin: 10px 0;">';
+                                    perfHtml += '<summary style="cursor: pointer; padding: 8px; background: #f9fafb; border-radius: 4px; font-weight: 600; color: #1f2937; user-select: none;">' + school.name + '</summary>';
+                                    perfHtml += '<div style="padding: 10px 0 0 0;">';
+                                    
+                                    // Get school info from schoolInfoData (now keyed by name)
+                                    const info = schoolInfoData[school.name] || {};
+                                    
+                                    // Basic Info
+                                    if (info.street_address) {
+                                        perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Address:</strong> ' + info.street_address + ', ' + (info.city || '') + ', ' + (info.state || '') + ' ' + (info.zip_code || '') + '</p>';
+                                    }
+                                    
+                                    if (info.telephone) {
+                                        perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Phone:</strong> ' + info.telephone + '</p>';
+                                    }
+                                    
+                                    if (info.website) {
+                                        perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Website:</strong> <a href="' + info.website + '" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: underline;">' + info.website + '</a></p>';
+                                    }
+                                    
+                                    if (info.grades_offered) {
+                                        perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Grades:</strong> ' + info.grades_offered + '</p>';
+                                    }
+                                    
+                                    if (info.enrollment) {
+                                        perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Enrollment:</strong> ' + info.enrollment.toLocaleString() + '</p>';
+                                    }
+                                    
+                                    if (info.district_name) {
+                                        perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>District:</strong> ' + info.district_name + '</p>';
+                                    }
+                                    
+                                    // School Type (Organization Code)
+                                    if (info.organization_code) {
+                                        perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>School Type:</strong> ' + info.organization_code + '</p>';
+                                    }
+                                    
+                                    // School Spending (if available)
+                                    if (schoolSpendingData && schoolSpendingData.districts) {
+                                        const districtSpending = schoolSpendingData.districts[school.aun.toString()];
+                                        const stateAvg = schoolSpendingData.state_average || 11900.06;
+                                        
+                                        if (districtSpending) {
+                                            const diff = districtSpending - stateAvg;
+                                            const diffColor = diff >= 0 ? '#059669' : '#dc2626';
+                                            const diffSign = diff >= 0 ? '+' : '';
+                                            
+                                            perfHtml += '<p style="margin: 8px 0 4px 0; font-size: 12px; font-weight: 600; color: #6b7280;">SPENDING:</p>';
+                                            perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">Actual Instruction Expense Per ADM: <strong>$' + districtSpending.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</strong></p>';
+                                            perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">State Average: $' + stateAvg.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <span style="color: ' + diffColor + ';">(' + diffSign + '$' + Math.abs(diff).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ')</span></p>';
+                                        }
+                                    }
+                                    
+                                    // Demographics (if available)
+                                    if (info.economically_disadvantaged !== null && info.economically_disadvantaged !== undefined) {
+                                        perfHtml += '<p style="margin: 8px 0 4px 0; font-size: 12px; font-weight: 600; color: #6b7280;">DEMOGRAPHICS:</p>';
+                                        
+                                        // Race/Ethnicity
+                                        perfHtml += '<p style="margin: 4px 0 2px 0; font-size: 11px; font-weight: 600; color: #1f2937; text-transform: uppercase;">Race/Ethnicity:</p>';
+                                        if (info.american_indian !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">American Indian: ' + info.american_indian.toFixed(1) + '%</p>';
+                                        if (info.asian !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Asian: ' + info.asian.toFixed(1) + '%</p>';
+                                        if (info.pacific_islander !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Pacific Islander: ' + info.pacific_islander.toFixed(1) + '%</p>';
+                                        if (info.black !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Black: ' + info.black.toFixed(1) + '%</p>';
+                                        if (info.hispanic !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Hispanic: ' + info.hispanic.toFixed(1) + '%</p>';
+                                        if (info.white !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">White: ' + info.white.toFixed(1) + '%</p>';
+                                        if (info.two_or_more_races !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Two or More Races: ' + info.two_or_more_races.toFixed(1) + '%</p>';
+                                        
+                                        // Sex
+                                        if (info.female !== null || info.male !== null) {
+                                            perfHtml += '<p style="margin: 4px 0 2px 0; font-size: 11px; font-weight: 600; color: #1f2937; text-transform: uppercase;">Sex:</p>';
+                                            if (info.female !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Female: ' + info.female.toFixed(1) + '%</p>';
+                                            if (info.male !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Male: ' + info.male.toFixed(1) + '%</p>';
+                                        }
+                                        
+                                        // Other demographics
+                                        perfHtml += '<p style="margin: 4px 0 2px 0; font-size: 11px; font-weight: 600; color: #1f2937; text-transform: uppercase;">Other:</p>';
+                                        perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Economically Disadvantaged: ' + info.economically_disadvantaged.toFixed(1) + '%</p>';
+                                        
+                                        if (info.english_learner !== null) {
+                                            perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">English Learner: ' + info.english_learner.toFixed(1) + '%</p>';
+                                        }
+                                        if (info.special_education !== null) {
+                                            perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Special Education: ' + info.special_education.toFixed(1) + '%</p>';
+                                        }
+                                        if (info.percent_gifted !== null) {
+                                            perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Gifted: ' + info.percent_gifted.toFixed(1) + '%</p>';
+                                        }
+                                        if (info.foster_care !== null) {
+                                            perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Foster Care: ' + info.foster_care.toFixed(1) + '%</p>';
+                                        }
+                                        if (info.homeless !== null) {
+                                            perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Homeless: ' + info.homeless.toFixed(1) + '%</p>';
+                                        }
+                                        if (info.military_connected !== null) {
+                                            perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Military Connected: ' + info.military_connected.toFixed(1) + '%</p>';
+                                        }
+                                    }
+                                    
+                                    perfHtml += '<p style="margin: 8px 0 4px 0; font-size: 12px; font-weight: 600; color: #6b7280;">PERFORMANCE:</p>';
+                                    
+                                    // Math performance
+                                    if (school.math !== null) {
+                                        const mathDiff = school.math - school.math_state;
+                                        const mathColor = mathDiff >= 0 ? '#059669' : '#dc2626';
+                                        perfHtml += '<p style="margin: 4px 0 0 0; font-size: 12px;"><strong>Math:</strong> <span style="color: ' + mathColor + '; font-weight: 600;">' + school.math.toFixed(1) + '%</span> <span style="font-size: 11px; color: #6b7280;">(State: ' + school.math_state.toFixed(1) + '%, ' + (mathDiff >= 0 ? '+' : '') + mathDiff.toFixed(1) + '%)</span></p>';
+                                    }
+                                    
+                                    // ELA performance
+                                    if (school.ela !== null) {
+                                        const elaDiff = school.ela - school.ela_state;
+                                        const elaColor = elaDiff >= 0 ? '#059669' : '#dc2626';
+                                        perfHtml += '<p style="margin: 4px 0 0 0; font-size: 12px;"><strong>ELA:</strong> <span style="color: ' + elaColor + '; font-weight: 600;">' + school.ela.toFixed(1) + '%</span> <span style="font-size: 11px; color: #6b7280;">(State: ' + school.ela_state.toFixed(1) + '%, ' + (elaDiff >= 0 ? '+' : '') + elaDiff.toFixed(1) + '%)</span></p>';
+                                    }
+                                    
+                                    // Attendance
+                                    if (school.attendance !== null) {
+                                        const attendDiff = school.attendance - school.attendance_state;
+                                        const attendColor = attendDiff >= 0 ? '#059669' : '#dc2626';
+                                        perfHtml += '<p style="margin: 4px 0 0 0; font-size: 12px;"><strong>Attendance:</strong> <span style="color: ' + attendColor + '; font-weight: 600;">' + school.attendance.toFixed(1) + '%</span> <span style="font-size: 11px; color: #6b7280;">(State: ' + school.attendance_state.toFixed(1) + '%, ' + (attendDiff >= 0 ? '+' : '') + attendDiff.toFixed(1) + '%)</span></p>';
+                                    }
+                                    
+                                    // 4-Year Graduation Rate (only for high schools)
+                                    if (isHighSchool(school.name) && schoolGraduationData.schools && schoolGraduationData.schools[school.aun]) {
+                                        const gradRate = schoolGraduationData.schools[school.aun];
+                                        const stateAvg = schoolGraduationData.state_average || 88.0;
+                                        const gradDiff = gradRate - stateAvg;
+                                        const gradColor = gradDiff >= 0 ? '#059669' : '#dc2626';
+                                        perfHtml += '<p style="margin: 4px 0 0 0; font-size: 12px;"><strong>4-Year Graduation:</strong> <span style="color: ' + gradColor + '; font-weight: 600;">' + gradRate.toFixed(1) + '%</span> <span style="font-size: 11px; color: #6b7280;">(State: ' + stateAvg.toFixed(1) + '%, ' + (gradDiff >= 0 ? '+' : '') + gradDiff.toFixed(1) + '%)</span></p>';
+                                    }
+                                    
+                                    // Social Capital (if available for this high school)
+                                    if (schoolSocialCapitalData[school.name]) {
+                                        const socialCap = schoolSocialCapitalData[school.name];
+                                        const scDiff = socialCap - 52.8; // National median
+                                        const scColor = scDiff >= 0 ? '#059669' : '#dc2626';
+                                        perfHtml += '<p style="margin: 4px 0 0 0; font-size: 12px;"><strong>HS Social Capital:</strong> <span style="color: ' + scColor + '; font-weight: 600;">' + socialCap.toFixed(1) + '%</span> <span style="font-size: 11px; color: #6b7280;">(National: 52.8%, ' + (scDiff >= 0 ? '+' : '') + scDiff.toFixed(1) + '%)</span></p>';
+                                    }
+                                    
+                                    perfHtml += '</div>'; // Close school detail content div
+                                    perfHtml += '</details>'; // Close details element
+                                });
+                                
+                                perfHtml += '</div>';
+                                marker.bindPopup(perfHtml, { maxWidth: 350 });
+                            } else {
+                                // Single school at this location
+                                const school = schools[0];
+                                
+                                let perfHtml = '<div style="position: relative; min-width: 300px; max-height: 500px; overflow-y: auto;">';
+                                perfHtml += '<button class="mobile-popup-close" onclick="map.closePopup()">×</button>';
+                                perfHtml += '<h3 style="margin: 0 0 10px 0; color: #dc2626;">' + school.name + '</h3>';
+                                
+                                // Get school info from schoolInfoData (now keyed by name)
+                                const info = schoolInfoData[school.name] || {};
+                                
+                                // Basic Info
+                                if (info.street_address) {
+                                    perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Address:</strong> ' + info.street_address + ', ' + (info.city || '') + ', ' + (info.state || '') + ' ' + (info.zip_code || '') + '</p>';
+                                }
+                                
+                                if (info.telephone) {
+                                    perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Phone:</strong> ' + info.telephone + '</p>';
+                                }
+                                
+                                if (info.website) {
+                                    perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Website:</strong> <a href="' + info.website + '" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: underline;">' + info.website + '</a></p>';
+                                }
+                                
+                                if (info.grades_offered) {
+                                    perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Grades:</strong> ' + info.grades_offered + '</p>';
+                                }
+                                
+                                if (info.enrollment) {
+                                    perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>Enrollment:</strong> ' + info.enrollment.toLocaleString() + '</p>';
+                                }
+                                
+                                if (info.district_name) {
+                                    perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>District:</strong> ' + info.district_name + '</p>';
+                                }
+                                
+                                // School Type (Organization Code)
+                                if (info.organization_code) {
+                                    perfHtml += '<p style="margin: 4px 0; font-size: 12px;"><strong>School Type:</strong> ' + info.organization_code + '</p>';
+                                }
+                                
+                                // School Spending (if available)
+                                if (schoolSpendingData && schoolSpendingData.districts) {
+                                    const districtSpending = schoolSpendingData.districts[school.aun.toString()];
+                                    const stateAvg = schoolSpendingData.state_average || 11900.06;
+                                    
+                                    if (districtSpending) {
+                                        const diff = districtSpending - stateAvg;
+                                        const diffColor = diff >= 0 ? '#059669' : '#dc2626';
+                                        const diffSign = diff >= 0 ? '+' : '';
+                                        
+                                        perfHtml += '<p style="margin: 12px 0 4px 0; padding-top: 8px; border-top: 1px solid #e5e7eb; font-size: 12px; font-weight: 600; color: #6b7280;">SPENDING:</p>';
+                                        perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">Actual Instruction Expense Per ADM: <strong>$' + districtSpending.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</strong></p>';
+                                        perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">State Average: $' + stateAvg.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <span style="color: ' + diffColor + ';">(' + diffSign + '$' + Math.abs(diff).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ')</span></p>';
+                                    }
+                                }
+                                
+                                // Demographics (if available)
+                                if (info.economically_disadvantaged !== null && info.economically_disadvantaged !== undefined) {
+                                    perfHtml += '<p style="margin: 12px 0 4px 0; padding-top: 8px; border-top: 1px solid #e5e7eb; font-size: 12px; font-weight: 600; color: #6b7280;">DEMOGRAPHICS:</p>';
+                                    
+                                    // Race/Ethnicity
+                                    perfHtml += '<p style="margin: 4px 0 2px 0; font-size: 11px; font-weight: 600; color: #1f2937; text-transform: uppercase;">Race/Ethnicity:</p>';
+                                    if (info.american_indian !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">American Indian: ' + info.american_indian.toFixed(1) + '%</p>';
+                                    if (info.asian !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Asian: ' + info.asian.toFixed(1) + '%</p>';
+                                    if (info.pacific_islander !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Pacific Islander: ' + info.pacific_islander.toFixed(1) + '%</p>';
+                                    if (info.black !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Black: ' + info.black.toFixed(1) + '%</p>';
+                                    if (info.hispanic !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Hispanic: ' + info.hispanic.toFixed(1) + '%</p>';
+                                    if (info.white !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">White: ' + info.white.toFixed(1) + '%</p>';
+                                    if (info.two_or_more_races !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Two or More Races: ' + info.two_or_more_races.toFixed(1) + '%</p>';
+                                    
+                                    // Sex
+                                    if (info.female !== null || info.male !== null) {
+                                        perfHtml += '<p style="margin: 4px 0 2px 0; font-size: 11px; font-weight: 600; color: #1f2937; text-transform: uppercase;">Sex:</p>';
+                                        if (info.female !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Female: ' + info.female.toFixed(1) + '%</p>';
+                                        if (info.male !== null) perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Male: ' + info.male.toFixed(1) + '%</p>';
+                                    }
+                                    
+                                    // Other demographics
+                                    perfHtml += '<p style="margin: 4px 0 2px 0; font-size: 11px; font-weight: 600; color: #1f2937; text-transform: uppercase;">Other:</p>';
+                                    perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Economically Disadvantaged: ' + info.economically_disadvantaged.toFixed(1) + '%</p>';
+                                    
+                                    if (info.english_learner !== null) {
+                                        perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">English Learner: ' + info.english_learner.toFixed(1) + '%</p>';
+                                    }
+                                    if (info.special_education !== null) {
+                                        perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Special Education: ' + info.special_education.toFixed(1) + '%</p>';
+                                    }
+                                    if (info.percent_gifted !== null) {
+                                        perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Gifted: ' + info.percent_gifted.toFixed(1) + '%</p>';
+                                    }
+                                    if (info.foster_care !== null) {
+                                        perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Foster Care: ' + info.foster_care.toFixed(1) + '%</p>';
+                                    }
+                                    if (info.homeless !== null) {
+                                        perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Homeless: ' + info.homeless.toFixed(1) + '%</p>';
+                                    }
+                                    if (info.military_connected !== null) {
+                                        perfHtml += '<p style="margin: 1px 0; font-size: 11px; color: #6b7280;">Military Connected: ' + info.military_connected.toFixed(1) + '%</p>';
+                                    }
+                                }
+                                
+                                perfHtml += '<p style="margin: 12px 0 4px 0; padding-top: 8px; border-top: 1px solid #e5e7eb; font-size: 12px; font-weight: 600; color: #6b7280;">PERFORMANCE:</p>';
+                                
+                                // Math performance
+                                if (school.math !== null) {
+                                    const mathDiff = school.math - school.math_state;
+                                    const mathColor = mathDiff >= 0 ? '#059669' : '#dc2626';
+                                    perfHtml += '<p style="margin: 8px 0 0 0; font-size: 12px;"><strong>Math Proficiency:</strong> <span style="color: ' + mathColor + '; font-weight: 600;">' + school.math.toFixed(1) + '%</span></p>';
+                                    perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">State avg: ' + school.math_state.toFixed(1) + '% <span style="color: ' + mathColor + ';">(' + (mathDiff >= 0 ? '+' : '') + mathDiff.toFixed(1) + '%)</span></p>';
+                                }
+                                
+                                // ELA performance
+                                if (school.ela !== null) {
+                                    const elaDiff = school.ela - school.ela_state;
+                                    const elaColor = elaDiff >= 0 ? '#059669' : '#dc2626';
+                                    perfHtml += '<p style="margin: 8px 0 0 0; font-size: 12px;"><strong>ELA Proficiency:</strong> <span style="color: ' + elaColor + '; font-weight: 600;">' + school.ela.toFixed(1) + '%</span></p>';
+                                    perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">State avg: ' + school.ela_state.toFixed(1) + '% <span style="color: ' + elaColor + ';">(' + (elaDiff >= 0 ? '+' : '') + elaDiff.toFixed(1) + '%)</span></p>';
+                                }
+                                
+                                // Attendance
+                                if (school.attendance !== null) {
+                                    const attendDiff = school.attendance - school.attendance_state;
+                                    const attendColor = attendDiff >= 0 ? '#059669' : '#dc2626';
+                                    perfHtml += '<p style="margin: 8px 0 0 0; font-size: 12px;"><strong>Regular Attendance:</strong> <span style="color: ' + attendColor + '; font-weight: 600;">' + school.attendance.toFixed(1) + '%</span></p>';
+                                    perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">State avg: ' + school.attendance_state.toFixed(1) + '% <span style="color: ' + attendColor + ';">(' + (attendDiff >= 0 ? '+' : '') + attendDiff.toFixed(1) + '%)</span></p>';
+                                }
+                                
+                                // 4-Year Graduation Rate (only for high schools)
+                                if (isHighSchool(school.name) && schoolGraduationData.schools && schoolGraduationData.schools[school.aun]) {
+                                    const gradRate = schoolGraduationData.schools[school.aun];
+                                    const stateAvg = schoolGraduationData.state_average || 88.0;
+                                    const gradDiff = gradRate - stateAvg;
+                                    const gradColor = gradDiff >= 0 ? '#059669' : '#dc2626';
+                                    perfHtml += '<p style="margin: 8px 0 0 0; font-size: 12px;"><strong>4-Year Graduation:</strong> <span style="color: ' + gradColor + '; font-weight: 600;">' + gradRate.toFixed(1) + '%</span></p>';
+                                    perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">State avg: ' + stateAvg.toFixed(1) + '% <span style="color: ' + gradColor + ';">(' + (gradDiff >= 0 ? '+' : '') + gradDiff.toFixed(1) + '%)</span></p>';
+                                }
+                                
+                                // Social Capital (if available for this high school)
+                                if (schoolSocialCapitalData[school.name]) {
+                                    const socialCap = schoolSocialCapitalData[school.name];
+                                    const scDiff = socialCap - 52.8; // National median
+                                    const scColor = scDiff >= 0 ? '#059669' : '#dc2626';
+                                    perfHtml += '<p style="margin: 8px 0 0 0; font-size: 12px;"><strong>HS Social Capital:</strong> <span style="color: ' + scColor + '; font-weight: 600;">' + socialCap.toFixed(1) + '%</span></p>';
+                                    perfHtml += '<p style="margin: 2px 0; font-size: 11px; color: #6b7280;">National median: 52.8% <span style="color: ' + scColor + ';">(' + (scDiff >= 0 ? '+' : '') + scDiff.toFixed(1) + '%)</span></p>';
+                                }
+                                
+                                perfHtml += '</div>';
+                                marker.bindPopup(perfHtml);
+                            }
+                            
+                            schoolMarkers.addLayer(marker);
+                        });
+                        schoolMarkers.addTo(map);
+                    }
+                } else {
+                    if (map.hasLayer(schoolMarkers)) {
+                        map.removeLayer(schoolMarkers);
+                    }
+                }
+            }
+            
+            function updateCollegeMarkers() {
+                const zoom = map.getZoom();
+                if (zoom >= 11) {
+                    if (!map.hasLayer(collegeMarkers)) {
+                        // Create college markers
+                        collegesData.forEach(college => {
+                            const marker = L.marker([college.lat, college.lon], { icon: collegeIcon });
+                            
+                            // Determine if public or private (check common field names)
+                            const isPublic = college.control === 'Public' || 
+                                           college.type === 'Public' || 
+                                           college.sector === 'Public' ||
+                                           college.institution_type === 'Public' ||
+                                           (college.control && college.control.toLowerCase().includes('public')) ||
+                                           (college.type && college.type.toLowerCase().includes('public'));
+                            
+                            // Check if this is Shippensburg University
+                            const isShippensburg = college.name && college.name.toLowerCase().includes('shippensburg');
+                            
+                            // Create popup with ROI charts and data
+                            const socialCap = college.social_capital;
+                            const scDiff = socialCap - 72.4; // National median
+                            const scColor = scDiff >= 0 ? '#059669' : '#dc2626';
+                            
+                            let popupHtml = '<div class="college-popup-container" style="position: relative; display: flex; gap: 20px; min-width: 500px; overflow: visible;">';
+                            popupHtml += '<button class="mobile-popup-close" onclick="map.closePopup()">×</button>';
+                            
+                            // Left side: ROI Charts
+                            popupHtml += '<div class="college-charts-section" style="flex-shrink: 0; width: 200px; overflow: visible;">';
+                            popupHtml += '<img src="' + PUBLIC_ROI_CHART_URL + '" alt="Public ROI Chart" class="roi-chart" style="width: 100%; height: auto; margin-bottom: 10px;" />';
+                            popupHtml += '<img src="' + PRIVATE_ROI_CHART_URL + '" alt="Private ROI Chart" class="roi-chart" style="width: 100%; height: auto;" />';
+                            popupHtml += '</div>';
+                            
+                            // Right side: College info
+                            popupHtml += '<div class="college-info-section" style="flex: 1;">';
+                            popupHtml += '<h3 style="margin: 0 0 10px 0; color: #2563eb;">' + college.name + '</h3>';
+                            
+                            // Add Shippensburg University specific image and website
+                            if (isShippensburg) {
+                                popupHtml += '<img src="https://raw.githubusercontent.com/lawrenceeppard-rgb/pa-opportunity-map-data/main/old_main.jpg" alt="Old Main Building" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px;" />';
+                                popupHtml += '<p style="margin: 0 0 8px 0;"><a href="https://www.ship.edu/" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: none; font-weight: 600;">🔗 Visit Website</a></p>';
+                            }
+                            
+                            popupHtml += '<p style="margin: 8px 0 0 0; padding-top: 8px; border-top: 1px solid #e5e7eb;"><strong>College Social Capital:</strong> <span style="color: ' + scColor + '; font-weight: 600;">' + socialCap.toFixed(1) + '%</span></p>';
+                            popupHtml += '<p style="margin: 2px 0; font-size: 12px; color: #6b7280;">National median: 72.4% <span style="color: ' + scColor + ';">(' + (scDiff >= 0 ? '+' : '') + scDiff.toFixed(1) + '%)</span></p>';
+                            
+                            // Add ROI data if available
+                            if (college.roi_10yr) {
+                                popupHtml += '<div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #e5e7eb;">';
+                                popupHtml += '<p style="margin: 0 0 6px 0; font-weight: 600; color: #1f2937;">Return on Investment (2023$):</p>';
+                                popupHtml += '<div style="font-size: 12px; color: #4b5563;">';
+                                if (college.roi_10yr) popupHtml += '<div style="display: flex; justify-content: space-between; margin: 3px 0;"><span>10-year:</span><span style="font-weight: 600;">$' + college.roi_10yr.toLocaleString() + '</span></div>';
+                                if (college.roi_15yr) popupHtml += '<div style="display: flex; justify-content: space-between; margin: 3px 0;"><span>15-year:</span><span style="font-weight: 600;">$' + college.roi_15yr.toLocaleString() + '</span></div>';
+                                if (college.roi_20yr) popupHtml += '<div style="display: flex; justify-content: space-between; margin: 3px 0;"><span>20-year:</span><span style="font-weight: 600;">$' + college.roi_20yr.toLocaleString() + '</span></div>';
+                                if (college.roi_30yr) popupHtml += '<div style="display: flex; justify-content: space-between; margin: 3px 0;"><span>30-year:</span><span style="font-weight: 600;">$' + college.roi_30yr.toLocaleString() + '</span></div>';
+                                if (college.roi_40yr) popupHtml += '<div style="display: flex; justify-content: space-between; margin: 3px 0;"><span>40-year:</span><span style="font-weight: 600;">$' + college.roi_40yr.toLocaleString() + '</span></div>';
+                                popupHtml += '</div></div>';
+                            }
+                            
+                            popupHtml += '</div>'; // Close right side
+                            popupHtml += '</div>'; // Close flex container
+                            
+                            marker.bindPopup(popupHtml, { maxWidth: 550 });
+                            collegeMarkers.addLayer(marker);
+                        });
+                        collegeMarkers.addTo(map);
+                    }
+                } else {
+                    if (map.hasLayer(collegeMarkers)) {
+                        map.removeLayer(collegeMarkers);
+                    }
+                }
+            }
+            
+            map.on('zoomend', updateSchoolMarkers);
+            map.on('zoomend', updateCollegeMarkers);
+            updateSchoolMarkers(); // Check initial zoom
+            updateCollegeMarkers(); // Check initial zoom
+        })
+        .catch(error => {
+            document.getElementById('loading').innerHTML = '<h3 style="color: #dc2626;">Error</h3><p style="color: #6b7280; margin-top: 10px;">' + error.message + '</p><button onclick="location.reload()" style="margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry</button>';
+        });
+        
+        // Search by tract number or city name
+        async function performSearch(query, target = 'main') {
+            query = query.trim();
+            const lowerQuery = query.toLowerCase();
+            console.log('Search query:', query, 'for target:', target);
+            
+            // Check if it's a tract number search (just digits or digits with decimal)
+            if (/^\d+\.?\d*$/.test(query)) {
+                const tractMatches = searchByTractNumber(query, target);
+                if (tractMatches) {
+                    return true;
+                }
+            }
+            
+            // Try school name search if it looks like a school name
+            if (query.length > 3 && (
+                lowerQuery.includes('school') || 
+                lowerQuery.includes('elementary') ||
+                lowerQuery.includes('middle') ||
+                lowerQuery.includes('high') ||
+                lowerQuery.includes('area') ||
+                lowerQuery.includes('district')
+            )) {
+                const schoolMatches = searchBySchoolName(lowerQuery, target);
+                if (schoolMatches) {
+                    return true;
+                }
+            }
+            
+            // Try college name search
+            if (query.length > 3 && (
+                lowerQuery.includes('college') ||
+                lowerQuery.includes('university') ||
+                lowerQuery.includes('institute')
+            )) {
+                const collegeMatches = searchByCollegeName(lowerQuery, target);
+                if (collegeMatches) {
+                    return true;
+                }
+            }
+            
+            // For everything else (addresses, cities, towns), use geocoding
+            // This handles ANY address or city in PA
+            console.log('Trying geocoding search for:', query);
+            const addressFound = await searchAddress(query, target);
+            if (addressFound) return true;
+            
+            // No results found
+            showNoResults(query, target);
+            return false;
+        }
+        
+        // Address geocoding search with multiple fallback services
+        async function searchAddress(address, target = 'main') {
+            // Determine target element ID once
+            const targetInfo = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+            
+            // Try two query variations
+            const queries = [address];
+            
+            // Add Pennsylvania if not already included
+            if (!address.toLowerCase().includes('pa') && !address.toLowerCase().includes('pennsylvania')) {
+                queries.push(address + ', Pennsylvania, USA');
+                queries.push(address + ', PA');
+            }
+            
+            console.log('Will try these queries:', queries);
+            
+            // Show loading message in the appropriate sidebar
+            document.getElementById(targetInfo).innerHTML = 
+                '<div style="padding: 40px 20px; text-align: center;"><div style="color: #6b7280;"><div style="display: inline-block; width: 20px; height: 20px; border: 3px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;"></div><p style="margin-top: 15px;">Searching for: ' + address + '</p></div></div>';
+            if (target === 'main') {
+                openSidebar();
+            }
+            
+            // Try each query variation
+            for (const searchQuery of queries) {
+                console.log('Trying query:', searchQuery);
+                
+                // Run all geocoding services in PARALLEL for speed
+                const servicePromises = [
+                    fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(searchQuery)}&limit=10`)
+                        .then(r => r.ok ? r.json() : null)
+                        .then(results => {
+                            if (!results?.features || results.features.length === 0) return null;
+                            return {
+                                name: 'Photon',
+                                results: results.features.filter(f => 
+                                    f.properties && 
+                                    (f.properties.state === 'Pennsylvania' || 
+                                     f.properties.country === 'United States')
+                                ).map(f => ({
+                                    lat: f.geometry.coordinates[1],
+                                    lon: f.geometry.coordinates[0],
+                                    display_name: [
+                                        f.properties.name,
+                                        f.properties.street,
+                                        f.properties.city,
+                                        f.properties.state,
+                                        f.properties.country
+                                    ].filter(x => x).join(', ')
+                                }))
+                            };
+                        })
+                        .catch(err => {
+                            console.error('Photon error:', err);
+                            return null;
+                        }),
+                    
+                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=10&addressdetails=1`, {
+                        headers: { 'User-Agent': 'PA-Opportunity-Map/1.0' }
+                    })
+                        .then(r => r.ok ? r.json() : null)
+                        .then(results => {
+                            if (!results || results.length === 0) return null;
+                            return {
+                                name: 'Nominatim',
+                                results: results.filter(r => 
+                                    (r.address && r.address.state === 'Pennsylvania') ||
+                                    r.display_name.includes('Pennsylvania') || 
+                                    r.display_name.includes(', PA,') ||
+                                    r.display_name.includes(', PA ')
+                                ).map(r => ({
+                                    lat: parseFloat(r.lat),
+                                    lon: parseFloat(r.lon),
+                                    display_name: r.display_name
+                                }))
+                            };
+                        })
+                        .catch(err => {
+                            console.error('Nominatim error:', err);
+                            return null;
+                        }),
+                    
+                    fetch(`https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=${encodeURIComponent(searchQuery)}&benchmark=2020&format=json`)
+                        .then(r => r.ok ? r.json() : null)
+                        .then(results => {
+                            if (!results?.result?.addressMatches || results.result.addressMatches.length === 0) return null;
+                            return {
+                                name: 'Census',
+                                results: results.result.addressMatches.map(r => ({
+                                    lat: r.coordinates.y,
+                                    lon: r.coordinates.x,
+                                    display_name: r.matchedAddress
+                                }))
+                            };
+                        })
+                        .catch(err => {
+                            console.error('Census error:', err);
+                            return null;
+                        })
+                ];
+                
+                // Wait for all services to complete
+                const serviceResults = await Promise.all(servicePromises);
+                
+                // Combine all results
+                let allResults = [];
+                for (const serviceResult of serviceResults) {
+                    if (serviceResult && serviceResult.results) {
+                        console.log(`${serviceResult.name} returned ${serviceResult.results.length} results`);
+                        allResults.push(...serviceResult.results);
+                    }
+                }
+                
+                // Filter to ensure results are actually in Pennsylvania bounds
+                const paResults = allResults.filter(r => 
+                    r.lat >= 39.5 && r.lat <= 42.5 &&
+                    r.lon >= -80.5 && r.lon <= -74.5
+                );
+                
+                console.log('Filtered PA results:', paResults.length);
+                
+                if (paResults.length === 0) continue;
+                
+                if (paResults.length === 1) {
+                    // Single result - zoom to it
+                    const result = paResults[0];
+                    console.log('Zooming to:', result.lat, result.lon);
+                    map.setView([result.lat, result.lon], 14);
+                    
+                    // Find and highlight the tract
+                    findTractByCoordinates(result.lat, result.lon, target);
+                    
+                    return true;
+                } else {
+                    // Multiple results - show list
+                    showAddressResults(paResults, target);
+                    return true;
+                }
+            }
+            
+            // No results from any service
+            console.log('No results from any geocoding service');
+            document.getElementById(targetInfo).innerHTML = 
+                '<div style="padding: 20px; text-align: center;">' +
+                '<div style="color: #dc2626; background: #fef2f2; padding: 15px; border-radius: 8px; margin-bottom: 15px;">' +
+                '<strong>❌ Address Not Found</strong><br>' +
+                '<span style="font-size: 13px;">Could not locate: ' + address + '</span>' +
+                '</div>' +
+                '<div style="color: #6b7280; font-size: 13px; text-align: left;">' +
+                '<strong>💡 Search Tips:</strong><br>' +
+                '• Include street number: "123 Main St, Harrisburg"<br>' +
+                '• Try city name only: "State College" or "Pittsburgh"<br>' +
+                '• Add zip code: "17013" or "Carlisle, PA 17013"<br>' +
+                '• Search school: "Shippensburg Area High School"<br>' +
+                '• Search tract number: "502"' +
+                '</div>' +
+                '</div>';
+            
+            return false;
+        }
+        
+        // Show multiple address results
+        function showAddressResults(results, target = 'main') {
+            let html = '<div style="padding: 20px;"><h3 style="margin-bottom: 15px; color: #1f2937;">Select an Address:</h3><div style="max-height: 400px; overflow-y: auto;">';
+            
+            results.forEach((result, index) => {
+                const displayName = result.display_name;
+                html += `<div onclick="zoomToAddress(${result.lat}, ${result.lon}, '${displayName.replace(/'/g, "\\'")}', '${target}');" ` +
+                    'class="search-result-item" style="padding: 12px; margin-bottom: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer; border: 1px solid #e5e7eb;">' +
+                    '<div style="font-weight: 500; color: #1f2937;">' + displayName + '</div>' +
+                    '</div>';
+            });
+            
+            html += '</div></div>';
+            const targetInfo = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+            document.getElementById(targetInfo).innerHTML = html;
+            
+            // On mobile, auto-expand sidebar to show address options
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                const sidebar = document.getElementById('sidebar');
+                const expandBtn = document.getElementById('mobileExpandBtn');
+                const expandText = document.getElementById('mobileExpandText');
+                const backdrop = document.getElementById('mobileBackdrop');
+                
+                // Update button text
+                if (expandText) {
+                    expandText.textContent = '📍 Choose from ' + results.length + ' addresses';
+                }
+                
+                // Show button and auto-expand sidebar
+                if (expandBtn) expandBtn.style.display = 'flex';
+                if (sidebar) sidebar.classList.add('mobile-expanded');
+                if (expandBtn) expandBtn.classList.add('expanded');
+                if (backdrop) backdrop.classList.add('visible');
+            } else {
+                openSidebar();
+            }
+        }
+        
+        // Zoom to selected address
+        function zoomToAddress(lat, lon, displayName, target = 'main') {
+            map.setView([lat, lon], 16);
+            
+            // Find and highlight the tract - pass target parameter
+            findTractByCoordinates(lat, lon, target);
+            
+            // Close mobile sidebar to show map
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                const sidebar = document.getElementById('sidebar');
+                const expandBtn = document.getElementById('mobileExpandBtn');
+                const backdrop = document.getElementById('mobileBackdrop');
+                
+                if (sidebar) sidebar.classList.remove('mobile-expanded');
+                if (expandBtn) expandBtn.classList.remove('expanded');
+                if (backdrop) backdrop.classList.remove('visible');
+            }
+        }
+        
+        // Search by tract number
+        function searchByTractNumber(query, target = 'main') {
+            // Try exact GEOID match
+            if (tractLookupData[query]) {
+                zoomToTract(query, target);
+                return true;
+            }
+            
+            // Try matching tract number
+            const matches = Object.entries(tractLookupData).filter(([geoid, data]) => 
+                data.name === query || 
+                data.name.replace('.', '') === query.replace('.', '') ||
+                geoid.includes(query) ||
+                data.name.includes(query)
+            );
+            
+            if (matches.length === 1) {
+                zoomToTract(matches[0][0], target);
+                return true;
+            } else if (matches.length > 1 && matches.length <= 50) {
+                showSearchResults(matches, target);
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Find tract by coordinates
+        function findTractByCoordinates(lat, lon, target = 'main') {
+            console.log('Finding tract at:', lat, lon, 'for target:', target);
+            const point = L.latLng(lat, lon);
+            
+            let closestTract = null;
+            let closestDistance = Infinity;
+            
+            for (const [geoid, data] of Object.entries(tractLookupData)) {
+                const tractPoint = L.latLng(data.lat, data.lon);
+                const distance = point.distanceTo(tractPoint);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestTract = geoid;
+                }
+            }
+            
+            if (closestTract) {
+                console.log('Found closest tract:', closestTract);
+                // Get the feature properties and update the appropriate sidebar
+                const layer = tractLayers[closestTract];
+                if (layer && layer.feature) {
+                    updateSidebar(layer.feature.properties, target);
+                    
+                    // Highlight the tract (visual feedback)
+                    if (selectedTract && tractLayers[selectedTract]) {
+                        tractLayers[selectedTract].setStyle(style(tractLayers[selectedTract].feature));
+                    }
+                    selectedTract = closestTract;
+                    layer.setStyle(highlightStyle(layer.feature));
+                }
+            }
+        }
+        
+        // Search by school name
+        function searchBySchoolName(query, target = 'main') {
+            // Check if school data is loaded
+            if (schoolsData.length === 0) {
+                console.log('School data not loaded yet');
+                return false;
+            }
+            
+            const matches = schoolsData.filter(school => 
+                school.name.toLowerCase().includes(query)
+            );
+            
+            if (matches.length === 1) {
+                // Single match - zoom to it
+                const school = matches[0];
+                map.setView([school.lat, school.lon], 15);
+                // Find and open the marker popup by school name
+                setTimeout(() => {
+                    schoolMarkers.eachLayer(function(marker) {
+                        if (marker.schoolNames && marker.schoolNames.includes(school.name)) {
+                            marker.openPopup();
+                        }
+                    });
+                }, 500);
+                return true;
+            } else if (matches.length > 1 && matches.length <= 50) {
+                // Multiple matches - show list
+                showSchoolSearchResults(matches, target);
+                return true;
+            } else if (matches.length > 50) {
+                // Too many results
+                const targetInfo = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+                document.getElementById(targetInfo).innerHTML = `
+                    <div style="padding: 20px; text-align: center;">
+                        <h3 style="color: #f59e0b; margin-bottom: 10px;">Too many results</h3>
+                        <p style="color: #6b7280;">Found ${matches.length} schools. Please be more specific.</p>
+                    </div>
+                `;
+                if (target === 'main') {
+                    openSidebar();
+                }
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Show school search results
+        function showSchoolSearchResults(matches, target = 'main') {
+            const resultsHtml = `
+                <div style="padding: 20px;">
+                    <h3 style="margin: 0 0 15px 0; color: #667eea;">Found ${matches.length} schools</h3>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${matches.map((school, idx) => `
+                            <div onclick="zoomToSchoolByName('${school.name.replace(/'/g, "\\'")}', ${school.lat}, ${school.lon})" 
+                                 style="padding: 12px; margin-bottom: 8px; background: #fef3f2; border-radius: 6px; cursor: pointer; border: 1px solid #dc2626;">
+                                <div style="font-weight: 600; color: #1f2937;">${school.name}</div>
+                                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">${school.address}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            const targetInfo = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+            document.getElementById(targetInfo).innerHTML = resultsHtml;
+            if (target === 'main') {
+                openSidebar();
+            }
+        }
+        
+        // Zoom to school by name and coordinates
+        function zoomToSchoolByName(name, lat, lon) {
+            map.setView([lat, lon], 15);
+            setTimeout(() => {
+                let found = false;
+                schoolMarkers.eachLayer(function(marker) {
+                    // Check if this marker contains the school we're looking for
+                    if (marker.schoolNames && marker.schoolNames.includes(name)) {
+                        marker.openPopup();
+                        found = true;
+                    }
+                });
+                if (!found) {
+                    console.log('Could not find marker for', name);
+                }
+            }, 500);
+        }
+        
+        // Search by college name
+        function searchByCollegeName(query, target = 'main') {
+            // Check if college data is loaded
+            if (collegesData.length === 0) {
+                console.log('College data not loaded yet');
+                return false;
+            }
+            
+            const matches = collegesData.filter(college => 
+                college.name.toLowerCase().includes(query)
+            );
+            
+            if (matches.length === 1) {
+                // Single match - zoom to it
+                const college = matches[0];
+                map.setView([college.lat, college.lon], 15);
+                // Find and open the marker popup
+                setTimeout(() => {
+                    collegeMarkers.eachLayer(function(marker) {
+                        const latLng = marker.getLatLng();
+                        if (Math.abs(latLng.lat - college.lat) < 0.0001 && 
+                            Math.abs(latLng.lng - college.lon) < 0.0001) {
+                            marker.openPopup();
+                        }
+                    });
+                }, 500);
+                return true;
+            } else if (matches.length > 1 && matches.length <= 50) {
+                // Multiple matches - show list
+                showCollegeSearchResults(matches, target);
+                return true;
+            } else if (matches.length > 50) {
+                // Too many results (unlikely with only 124 colleges)
+                const targetInfo = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+                document.getElementById(targetInfo).innerHTML = `
+                    <div style="padding: 20px; text-align: center;">
+                        <h3 style="color: #f59e0b; margin-bottom: 10px;">Too many results</h3>
+                        <p style="color: #6b7280;">Found ${matches.length} colleges. Please be more specific.</p>
+                    </div>
+                `;
+                if (target === 'main') {
+                    openSidebar();
+                }
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Show college search results
+        function showCollegeSearchResults(matches, target = 'main') {
+            const resultsHtml = `
+                <div style="padding: 20px;">
+                    <h3 style="margin: 0 0 15px 0; color: #2563eb;">Found ${matches.length} colleges</h3>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${matches.map((college, idx) => `
+                            <div onclick="zoomToCollege('${college.name.replace(/'/g, "\\'")}', ${college.lat}, ${college.lon})" 
+                                 style="padding: 12px; margin-bottom: 8px; background: #eff6ff; border-radius: 6px; cursor: pointer; border: 1px solid #2563eb;">
+                                <div style="font-weight: 600; color: #1f2937;">${college.name}</div>
+                                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Social Capital: ${college.social_capital.toFixed(1)}%</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            const targetInfo = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+            document.getElementById(targetInfo).innerHTML = resultsHtml;
+            if (target === 'main') {
+                openSidebar();
+            }
+        }
+        
+        // Zoom to college by name and coordinates
+        function zoomToCollege(name, lat, lon) {
+            map.setView([lat, lon], 15);
+            setTimeout(() => {
+                let found = false;
+                collegeMarkers.eachLayer(function(marker) {
+                    const latLng = marker.getLatLng();
+                    if (Math.abs(latLng.lat - lat) < 0.0001 && 
+                        Math.abs(latLng.lng - lon) < 0.0001) {
+                        marker.openPopup();
+                        found = true;
+                    }
+                });
+                if (!found) {
+                    console.log('Could not find marker for', name);
+                }
+            }, 500);
+        }
+        
+        // Zoom to tract
+        function zoomToTract(geoid, target = 'main') {
+            const layer = tractLayers[geoid];
+            if (layer) {
+                // Instead of firing click event, directly update the sidebar
+                if (selectedTract && tractLayers[selectedTract]) {
+                    tractLayers[selectedTract].setStyle(style(tractLayers[selectedTract].feature));
+                }
+                selectedTract = geoid;
+                layer.setStyle(highlightStyle(layer.feature));
+                
+                // Fit bounds
+                map.fitBounds(layer.getBounds(), {padding: [100, 100], maxZoom: 13});
+                
+                // Update the appropriate sidebar
+                updateSidebar(layer.feature.properties, target);
+                if (target === 'main') {
+                    openSidebar();
+                }
+            }
+        }
+        
+        // Show tract search results
+        function showSearchResults(matches, target = 'main') {
+            const resultsHtml = `
+                <div style="padding: 20px;">
+                    <h3 style="margin-bottom: 15px; color: #1f2937;">Found ${matches.length} Census Tracts</h3>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${matches.map(([geoid, data]) => `
+                            <div class="search-result-item" onclick="zoomToTract('${geoid}', '${target}')" 
+                                 style="padding: 12px; margin-bottom: 8px; background: #f9fafb; border-radius: 6px; cursor: pointer; border: 1px solid #e5e7eb;">
+                                <div style="font-weight: 600; color: #1f2937;">${data.fullname}</div>
+                                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">GEOID: ${geoid}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            const targetInfo = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+            document.getElementById(targetInfo).innerHTML = resultsHtml;
+            if (target === 'main') {
+                openSidebar();
+            }
+        }
+        
+        // Show no results message
+        function showNoResults(query, target = 'main') {
+            const targetInfo = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+            document.getElementById(targetInfo).innerHTML = `
+                <div style="padding: 20px;">
+                    <div style="color: #dc2626; background: #fef2f2; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                        <strong>❌ No Results Found</strong><br>
+                        <span style="font-size: 13px;">Could not find: "${query}"</span>
+                    </div>
+                    <div style="color: #6b7280; font-size: 13px;">
+                        <p style="font-weight: 600; color: #1f2937; margin-bottom: 10px;">💡 Try These Examples:</p>
+                        <p style="margin: 8px 0;"><strong>Addresses:</strong><br>
+                        "123 Main St, Harrisburg"<br>
+                        "500 University Drive, Shippensburg"<br>
+                        "Old Main, Ship"</p>
+                        
+                        <p style="margin: 8px 0;"><strong>Cities & Towns:</strong><br>
+                        "Pittsburgh" • "Harrisburg" • "State College"<br>
+                        "Carlisle" • "Chambersburg" • "Gettysburg"</p>
+                        
+                        <p style="margin: 8px 0;"><strong>Schools:</strong><br>
+                        "Shippensburg Area High School"<br>
+                        "Cumberland Valley High School"</p>
+                        
+                        <p style="margin: 8px 0;"><strong>Tract Numbers:</strong><br>
+                        "502" • "118.01" • "42071011801"</p>
+                    </div>
+                </div>
+            `;
+            
+            // On mobile, auto-expand sidebar to show error and suggestions
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                const sidebar = document.getElementById('sidebar');
+                const expandBtn = document.getElementById('mobileExpandBtn');
+                const expandText = document.getElementById('mobileExpandText');
+                const backdrop = document.getElementById('mobileBackdrop');
+                
+                // Update button text
+                if (expandText) {
+                    expandText.textContent = '❌ No results - see suggestions';
+                }
+                
+                // Show button and auto-expand sidebar
+                if (expandBtn) expandBtn.style.display = 'flex';
+                if (sidebar) sidebar.classList.add('mobile-expanded');
+                if (expandBtn) expandBtn.classList.add('expanded');
+                if (backdrop) backdrop.classList.add('visible');
+            } else if (target === 'main') {
+                openSidebar();
+            }
+        }
+        
+        // Search handler
+        document.getElementById('searchBox').addEventListener('keypress', async function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    await performSearch(query, 'main');
+                }
+            }
+        });
+        
+        // Helper function to create comparison bar
+        function createComparisonBar(value, median, label, higherIsBetter = true, isIncome = false) {
+            // Calculate position (0-100%)
+            let minVal, maxVal;
+            if (isIncome) {
+                minVal = 0;
+                maxVal = median * 2; // Show range from 0 to 2x median
+            } else {
+                minVal = 0;
+                maxVal = 100; // Percentage
+            }
+            
+            const position = Math.min(100, Math.max(0, ((value - minVal) / (maxVal - minVal)) * 100));
+            const medianPosition = ((median - minVal) / (maxVal - minVal)) * 100;
+            
+            // Determine if value is better or worse than median
+            const isBetter = higherIsBetter ? (value >= median) : (value <= median);
+            const dotColor = isBetter ? '#059669' : '#dc2626';
+            const barColor = isBetter ? '#86efac' : '#fca5a5';
+            
+            return '<div style="margin-top: 12px;">' +
+                '<div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; color: #6b7280;">' +
+                '<span>LOWEST</span>' +
+                '<span>NATIONAL MEDIAN (' + (isIncome ? '$' + (median/1000).toFixed(0) + 'k' : median + '%') + ')</span>' +
+                '<span>HIGHEST</span>' +
+                '</div>' +
+                '<div style="position: relative; height: 8px; background: linear-gradient(to right, #fca5a5 0%, #fca5a5 ' + medianPosition + '%, #86efac ' + medianPosition + '%, #86efac 100%); border-radius: 4px;">' +
+                '<div style="position: absolute; left: ' + medianPosition + '%; top: -2px; width: 2px; height: 12px; background: #374151;"></div>' +
+                '<div style="position: absolute; left: ' + position + '%; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: ' + dotColor + '; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>' +
+                '</div>' +
+                '</div>';
+        }
+        
+        function updateSidebar(props, target = 'main') {
+            // Determine which sidebar elements to update
+            const titleId = target === 'comparison' ? 'comparison-tract-title' : 'tract-title';
+            const subtitleId = target === 'comparison' ? 'comparison-tract-subtitle' : 'tract-subtitle';
+            const infoId = target === 'comparison' ? 'comparison-tract-info' : 'tract-info';
+            
+            document.getElementById(titleId).textContent = props.NAMELSAD;
+            document.getElementById(subtitleId).textContent = 'GEOID: ' + props.GEOID;
+            
+            // Update mobile expand button text
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                const expandBtn = document.getElementById('mobileExpandBtn');
+                const expandText = document.getElementById('mobileExpandText');
+                if (expandBtn && expandText) {
+                    expandText.textContent = `📍 ${props.NAMELSAD}`;
+                    expandBtn.style.display = 'flex';
+                }
+            }
+            
+            const income = incomeData[props.GEOID];
+            let incomeHtml = '';
+            
+            if (income) {
+                incomeHtml = '<div class="info-item" style="background: #f0fdf4; padding: 20px; border-radius: 8px; border: 2px solid #059669;"><div class="info-label" style="color: #059669;">Household Income at Age 35 (tract)</div><div class="income-highlight">$' + income.toLocaleString() + '</div><p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Avg HH income at 35 for those who grew up in this area in the 1980s</p>' + createComparisonBar(income, 44000, 'National Median: $44k', true, true) + '</div>';
+            } else {
+                // Check if county income data is available
+                const countyFipsForIncome = '42' + props.COUNTYFP;
+                const countyIncomeInfo = countyIncome35Data[countyFipsForIncome];
+                
+                if (countyIncomeInfo && countyIncomeInfo.hh_income_35 !== null) {
+                    const countyName = countyIncomeInfo.county_name;
+                    const countyIncome = countyIncomeInfo.hh_income_35;
+                    
+                    incomeHtml = '<div class="info-item" style="background: #f0fdf4; padding: 20px; border-radius: 8px; border: 2px solid #059669;"><div class="info-label" style="color: #059669;">Household Income at Age 35 (' + countyName + ' County, PA)</div><div class="income-highlight">$' + countyIncome.toLocaleString() + '</div><p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Avg HH income at 35 for those who grew up in this area in the 1980s</p>' + createComparisonBar(countyIncome, 44000, 'National Median: $44k', true, true) + '</div>';
+                } else {
+                    incomeHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;"><div class="info-label" style="color: #92400e;">Household Income at Age 35</div><div class="info-value" style="color: #92400e;">Data not available</div></div>';
+                }
+            }
+            
+            // Social capital section
+            const socialCapData = socialCapitalData[props.GEOID] || [];
+            let socialCapHtml = '';
+            
+            if (socialCapData.length > 0) {
+                const avgSocialCap = socialCapData.reduce((sum, item) => sum + item.social_capital, 0) / socialCapData.length;
+                
+                const zipsList = socialCapData.map(item => 
+                    '<div style="display: flex; justify-content: space-between; padding: 8px; background: #f9fafb; border-radius: 4px; margin-bottom: 6px;">' +
+                    '<span style="font-weight: 500; color: #1f2937;">ZIP ' + item.zip + '</span>' +
+                    '<span style="font-weight: 700; color: #7c3aed;">' + item.social_capital + '%</span>' +
+                    '</div>'
+                ).join('');
+                
+                // Generate unique ID for this instance
+                const expandId = 'zip-expand-' + props.GEOID + '-' + target;
+                
+                socialCapHtml = '<div class="info-item" style="background: #faf5ff; padding: 20px; border-radius: 8px; border: 2px solid #7c3aed;">' +
+                    '<div class="info-label" style="color: #7c3aed;">Social Capital (zip code avg)</div>' +
+                    '<div style="font-size: 24px; color: #7c3aed; font-weight: 700; margin-top: 8px;">' + avgSocialCap.toFixed(1) + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of lower-income people\'s friends in this area who are higher income, 2020s</p>' +
+                    createComparisonBar(avgSocialCap, 43.8, 'National Median: 43.8%', true, false) +
+                    '<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e9d5ff;">' +
+                    '<div onclick="document.getElementById(\'' + expandId + '\').style.display = document.getElementById(\'' + expandId + '\').style.display === \'none\' ? \'block\' : \'none\'; this.querySelector(\'span\').textContent = this.querySelector(\'span\').textContent === \'▼\' ? \'▲\' : \'▼\';" style="cursor: pointer; font-size: 11px; color: #7c3aed; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">' +
+                    '<span style="font-size: 9px;">▼</span> VIEW BY ZIP CODE</div>' +
+                    '<div id="' + expandId + '" style="display: none; max-height: 150px; overflow-y: auto; margin-top: 6px;">' +
+                    zipsList + '</div>' +
+                    '</div>' +
+                    '</div>';
+            } else {
+                socialCapHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                    '<div class="info-label" style="color: #92400e;">Social Capital (zip code avg)</div>' +
+                    '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                    '</div>';
+            }
+            
+            // Single parent section
+            const singleParent = singleParentData[props.GEOID];
+            let singleParentHtml = '';
+            
+            if (singleParent !== undefined) {
+                singleParentHtml = '<div class="info-item" style="background: #fef3f2; padding: 20px; border-radius: 8px; border: 2px solid #ef4444;">' +
+                    '<div class="info-label" style="color: #ef4444;">Single Parent Households (tract)</div>' +
+                    '<div style="font-size: 24px; color: #dc2626; font-weight: 700; margin-top: 8px;">' + singleParent + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Estimated % children living with single mother, 2024</p>' +
+                    createComparisonBar(singleParent, 33, 'National Median: 33%', false, false) +
+                    '</div>';
+            } else {
+                // Check if county single parent data is available
+                const countyFips = '42' + props.COUNTYFP;
+                const countySPData = countySingleParentData.counties ? countySingleParentData.counties[countyFips] : null;
+                
+                if (countySPData) {
+                    const countyName = countySPData.name;
+                    // Add " County, PA" for proper formatting
+                    const countyDisplayName = countyName + ' County, PA';
+                    const countySPRate = countySPData.single_parent_rate;
+                    
+                    singleParentHtml = '<div class="info-item" style="background: #fef3f2; padding: 20px; border-radius: 8px; border: 2px solid #ef4444;">' +
+                        '<div class="info-label" style="color: #ef4444;">Single Parenthood (' + countyDisplayName + ')</div>' +
+                        '<div style="font-size: 24px; color: #dc2626; font-weight: 700; margin-top: 8px;">' + countySPRate.toFixed(1) + '%</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Estimated % children living with single mother, 2024</p>' +
+                        createComparisonBar(countySPRate, 33, 'National Median: 33%', false, false) +
+                        '</div>';
+                } else {
+                    singleParentHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Single Parent Households</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            // Poverty section
+            const poverty = povertyData[props.GEOID];
+            let povertyHtml = '';
+            
+            if (poverty !== undefined) {
+                povertyHtml = '<div class="info-item" style="background: #fef2f2; padding: 20px; border-radius: 8px; border: 2px solid #f97316;">' +
+                    '<div class="info-label" style="color: #f97316;">Poverty Rate (tract)</div>' +
+                    '<div style="font-size: 24px; color: #ea580c; font-weight: 700; margin-top: 8px;">' + poverty + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of residents living below the poverty line, 2021</p>' +
+                    createComparisonBar(poverty, 16, 'National Median: 16%', false, false) +
+                    '</div>';
+            } else {
+                povertyHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                    '<div class="info-label" style="color: #92400e;">Poverty Rate (tract)</div>' +
+                    '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                    '</div>';
+            }
+            
+            // Murder data section
+            const countyFipsForMurders = '42' + props.COUNTYFP;
+            const countyMurderInfo = countyMurderData[countyFipsForMurders];
+            let murderHtml = '';
+            
+            if (countyMurderInfo) {
+                const countyName = countyMurderInfo.county_name;
+                let totalMurders, yearText;
+                
+                // Use 2024-2025 data if available, otherwise fall back to 2018
+                if (countyMurderInfo.total_murders_2024 !== null && countyMurderInfo.total_murders_2024 !== undefined) {
+                    totalMurders = countyMurderInfo.total_murders_2024;
+                    yearText = '2024-2025';
+                } else if (countyMurderInfo.total_murders_2018 !== null && countyMurderInfo.total_murders_2018 !== undefined) {
+                    totalMurders = countyMurderInfo.total_murders_2018;
+                    yearText = '2018';
+                } else {
+                    totalMurders = null;
+                }
+                
+                if (totalMurders !== null) {
+                    murderHtml = '<div class="info-item" style="background: #fef2f2; padding: 20px; border-radius: 8px; border: 2px solid #dc2626;">' +
+                        '<div class="info-label" style="color: #dc2626;">Total Murders (' + countyName + ' County, PA)</div>' +
+                        '<div style="font-size: 24px; color: #dc2626; font-weight: 700; margin-top: 8px;">' + totalMurders + '</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Total number of murders, ' + yearText + '</p>' +
+                        '</div>';
+                } else {
+                    murderHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Total Murders (County)</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            } else {
+                murderHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                    '<div class="info-label" style="color: #92400e;">Total Murders (County)</div>' +
+                    '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                    '</div>';
+            }
+            
+            // Other crimes data section
+            const countyFipsForCrimes = '42' + props.COUNTYFP;
+            const countyCrimeInfo = countyCrimeData[countyFipsForCrimes];
+            let crimeHtml = '';
+            
+            if (countyCrimeInfo) {
+                const countyName = countyCrimeInfo.county_name;
+                
+                crimeHtml = '<div class="info-item" style="background: #fef2f2; padding: 20px; border-radius: 8px; border: 2px solid #ef4444;">' +
+                    '<details style="cursor: pointer;">' +
+                    '<summary style="font-weight: 600; color: #ef4444; user-select: none; list-style: none; display: flex; align-items: center;">' +
+                    '<span style="margin-right: 8px;">▶</span> Other Crimes (' + countyName + ' County, PA)' +
+                    '</summary>' +
+                    '<div style="margin-top: 12px; font-size: 13px; line-height: 1.8;">' +
+                    '<div><strong>Violent Crimes:</strong> ' + countyCrimeInfo.violent_crimes.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.violent_crimes_rate + ' per 10k)</span></div>' +
+                    '<div><strong>Property Crimes:</strong> ' + countyCrimeInfo.property_crimes.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.property_crimes_rate + ' per 10k)</span></div>' +
+                    '<div><strong>Rape:</strong> ' + countyCrimeInfo.rape.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.rape_rate + ' per 10k)</span></div>' +
+                    '<div><strong>Robbery:</strong> ' + countyCrimeInfo.robbery.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.robbery_rate + ' per 10k)</span></div>' +
+                    '<div><strong>Agg. Assault:</strong> ' + countyCrimeInfo.agg_assault.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.agg_assault_rate + ' per 10k)</span></div>' +
+                    '<div><strong>Burglary:</strong> ' + countyCrimeInfo.burglary.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.burglary_rate + ' per 10k)</span></div>' +
+                    '<div><strong>Larceny:</strong> ' + countyCrimeInfo.larceny.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.larceny_rate + ' per 10k)</span></div>' +
+                    '<div><strong>Vehicle Theft:</strong> ' + countyCrimeInfo.vehicle_theft.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.vehicle_theft_rate + ' per 10k)</span></div>' +
+                    '<div><strong>Arson:</strong> ' + countyCrimeInfo.arson.toLocaleString() + ' <span style="color: #6b7280;">(' + countyCrimeInfo.arson_rate + ' per 10k)</span></div>' +
+                    '</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Various total offenses by PA county, 2018</p>' +
+                    '</details>' +
+                    '</div>';
+            } else {
+                crimeHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                    '<div class="info-label" style="color: #92400e;">Other Crimes (County)</div>' +
+                    '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                    '</div>';
+            }
+            
+            // Upward mobility section
+            const upwardMobility = upwardMobilityData[props.GEOID];
+            let upwardMobilityHtml = '';
+            
+            if (upwardMobility !== undefined) {
+                upwardMobilityHtml = '<div class="info-item" style="background: #eff6ff; padding: 20px; border-radius: 8px; border: 2px solid #3b82f6;">' +
+                    '<div class="info-label" style="color: #3b82f6;">Upward Mobility (tract)</div>' +
+                    '<div style="font-size: 24px; color: #2563eb; font-weight: 700; margin-top: 8px;">' + upwardMobility + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of low-income children raised here in 1980s who rose to top 20% HH income in adulthood</p>' +
+                    createComparisonBar(upwardMobility, 9.9, 'National Median: 9.9%', true, false) +
+                    '</div>';
+            } else {
+                // Check if county mobility data is available
+                const countyFipsForMobility = '42' + props.COUNTYFP;
+                const countyMobilityInfo = countyMobilityData[countyFipsForMobility];
+                
+                if (countyMobilityInfo && countyMobilityInfo.upward_mobility !== null) {
+                    const countyName = countyMobilityInfo.county_name;
+                    const countyMobility = countyMobilityInfo.upward_mobility;
+                    
+                    upwardMobilityHtml = '<div class="info-item" style="background: #eff6ff; padding: 20px; border-radius: 8px; border: 2px solid #3b82f6;">' +
+                        '<div class="info-label" style="color: #3b82f6;">Upward Mobility (' + countyName + ' County, PA)</div>' +
+                        '<div style="font-size: 24px; color: #2563eb; font-weight: 700; margin-top: 8px;">' + countyMobility + '%</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of low-income children raised here in 1980s who rose to top 20% HH income in adulthood</p>' +
+                        createComparisonBar(countyMobility, 9.9, 'National Median: 9.9%', true, false) +
+                        '</div>';
+                } else {
+                    upwardMobilityHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Upward Mobility</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            // Teen birth section
+            const teenBirth = teenBirthData[props.GEOID];
+            let teenBirthHtml = '';
+            
+            if (teenBirth !== undefined) {
+                teenBirthHtml = '<div class="info-item" style="background: #fef2f2; padding: 20px; border-radius: 8px; border: 2px solid #ec4899;">' +
+                    '<div class="info-label" style="color: #ec4899;">Teen Birth Rate (tract)</div>' +
+                    '<div style="font-size: 24px; color: #db2777; font-weight: 700; margin-top: 8px;">' + teenBirth + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of females who grew up in this area in the 1980s who became teen parents</p>' +
+                    createComparisonBar(teenBirth, 16, 'National Median: 16%', false, false) +
+                    '</div>';
+            } else {
+                // Check if county teen birth data is available
+                const countyFipsForTB = '42' + props.COUNTYFP;
+                const countyTBData = countyTeenBirthData.counties ? countyTeenBirthData.counties[countyFipsForTB] : null;
+                
+                if (countyTBData) {
+                    const countyName = countyTBData.name;
+                    const countyTBRate = countyTBData.teen_birth_rate;
+                    
+                    teenBirthHtml = '<div class="info-item" style="background: #fef2f2; padding: 20px; border-radius: 8px; border: 2px solid #ec4899;">' +
+                        '<div class="info-label" style="color: #ec4899;">Teen Birth Rate (' + countyName + ' County, PA)</div>' +
+                        '<div style="font-size: 24px; color: #db2777; font-weight: 700; margin-top: 8px;">' + countyTBRate.toFixed(1) + '%</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of females who grew up in this area in the 1980s who became teen parents</p>' +
+                        createComparisonBar(countyTBRate, 16, 'National Median: 16%', false, false) +
+                        '</div>';
+                } else {
+                    teenBirthHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Teen Birth Rate</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            // Wage growth section
+            const wageGrowth = wageGrowthData[props.GEOID];
+            let wageGrowthHtml = '';
+            
+            if (wageGrowth !== undefined) {
+                const isPositive = wageGrowth >= 0;
+                const wageColor = isPositive ? '#059669' : '#dc2626';
+                const wageSign = isPositive ? '+' : '';
+                
+                wageGrowthHtml = '<div class="info-item" style="background: ' + (isPositive ? '#f0fdf4' : '#fef2f2') + '; padding: 20px; border-radius: 8px; border: 2px solid ' + wageColor + ';">' +
+                    '<div class="info-label" style="color: ' + wageColor + ';">Wage Growth (tract)</div>' +
+                    '<div style="font-size: 24px; color: ' + wageColor + '; font-weight: 700; margin-top: 8px;">' + wageSign + wageGrowth + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Avg. wage growth for HS grads, 2005-2014</p>' +
+                    '</div>';
+            } else {
+                // Check if county wage data is available
+                const countyFipsForWage = '42' + props.COUNTYFP;
+                const countyWageInfo = countyWageData[countyFipsForWage];
+                
+                if (countyWageInfo && countyWageInfo.wage_growth !== null) {
+                    const countyName = countyMobilityData[countyFipsForWage]?.county_name || 
+                                      countyIncome35Data[countyFipsForWage]?.county_name || 
+                                      props.COUNTYFP;
+                    const countyWageGrowth = countyWageInfo.wage_growth;
+                    const isPositive = countyWageGrowth >= 0;
+                    const wageColor = isPositive ? '#059669' : '#dc2626';
+                    const wageSign = isPositive ? '+' : '';
+                    
+                    wageGrowthHtml = '<div class="info-item" style="background: ' + (isPositive ? '#f0fdf4' : '#fef2f2') + '; padding: 20px; border-radius: 8px; border: 2px solid ' + wageColor + ';">' +
+                        '<div class="info-label" style="color: ' + wageColor + ';">Wage Growth (' + countyName + ' County, PA)</div>' +
+                        '<div style="font-size: 24px; color: ' + wageColor + '; font-weight: 700; margin-top: 8px;">' + wageSign + countyWageGrowth + '%</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Avg. wage growth for HS grads, 2005-2014</p>' +
+                        '</div>';
+                } else {
+                    wageGrowthHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Wage Growth</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            // Commute time section
+            const commuteInfo = commuteData[props.GEOID];
+            let commuteHtml = '';
+            
+            if (commuteInfo) {
+                const avgMinutes = commuteInfo.avg_minutes;
+                const dist = commuteInfo.distribution;
+                
+                // Create distribution bars
+                const distributionBars = `
+                    <div style="margin-top: 12px; font-size: 11px;">
+                        <div style="margin-bottom: 4px;">
+                            <span style="color: #6b7280;">&lt;5 min: ${dist.less_than_5}%</span>
+                            <div style="background: #e5e7eb; height: 4px; border-radius: 2px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #10b981; width: ${dist.less_than_5}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 4px;">
+                            <span style="color: #6b7280;">5-14 min: ${(dist['5_to_9'] + dist['10_to_14']).toFixed(1)}%</span>
+                            <div style="background: #e5e7eb; height: 4px; border-radius: 2px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #10b981; width: ${dist['5_to_9'] + dist['10_to_14']}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 4px;">
+                            <span style="color: #6b7280;">15-29 min: ${(dist['15_to_19'] + dist['20_to_24'] + dist['25_to_29']).toFixed(1)}%</span>
+                            <div style="background: #e5e7eb; height: 4px; border-radius: 2px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #3b82f6; width: ${dist['15_to_19'] + dist['20_to_24'] + dist['25_to_29']}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 4px;">
+                            <span style="color: #6b7280;">30-44 min: ${(dist['30_to_34'] + dist['35_to_39'] + dist['40_to_44']).toFixed(1)}%</span>
+                            <div style="background: #e5e7eb; height: 4px; border-radius: 2px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #f59e0b; width: ${dist['30_to_34'] + dist['35_to_39'] + dist['40_to_44']}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 4px;">
+                            <span style="color: #6b7280;">45+ min: ${(dist['45_to_59'] + dist['60_to_89'] + dist['90_plus']).toFixed(1)}%</span>
+                            <div style="background: #e5e7eb; height: 4px; border-radius: 2px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #ef4444; width: ${dist['45_to_59'] + dist['60_to_89'] + dist['90_plus']}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                commuteHtml = '<div class="info-item" style="background: #f0fdf4; padding: 20px; border-radius: 8px; border: 2px solid #10b981;">' +
+                    '<div class="info-label" style="color: #10b981;">Avg Commute Time (tract)</div>' +
+                    '<div style="font-size: 24px; color: #059669; font-weight: 700; margin-top: 8px;">' + avgMinutes + ' min</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Avg. commute time estimates, 2024</p>' +
+                    distributionBars +
+                    '</div>';
+            } else {
+                commuteHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                    '<div class="info-label" style="color: #92400e;">Avg Commute Time (tract)</div>' +
+                    '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                    '</div>';
+            }
+            
+            // Life expectancy section
+            const lifeExp = lifeExpectancyData[props.GEOID];
+            let lifeExpHtml = '';
+            
+            if (lifeExp !== undefined) {
+                lifeExpHtml = '<div class="info-item" style="background: #eff6ff; padding: 20px; border-radius: 8px; border: 2px solid #3b82f6;">' +
+                    '<div class="info-label" style="color: #3b82f6;">Life Expectancy (tract)</div>' +
+                    '<div style="font-size: 24px; color: #2563eb; font-weight: 700; margin-top: 8px;">' + lifeExp + ' years</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Life expectancy at birth, 2010-2015</p>' +
+                    '</div>';
+            } else {
+                // Check if county life expectancy data is available
+                const countyLifeExp = countyLifeExpData[props.COUNTYFP];
+                
+                if (countyLifeExp !== undefined && countyLifeExp !== null) {
+                    const countyName = countyMobilityData['42' + props.COUNTYFP]?.county_name || 
+                                      countyIncome35Data['42' + props.COUNTYFP]?.county_name || 
+                                      props.COUNTYFP;
+                    
+                    lifeExpHtml = '<div class="info-item" style="background: #eff6ff; padding: 20px; border-radius: 8px; border: 2px solid #3b82f6;">' +
+                        '<div class="info-label" style="color: #3b82f6;">Life Expectancy (' + countyName + ' County, PA)</div>' +
+                        '<div style="font-size: 24px; color: #2563eb; font-weight: 700; margin-top: 8px;">' + countyLifeExp + ' years</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Average life expectancy at birth for county, 2010-2015</p>' +
+                        '</div>';
+                } else {
+                    lifeExpHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Life Expectancy</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            // Health data section
+            const countyFipsForHealth = '42' + props.COUNTYFP;
+            const countyHealthInfo = countyHealthData[countyFipsForHealth];
+            let healthHtml = '';
+            
+            if (countyHealthInfo && countyHealthInfo.fair_poor_health !== null && countyHealthInfo.fair_poor_health !== undefined) {
+                const countyName = countyHealthInfo.county_name;
+                const healthPct = countyHealthInfo.fair_poor_health;
+                
+                // Find min and max for the bar (PA range is 13% to 24%)
+                const minHealth = 13;
+                const maxHealth = 24;
+                const paAverage = 17;
+                
+                healthHtml = '<div class="info-item" style="background: #fef3f2; padding: 20px; border-radius: 8px; border: 2px solid #f97316;">' +
+                    '<div class="info-label" style="color: #f97316;">Poor/Fair Health (' + countyName + ' County, PA)</div>' +
+                    '<div style="font-size: 24px; color: #ea580c; font-weight: 700; margin-top: 8px;">' + healthPct + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of adults in area self-reporting fair or poor health, 2022</p>' +
+                    '<div style="margin-top: 12px;">' +
+                    '<div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; color: #6b7280;">' +
+                    '<span>LOWEST (' + minHealth + '%)</span>' +
+                    '<span>PA AVERAGE (' + paAverage + '%)</span>' +
+                    '<span>HIGHEST (' + maxHealth + '%)</span>' +
+                    '</div>' +
+                    '<div style="position: relative; height: 8px; background: linear-gradient(to right, #86efac 0%, #86efac ' + (((paAverage - minHealth) / (maxHealth - minHealth)) * 100) + '%, #fca5a5 ' + (((paAverage - minHealth) / (maxHealth - minHealth)) * 100) + '%, #fca5a5 100%); border-radius: 4px;">' +
+                    '<div style="position: absolute; left: ' + (((paAverage - minHealth) / (maxHealth - minHealth)) * 100) + '%; top: -2px; width: 2px; height: 12px; background: #374151;"></div>' +
+                    '<div style="position: absolute; left: ' + (((healthPct - minHealth) / (maxHealth - minHealth)) * 100) + '%; top: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; background: ' + (healthPct <= paAverage ? '#059669' : '#dc2626') + '; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            } else {
+                healthHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                    '<div class="info-label" style="color: #92400e;">Poor/Fair Health (County)</div>' +
+                    '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                    '</div>';
+            }
+            
+            // Other health indicators section
+            const countyFipsForHealthIndicators = '42' + props.COUNTYFP;
+            const countyHealthIndicatorsInfo = countyHealthIndicators[countyFipsForHealthIndicators];
+            let healthIndicatorsHtml = '';
+            
+            if (countyHealthIndicatorsInfo) {
+                const countyName = countyHealthIndicatorsInfo.county_name;
+                
+                healthIndicatorsHtml = '<div class="info-item" style="background: #fef3f2; padding: 20px; border-radius: 8px; border: 2px solid #f97316;">' +
+                    '<details style="cursor: pointer;">' +
+                    '<summary style="font-weight: 600; color: #f97316; user-select: none; list-style: none; display: flex; align-items: center;">' +
+                    '<span style="margin-right: 8px;">▶</span> Other Health Indicators (' + countyName + ' County, PA)' +
+                    '</summary>' +
+                    '<div style="margin-top: 12px; font-size: 13px; line-height: 1.8;">' +
+                    '<div><strong>Dentist Visit (past year):</strong> ' + (countyHealthIndicatorsInfo.dentist_visit !== null ? countyHealthIndicatorsInfo.dentist_visit + '%' : 'N/A') + '</div>' +
+                    '<div><strong>Insufficient Sleep:</strong> ' + (countyHealthIndicatorsInfo.insufficient_sleep !== null ? countyHealthIndicatorsInfo.insufficient_sleep + '%' : 'N/A') + '</div>' +
+                    '<div><strong>Tooth Loss (65+):</strong> ' + (countyHealthIndicatorsInfo.tooth_loss_65plus !== null ? countyHealthIndicatorsInfo.tooth_loss_65plus + '%' : 'N/A') + '</div>' +
+                    '<div><strong>Mammogram (women 50-74, past 2 yrs):</strong> ' + (countyHealthIndicatorsInfo.mammogram_50_74 !== null ? countyHealthIndicatorsInfo.mammogram_50_74 + '%' : 'N/A') + '</div>' +
+                    '<div><strong>Colorectal Screening (45-75):</strong> ' + (countyHealthIndicatorsInfo.colorectal_screening !== null ? countyHealthIndicatorsInfo.colorectal_screening + '%' : 'N/A') + '</div>' +
+                    '</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of adults in area, 2022</p>' +
+                    '</details>' +
+                    '</div>';
+            } else {
+                healthIndicatorsHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                    '<div class="info-label" style="color: #92400e;">Other Health Indicators (County)</div>' +
+                    '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                    '</div>';
+            }
+            
+            // County economic data section
+            const countyFips = '42' + props.COUNTYFP; // Construct full county FIPS code
+            const countyData = countyEconomicData.counties ? countyEconomicData.counties[countyFips] : null;
+            const stateData = countyEconomicData.state;
+            let countyIncomeHtml = '';
+            let countyUnemploymentHtml = '';
+            
+            if (countyData && stateData) {
+                const countyName = countyData.name;
+                // Remove ", PA" and add " County, PA" for proper formatting
+                const countyDisplayName = countyName.replace(', PA', '') + ' County, PA';
+                const countyIncome = countyData.median_hh_income;
+                const countyUnemployment = countyData.unemployment_rate;
+                const stateIncome = stateData.median_hh_income;
+                const stateUnemployment = stateData.unemployment_rate;
+                
+                // County Median HH Income
+                const incomeDiff = countyIncome - stateIncome;
+                const incomeColor = incomeDiff >= 0 ? '#059669' : '#dc2626';
+                countyIncomeHtml = '<div class="info-item" style="background: #f0fdf4; padding: 20px; border-radius: 8px; border: 2px solid #10b981;">' +
+                    '<div class="info-label" style="color: #10b981;">Median HH Income (' + countyDisplayName + ')</div>' +
+                    '<div style="font-size: 24px; color: #059669; font-weight: 700; margin-top: 8px;">$' + countyIncome.toLocaleString() + '</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 4px;">PA State: $' + stateIncome.toLocaleString() + ' <span style="color: ' + incomeColor + '; font-weight: 600;">(' + (incomeDiff >= 0 ? '+' : '') + '$' + Math.abs(incomeDiff).toLocaleString() + ')</span></p>' +
+                    '<p style="font-size: 11px; color: #6b7280; margin-top: 8px;">Median household income, 2022</p>' +
+                    '</div>';
+                
+                // County Unemployment Rate
+                const unemploymentDiff = countyUnemployment - stateUnemployment;
+                const unemploymentColor = unemploymentDiff <= 0 ? '#059669' : '#dc2626';
+                countyUnemploymentHtml = '<div class="info-item" style="background: #fef9f5; padding: 20px; border-radius: 8px; border: 2px solid #fb923c;">' +
+                    '<div class="info-label" style="color: #fb923c;">Unemployment Rate (' + countyDisplayName + ')</div>' +
+                    '<div style="font-size: 24px; color: #ea580c; font-weight: 700; margin-top: 8px;">' + countyUnemployment.toFixed(1) + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 4px;">PA State: ' + stateUnemployment.toFixed(1) + '% <span style="color: ' + unemploymentColor + '; font-weight: 600;">(' + (unemploymentDiff >= 0 ? '+' : '') + unemploymentDiff.toFixed(1) + '%)</span></p>' +
+                    '<p style="font-size: 11px; color: #6b7280; margin-top: 8px;">Average unemployment rate, 2020-2023</p>' +
+                    '</div>';
+            }
+            
+            // County education data section
+            const countyEducationDataObj = countyEducationData.counties ? countyEducationData.counties[countyFips] : null;
+            const stateEducationData = countyEducationData.state;
+            let countyEducationHtml = '';
+            
+            if (countyEducationDataObj && stateEducationData) {
+                const countyName = countyEducationDataObj.name;
+                // Add " County, PA" for proper formatting
+                const countyDisplayName = countyName + ' County, PA';
+                const countyEducationRate = countyEducationDataObj.bachelors_or_higher;
+                const stateEducationRate = stateEducationData.bachelors_or_higher;
+                
+                // County Bachelor's Degree or Higher
+                const educationDiff = countyEducationRate - stateEducationRate;
+                const educationColor = educationDiff >= 0 ? '#059669' : '#dc2626';
+                const countyEducationCardHtml = '<div class="info-item" style="background: #f0f9ff; padding: 20px; border-radius: 8px; border: 2px solid #0ea5e9;">' +
+                    '<div class="info-label" style="color: #0ea5e9;">Bachelor\'s Degree or Higher (' + countyDisplayName + ')</div>' +
+                    '<div style="font-size: 24px; color: #0284c7; font-weight: 700; margin-top: 8px;">' + countyEducationRate.toFixed(1) + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 4px;">PA State: ' + stateEducationRate.toFixed(1) + '% <span style="color: ' + educationColor + '; font-weight: 600;">(' + (educationDiff >= 0 ? '+' : '') + educationDiff.toFixed(1) + '%)</span></p>' +
+                    '<p style="font-size: 11px; color: #6b7280; margin-top: 8px;">% of adults with BA or higher, 2024</p>' +
+                    '</div>';
+                
+                countyEducationHtml = countyEducationCardHtml;
+            }
+            
+            // 3rd grade math section
+            const mathScore = mathData[props.GEOID];
+            let mathHtml = '';
+            
+            if (mathScore !== undefined) {
+                const target = 3.0;
+                const diff = mathScore - target;
+                const diffText = diff >= 0 ? '+' + diff.toFixed(2) : diff.toFixed(2);
+                const diffColor = diff >= 0 ? '#059669' : '#dc2626';
+                const scoreColor = mathScore >= target ? '#059669' : '#ea580c';
+                
+                mathHtml = '<div class="info-item" style="background: #fef9f5; padding: 20px; border-radius: 8px; border: 2px solid #fb923c;">' +
+                    '<div class="info-label" style="color: #fb923c;">3rd Grade Math (tract)</div>' +
+                    '<div style="font-size: 24px; color: ' + scoreColor + '; font-weight: 700; margin-top: 8px;">' + mathScore.toFixed(2) + '</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Target: 3.00 (grade level) <span style="color: ' + diffColor + '; font-weight: 600;">(' + diffText + ')</span></p>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Avg. math performance of third graders in tract, 2013. A value of 3 is on grade level--values higher are above grade level, values lower are below grade level</p>' +
+                    '</div>';
+            } else {
+                // Check if county math data is available
+                const countyFipsForMath = '42' + props.COUNTYFP;
+                const countyMathInfo = countyMathData[countyFipsForMath];
+                
+                if (countyMathInfo && countyMathInfo.math_score !== null) {
+                    const countyName = countyMobilityData[countyFipsForMath]?.county_name || 
+                                      countyIncome35Data[countyFipsForMath]?.county_name || 
+                                      props.COUNTYFP;
+                    const countyMathScore = countyMathInfo.math_score;
+                    const target = 3.0;
+                    const diff = countyMathScore - target;
+                    const diffText = diff >= 0 ? '+' + diff.toFixed(2) : diff.toFixed(2);
+                    const diffColor = diff >= 0 ? '#059669' : '#dc2626';
+                    const scoreColor = countyMathScore >= target ? '#059669' : '#ea580c';
+                    
+                    mathHtml = '<div class="info-item" style="background: #fef9f5; padding: 20px; border-radius: 8px; border: 2px solid #fb923c;">' +
+                        '<div class="info-label" style="color: #fb923c;">3rd Grade Math (' + countyName + ' County, PA)</div>' +
+                        '<div style="font-size: 24px; color: ' + scoreColor + '; font-weight: 700; margin-top: 8px;">' + countyMathScore.toFixed(2) + '</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Target: 3.00 (grade level) <span style="color: ' + diffColor + '; font-weight: 600;">(' + diffText + ')</span></p>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Avg. math performance of third graders, 2013. A value of 3 is on grade level--values higher are above grade level, values lower are below grade level</p>' +
+                        '</div>';
+                } else {
+                    mathHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">3rd Grade Math</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            // Prison section
+            const prisonRate = prisonData[props.GEOID];
+            let prisonHtml = '';
+            
+            if (prisonRate !== undefined) {
+                prisonHtml = '<div class="info-item" style="background: #fef2f2; padding: 20px; border-radius: 8px; border: 2px solid #dc2626;">' +
+                    '<div class="info-label" style="color: #dc2626;">Percentage in Jail/Prison at Age 35 (tract)</div>' +
+                    '<div style="font-size: 24px; color: #dc2626; font-weight: 700; margin-top: 8px;">' + prisonRate + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of those who grew up in this area in the 1980s who were in jail/prison by their 30s</p>' +
+                    '</div>';
+            } else {
+                // Check if county jail data is available
+                const countyFipsForJail = '42' + props.COUNTYFP;
+                const countyJailInfo = countyJailData[countyFipsForJail];
+                
+                if (countyJailInfo && countyJailInfo.jail_prison_rate !== null) {
+                    const countyName = countyJailInfo.county_name;
+                    const countyJailRate = countyJailInfo.jail_prison_rate;
+                    
+                    prisonHtml = '<div class="info-item" style="background: #fef2f2; padding: 20px; border-radius: 8px; border: 2px solid #dc2626;">' +
+                        '<div class="info-label" style="color: #dc2626;">Percentage in Jail/Prison at Age 35 (' + countyName + ' County, PA)</div>' +
+                        '<div style="font-size: 24px; color: #dc2626; font-weight: 700; margin-top: 8px;">' + countyJailRate + '%</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of those who grew up in this area in the 1980s who were in jail/prison by their 30s</p>' +
+                        '</div>';
+                } else {
+                    prisonHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Percentage in Jail/Prison at Age 35</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            // Married section
+            const marriedRate = marriedData[props.GEOID];
+            let marriedHtml = '';
+            
+            if (marriedRate !== undefined) {
+                marriedHtml = '<div class="info-item" style="background: #fef9f5; padding: 20px; border-radius: 8px; border: 2px solid #ec4899;">' +
+                    '<div class="info-label" style="color: #ec4899;">Percentage Married at Age 35 (tract)</div>' +
+                    '<div style="font-size: 24px; color: #db2777; font-weight: 700; margin-top: 8px;">' + marriedRate + '%</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of those who grew up in this area in the 1980s who married by their 30s</p>' +
+                    '</div>';
+            } else {
+                // Check if county marriage data is available
+                const countyFipsForMarriage = '42' + props.COUNTYFP;
+                const countyMarriageInfo = countyMarriageData[countyFipsForMarriage];
+                
+                if (countyMarriageInfo && countyMarriageInfo.marriage_rate !== null) {
+                    const countyName = countyMarriageInfo.county_name;
+                    const countyMarriageRate = countyMarriageInfo.marriage_rate;
+                    
+                    marriedHtml = '<div class="info-item" style="background: #fef9f5; padding: 20px; border-radius: 8px; border: 2px solid #ec4899;">' +
+                        '<div class="info-label" style="color: #ec4899;">Percentage Married at Age 35 (' + countyName + ' County, PA)</div>' +
+                        '<div style="font-size: 24px; color: #db2777; font-weight: 700; margin-top: 8px;">' + countyMarriageRate + '%</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">% of those who grew up in this area in the 1980s who married by their 30s</p>' +
+                        '</div>';
+                } else {
+                    marriedHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Percentage Married at Age 35</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            // Race demographics section
+            const raceInfo = raceData[props.GEOID];
+            let raceHtml = '';
+            
+            if (raceInfo) {
+                const raceBars = `
+                    <div style="margin-top: 12px; font-size: 11px;">
+                        <div style="margin-bottom: 6px;">
+                            <span style="color: #6b7280;">White: ${raceInfo.white}%</span>
+                            <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #3b82f6; width: ${raceInfo.white}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <span style="color: #6b7280;">Black: ${raceInfo.black}%</span>
+                            <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #8b5cf6; width: ${raceInfo.black}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <span style="color: #6b7280;">Hispanic: ${raceInfo.hispanic}%</span>
+                            <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #f59e0b; width: ${raceInfo.hispanic}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <span style="color: #6b7280;">Asian: ${raceInfo.asian}%</span>
+                            <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                                <div style="background: #10b981; width: ${raceInfo.asian}%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                raceHtml = '<div class="info-item" style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 2px solid #6b7280;">' +
+                    '<div class="info-label" style="color: #6b7280;">Race/Ethnicity (tract)</div>' +
+                    '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Racial/ethnic demographics of census tract, 2010</p>' +
+                    raceBars +
+                    '</div>';
+            } else {
+                // Check if county race data is available
+                const countyFipsForRace = '42' + props.COUNTYFP;
+                const countyRaceInfo = countyRaceData[countyFipsForRace];
+                
+                if (countyRaceInfo && (countyRaceInfo.white !== null || countyRaceInfo.black !== null || countyRaceInfo.hispanic !== null || countyRaceInfo.asian !== null)) {
+                    // Get county name from any county dataset
+                    const countyName = countyMobilityData[countyFipsForRace]?.county_name || 
+                                      countyIncome35Data[countyFipsForRace]?.county_name || 
+                                      props.COUNTYFP;
+                    
+                    const raceBars = `
+                        <div style="margin-top: 12px; font-size: 11px;">
+                            ${countyRaceInfo.white !== null ? `
+                            <div style="margin-bottom: 6px;">
+                                <span style="color: #6b7280;">White: ${countyRaceInfo.white}%</span>
+                                <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                                    <div style="background: #3b82f6; width: ${countyRaceInfo.white}%; height: 100%;"></div>
+                                </div>
+                            </div>` : ''}
+                            ${countyRaceInfo.black !== null ? `
+                            <div style="margin-bottom: 6px;">
+                                <span style="color: #6b7280;">Black: ${countyRaceInfo.black}%</span>
+                                <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                                    <div style="background: #8b5cf6; width: ${countyRaceInfo.black}%; height: 100%;"></div>
+                                </div>
+                            </div>` : ''}
+                            ${countyRaceInfo.hispanic !== null ? `
+                            <div style="margin-bottom: 6px;">
+                                <span style="color: #6b7280;">Hispanic: ${countyRaceInfo.hispanic}%</span>
+                                <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                                    <div style="background: #f59e0b; width: ${countyRaceInfo.hispanic}%; height: 100%;"></div>
+                                </div>
+                            </div>` : ''}
+                            ${countyRaceInfo.asian !== null ? `
+                            <div style="margin-bottom: 6px;">
+                                <span style="color: #6b7280;">Asian: ${countyRaceInfo.asian}%</span>
+                                <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                                    <div style="background: #10b981; width: ${countyRaceInfo.asian}%; height: 100%;"></div>
+                                </div>
+                            </div>` : ''}
+                        </div>
+                    `;
+                    
+                    raceHtml = '<div class="info-item" style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 2px solid #6b7280;">' +
+                        '<div class="info-label" style="color: #6b7280;">Race/Ethnicity (' + countyName + ' County, PA)</div>' +
+                        '<p style="font-size: 12px; color: #6b7280; margin-top: 8px;">Racial/ethnic demographics, 2010</p>' +
+                        raceBars +
+                        '</div>';
+                } else {
+                    raceHtml = '<div class="info-item" style="background: #fef3c7; padding: 15px; border-radius: 8px;">' +
+                        '<div class="info-label" style="color: #92400e;">Race/Ethnicity</div>' +
+                        '<div class="info-value" style="color: #92400e;">Data not available</div>' +
+                        '</div>';
+                }
+            }
+            
+            document.getElementById(infoId).innerHTML = povertyHtml + murderHtml + crimeHtml + upwardMobilityHtml + countyIncomeHtml + wageGrowthHtml + commuteHtml + lifeExpHtml + healthHtml + healthIndicatorsHtml + countyUnemploymentHtml + countyEducationHtml + mathHtml + singleParentHtml + socialCapHtml + teenBirthHtml + prisonHtml + marriedHtml + raceHtml + incomeHtml +
+                '<div class="info-item"><div class="info-label">Tract Number</div><div class="info-value">' + props.NAME + '</div></div>' +
+                '<div class="info-item"><div class="info-label">Full Name</div><div class="info-value">' + props.NAMELSAD + '</div></div>' +
+                '<div class="info-item"><div class="info-label">Geographic ID (GEOID)</div><div class="info-value">' + props.GEOID + '</div></div>' +
+                '<div class="info-item"><div class="info-label">County Code</div><div class="info-value">' + props.COUNTYFP + '</div></div>' +
+                '<div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #e5e7eb; font-size: 11px; color: #6b7280;">' +
+                '<strong>SOURCES:</strong> ' +
+                '<a href="https://www.cdc.gov/nchs/data-visualization/life-expectancy/index.html" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">CDC</a>; ' +
+                '<a href="https://www.cdc.gov/places/index.html" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">CDC Places</a>; ' +
+                '<a href="https://cew.georgetown.edu/cew-reports/roi2025/" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">Georgetown University</a>; ' +
+                '<a href="https://www.openpagov.org/about/" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">OpenPA.gov</a>; ' +
+                '<a href="https://opportunityinsights.org/" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">Opportunity Insights</a>; ' +
+                '<a href="https://www.ucr.pa.gov/PAUCRSPublic" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">PA-UCR</a>; ' +
+                '<a href="https://futurereadypa.org/" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">PA Dept of Education</a>; ' +
+                '<a href="https://fred.stlouisfed.org/release/tables?rid=330&eid=393778" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">St. Louis FRED (a)</a>; ' +
+                '<a href="https://fred.stlouisfed.org/release/tables?eid=360857&rid=412" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">St. Louis FRED (b)</a>; ' +
+                '<a href="https://mtgis-portal.geo.census.gov/arcgis/apps/experiencebuilder/experience/?id=ad8ad0751e474f938fc98345462cdfbf&page=EDA-Census-Poverty-Status-Viewer&views=Modeled-Tract-Area-Poverty" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">U.S. Census Bureau (a)</a>; ' +
+                '<a href="https://data.census.gov/table" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">U.S. Census Bureau (b)</a>; ' +
+                '<a href="https://uwphi.pophealth.wisc.edu/" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">Univ. of Wisconsin PHI</a>; ' +
+                '<a href="https://ers.usda.gov/data-products/county-level-data-sets" target="_blank" rel="noopener noreferrer" style="color: #667eea; text-decoration: none;">USDA</a>.' +
+                '</div>';
+            
+            // Show compare button (only for main sidebar)
+            if (target === 'main') {
+                document.getElementById('compareTractsBtn').style.display = 'block';
+                document.getElementById('compareTractsBtn2').style.display = 'block';
+            }
+        }
+        
+        function openSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // On mobile, show the expand button instead of opening sidebar
+                const expandBtn = document.getElementById('mobileExpandBtn');
+                expandBtn.style.display = 'flex';
+            } else {
+                // On desktop, open sidebar normally
+                sidebar.classList.remove('closed');
+                sidebarOpen = true;
+            }
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // On mobile, toggle bottom sheet
+                const isExpanded = sidebar.classList.toggle('mobile-expanded');
+                const expandBtn = document.getElementById('mobileExpandBtn');
+                const backdrop = document.getElementById('mobileBackdrop');
+                
+                expandBtn.classList.toggle('expanded');
+                
+                if (isExpanded) {
+                    backdrop.classList.add('visible');
+                } else {
+                    backdrop.classList.remove('visible');
+                }
+            } else {
+                // On desktop, toggle normally
+                if (sidebarOpen) {
+                    sidebar.classList.add('closed');
+                    sidebarOpen = false;
+                } else {
+                    sidebar.classList.remove('closed');
+                    sidebarOpen = true;
+                }
+            }
+        }
+        
+        // Comparison tract functionality
+        let comparisonMode = false;
+        let comparisonTractData = null;
+        
+        function startComparison() {
+            comparisonMode = true;
+            
+            // Add body class for CSS targeting
+            document.body.classList.add('comparison-mode');
+            
+            // Copy current tract data to comparison sidebar
+            document.getElementById('comparison-tract-title').textContent = document.getElementById('tract-title').textContent;
+            document.getElementById('comparison-tract-subtitle').textContent = document.getElementById('tract-subtitle').textContent;
+            document.getElementById('comparison-tract-info').innerHTML = document.getElementById('tract-info').innerHTML;
+            
+            // Show comparison sidebar
+            document.getElementById('comparison-sidebar').classList.add('active');
+            
+            // Sync scrolling
+            syncSidebarScrolling();
+            
+            // Hide compare button on main sidebar
+            document.getElementById('compareTractsBtn').style.display = 'none';
+            document.getElementById('compareTractsBtn2').style.display = 'none';
+        }
+        
+        function closeComparison() {
+            comparisonMode = false;
+            comparisonTractData = null;
+            
+            // Remove body class
+            document.body.classList.remove('comparison-mode');
+            
+            document.getElementById('comparison-sidebar').classList.remove('active');
+            
+            // Unsync scrolling
+            unsyncSidebarScrolling();
+            
+            // Show compare button again if tract is selected
+            if (selectedTract) {
+                document.getElementById('compareTractsBtn').style.display = 'block';
+                document.getElementById('compareTractsBtn2').style.display = 'block';
+            }
+        }
+        
+        function syncSidebarScrolling() {
+            const mainSidebar = document.getElementById('sidebar');
+            const compSidebar = document.getElementById('comparison-sidebar');
+            
+            let scrollingElement = null;
+            let scrollEndTimer = null;
+            const isMobile = window.innerWidth <= 768;
+            const scrollEndDelay = isMobile ? 150 : 100;
+            
+            function syncScroll(source, target, sourceName) {
+                // Only sync if this is the element being actively scrolled by user
+                // OR if no element is being scrolled
+                if (scrollingElement !== null && scrollingElement !== sourceName) {
+                    return; // Different element is being scrolled, ignore this event
+                }
+                
+                // Mark this element as the active scroller
+                scrollingElement = sourceName;
+                
+                // Sync the scroll position
+                target.scrollTop = source.scrollTop;
+                
+                // Reset the active scroller after scrolling stops
+                if (scrollEndTimer) {
+                    clearTimeout(scrollEndTimer);
+                }
+                scrollEndTimer = setTimeout(() => {
+                    scrollingElement = null;
+                }, scrollEndDelay);
+            }
+            
+            mainSidebar.addEventListener('scroll', function() {
+                syncScroll(mainSidebar, compSidebar, 'main');
+            }, { passive: true });
+            
+            compSidebar.addEventListener('scroll', function() {
+                syncScroll(compSidebar, mainSidebar, 'comp');
+            }, { passive: true });
+        }
+        
+        function unsyncSidebarScrolling() {
+            const mainSidebar = document.getElementById('sidebar');
+            const compSidebar = document.getElementById('comparison-sidebar');
+            
+            // Clone and replace to remove all event listeners
+            const newMain = mainSidebar.cloneNode(true);
+            const newComp = compSidebar.cloneNode(true);
+            mainSidebar.parentNode.replaceChild(newMain, mainSidebar);
+            compSidebar.parentNode.replaceChild(newComp, compSidebar);
+        }
+        
+        // Mobile expand button and backdrop handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            const expandBtn = document.getElementById('mobileExpandBtn');
+            const backdrop = document.getElementById('mobileBackdrop');
+            
+            if (expandBtn) {
+                expandBtn.addEventListener('click', function() {
+                    toggleSidebar();
+                });
+            }
+            
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar.classList.contains('mobile-expanded')) {
+                        toggleSidebar();
+                    }
+                });
+            }
+            
+            // Sync mobile and desktop search
+            const mobileSearch = document.getElementById('mobileSearchBox');
+            const desktopSearch = document.getElementById('searchBox');
+            
+            if (mobileSearch && desktopSearch) {
+                // Sync input values
+                mobileSearch.addEventListener('input', function() {
+                    desktopSearch.value = this.value;
+                });
+                
+                // Add Enter key handler for mobile search
+                mobileSearch.addEventListener('keypress', async function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            await performSearch(query);
+                        }
+                    }
+                });
+            }
+        });
+        
+        function resetMap() {
+            // Clear selected tract styling
+            if (selectedTract && tractLayers[selectedTract]) {
+                tractLayers[selectedTract].setStyle({fillColor: '#93c5fd', weight: 1, opacity: 1, color: '#3b82f6', fillOpacity: 0.5});
+                selectedTract = null;
+            }
+            
+            // Reset map view to initial position
+            map.setView([40.8781, -77.7996], 7);
+            
+            // Reset sidebar to default message
+            document.getElementById('tract-title').textContent = 'PA Opportunity Map';
+            document.getElementById('tract-subtitle').textContent = 'Search or click on map';
+            document.getElementById('tract-info').innerHTML = '<p style="color: #6b7280; text-align: center; padding: 40px 20px;">Enter a city name or tract number above, or click on a census tract on the map to view details.</p>';
+        }
+        
+        map.on('click', function() {
+            if (selectedTract && tractLayers[selectedTract]) {
+                tractLayers[selectedTract].setStyle({fillColor: '#93c5fd', weight: 1, opacity: 1, color: '#3b82f6', fillOpacity: 0.5});
+                selectedTract = null;
+            }
+        });
+    </script>
+</body>
+</html>
