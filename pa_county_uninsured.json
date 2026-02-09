@@ -1,0 +1,270 @@
+{
+  "42001": {
+    "county_name": "Adams",
+    "uninsured_pct": 6.8
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "uninsured_pct": 4.8
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "uninsured_pct": 5.6
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "uninsured_pct": 5.1
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "uninsured_pct": 7.9
+  },
+  "42011": {
+    "county_name": "Berks",
+    "uninsured_pct": 8.3
+  },
+  "42013": {
+    "county_name": "Blair",
+    "uninsured_pct": 6.5
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "uninsured_pct": 6.8
+  },
+  "42017": {
+    "county_name": "Bucks",
+    "uninsured_pct": 4.6
+  },
+  "42019": {
+    "county_name": "Butler",
+    "uninsured_pct": 4.2
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "uninsured_pct": 5.2
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "uninsured_pct": 6.7
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "uninsured_pct": 6.7
+  },
+  "42027": {
+    "county_name": "Centre",
+    "uninsured_pct": 6.5
+  },
+  "42029": {
+    "county_name": "Chester",
+    "uninsured_pct": 4.9
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "uninsured_pct": 6.6
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "uninsured_pct": 7.1
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "uninsured_pct": 7.3
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "uninsured_pct": 6.0
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "uninsured_pct": 9.1
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "uninsured_pct": 6.5
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "uninsured_pct": 7.5
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "uninsured_pct": 5.6
+  },
+  "42047": {
+    "county_name": "Elk",
+    "uninsured_pct": 5.8
+  },
+  "42049": {
+    "county_name": "Erie",
+    "uninsured_pct": 5.8
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "uninsured_pct": 5.9
+  },
+  "42053": {
+    "county_name": "Forest",
+    "uninsured_pct": 13.0
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "uninsured_pct": 8.6
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "uninsured_pct": 6.0
+  },
+  "42059": {
+    "county_name": "Greene",
+    "uninsured_pct": 6.2
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "uninsured_pct": 6.7
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "uninsured_pct": 8.4
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "uninsured_pct": 8.9
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "uninsured_pct": 12.3
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "uninsured_pct": 6.5
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "uninsured_pct": 11.0
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "uninsured_pct": 5.8
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "uninsured_pct": 8.6
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "uninsured_pct": 7.3
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "uninsured_pct": 7.9
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "uninsured_pct": 6.5
+  },
+  "42083": {
+    "county_name": "Mc Kean",
+    "uninsured_pct": 6.2
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "uninsured_pct": 7.7
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "uninsured_pct": 11.9
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "uninsured_pct": 7.4
+  },
+  "42091": {
+    "county_name": "Montgomery",
+    "uninsured_pct": 4.9
+  },
+  "42093": {
+    "county_name": "Montour",
+    "uninsured_pct": 4.7
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "uninsured_pct": 6.1
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "uninsured_pct": 6.7
+  },
+  "42099": {
+    "county_name": "Perry",
+    "uninsured_pct": 8.2
+  },
+  "42101": {
+    "county_name": "Philadelphia",
+    "uninsured_pct": 8.1
+  },
+  "42103": {
+    "county_name": "Pike",
+    "uninsured_pct": 6.6
+  },
+  "42105": {
+    "county_name": "Potter",
+    "uninsured_pct": 6.9
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "uninsured_pct": 6.9
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "uninsured_pct": 9.7
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "uninsured_pct": 6.9
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "uninsured_pct": 7.9
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "uninsured_pct": 7.2
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "uninsured_pct": 7.3
+  },
+  "42119": {
+    "county_name": "Union",
+    "uninsured_pct": 9.4
+  },
+  "42121": {
+    "county_name": "Venango",
+    "uninsured_pct": 6.6
+  },
+  "42123": {
+    "county_name": "Warren",
+    "uninsured_pct": 5.6
+  },
+  "42125": {
+    "county_name": "Washington",
+    "uninsured_pct": 5.0
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "uninsured_pct": 7.2
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "uninsured_pct": 4.3
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "uninsured_pct": 5.8
+  },
+  "42133": {
+    "county_name": "York",
+    "uninsured_pct": 5.8
+  }
+}
