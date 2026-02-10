@@ -1,0 +1,270 @@
+{
+  "42001": {
+    "county_name": "Adams",
+    "gini_coefficient": 0.3994
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "gini_coefficient": 0.4852
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "gini_coefficient": 0.4293
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "gini_coefficient": 0.4316
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "gini_coefficient": 0.4308
+  },
+  "42011": {
+    "county_name": "Berks",
+    "gini_coefficient": 0.4455
+  },
+  "42013": {
+    "county_name": "Blair",
+    "gini_coefficient": 0.446
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "gini_coefficient": 0.4465
+  },
+  "42017": {
+    "county_name": "Bucks",
+    "gini_coefficient": 0.4472
+  },
+  "42019": {
+    "county_name": "Butler",
+    "gini_coefficient": 0.455
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "gini_coefficient": 0.4592
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "gini_coefficient": 0.419
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "gini_coefficient": 0.4286
+  },
+  "42027": {
+    "county_name": "Centre",
+    "gini_coefficient": 0.4768
+  },
+  "42029": {
+    "county_name": "Chester",
+    "gini_coefficient": 0.4469
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "gini_coefficient": 0.4287
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "gini_coefficient": 0.4386
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "gini_coefficient": 0.4319
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "gini_coefficient": 0.4362
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "gini_coefficient": 0.4454
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "gini_coefficient": 0.4247
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "gini_coefficient": 0.4611
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "gini_coefficient": 0.4884
+  },
+  "42047": {
+    "county_name": "Elk",
+    "gini_coefficient": 0.4213
+  },
+  "42049": {
+    "county_name": "Erie",
+    "gini_coefficient": 0.4636
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "gini_coefficient": 0.4482
+  },
+  "42053": {
+    "county_name": "Forest",
+    "gini_coefficient": 0.4036
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "gini_coefficient": 0.4132
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "gini_coefficient": 0.4375
+  },
+  "42059": {
+    "county_name": "Greene",
+    "gini_coefficient": 0.4315
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "gini_coefficient": 0.4191
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "gini_coefficient": 0.4511
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "gini_coefficient": 0.4472
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "gini_coefficient": 0.3961
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "gini_coefficient": 0.4667
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "gini_coefficient": 0.4301
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "gini_coefficient": 0.436
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "gini_coefficient": 0.4341
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "gini_coefficient": 0.4653
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "gini_coefficient": 0.4639
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "gini_coefficient": 0.4444
+  },
+  "42083": {
+    "county_name": "McKean",
+    "gini_coefficient": 0.4262
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "gini_coefficient": 0.4423
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "gini_coefficient": 0.3982
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "gini_coefficient": 0.4277
+  },
+  "42091": {
+    "county_name": "Montgomery",
+    "gini_coefficient": 0.4728
+  },
+  "42093": {
+    "county_name": "Montour",
+    "gini_coefficient": 0.4894
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "gini_coefficient": 0.4411
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "gini_coefficient": 0.4277
+  },
+  "42099": {
+    "county_name": "Perry",
+    "gini_coefficient": 0.4039
+  },
+  "42101": {
+    "county_name": "Philadelphia",
+    "gini_coefficient": 0.5131
+  },
+  "42103": {
+    "county_name": "Pike",
+    "gini_coefficient": 0.4293
+  },
+  "42105": {
+    "county_name": "Potter",
+    "gini_coefficient": 0.4161
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "gini_coefficient": 0.43
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "gini_coefficient": 0.4131
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "gini_coefficient": 0.424
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "gini_coefficient": 0.4393
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "gini_coefficient": 0.4711
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "gini_coefficient": 0.422
+  },
+  "42119": {
+    "county_name": "Union",
+    "gini_coefficient": 0.4736
+  },
+  "42121": {
+    "county_name": "Venango",
+    "gini_coefficient": 0.4145
+  },
+  "42123": {
+    "county_name": "Warren",
+    "gini_coefficient": 0.4159
+  },
+  "42125": {
+    "county_name": "Washington",
+    "gini_coefficient": 0.4539
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "gini_coefficient": 0.4486
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "gini_coefficient": 0.4537
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "gini_coefficient": 0.4584
+  },
+  "42133": {
+    "county_name": "York",
+    "gini_coefficient": 0.4122
+  }
+}
