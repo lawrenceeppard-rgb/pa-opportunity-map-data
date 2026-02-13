@@ -1,0 +1,270 @@
+{
+  "42091": {
+    "county_name": "Montgomery",
+    "hh_income_35": 59230
+  },
+  "42029": {
+    "county_name": "Chester",
+    "hh_income_35": 58989
+  },
+  "42017": {
+    "county_name": "Bucks",
+    "hh_income_35": 57376
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "hh_income_35": 53643
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "hh_income_35": 53594
+  },
+  "42125": {
+    "county_name": "Washington",
+    "hh_income_35": 53577
+  },
+  "42019": {
+    "county_name": "Butler",
+    "hh_income_35": 53451
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "hh_income_35": 52603
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "hh_income_35": 52587
+  },
+  "42047": {
+    "county_name": "Elk",
+    "hh_income_35": 52399
+  },
+  "42027": {
+    "county_name": "Centre",
+    "hh_income_35": 52192
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "hh_income_35": 51977
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "hh_income_35": 51831
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "hh_income_35": 51542
+  },
+  "42119": {
+    "county_name": "Union",
+    "hh_income_35": 51382
+  },
+  "42093": {
+    "county_name": "Montour",
+    "hh_income_35": 51324
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "hh_income_35": 50835
+  },
+  "42011": {
+    "county_name": "Berks",
+    "hh_income_35": 50723
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "hh_income_35": 50660
+  },
+  "42001": {
+    "county_name": "Adams",
+    "hh_income_35": 50464
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "hh_income_35": 50438
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "hh_income_35": 50296
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "hh_income_35": 50225
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "hh_income_35": 50153
+  },
+  "42133": {
+    "county_name": "York",
+    "hh_income_35": 50025
+  },
+  "42059": {
+    "county_name": "Greene",
+    "hh_income_35": 49919
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "hh_income_35": 49723
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "hh_income_35": 49530
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "hh_income_35": 49134
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "hh_income_35": 48841
+  },
+  "42105": {
+    "county_name": "Potter",
+    "hh_income_35": 48624
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "hh_income_35": 48551
+  },
+  "42099": {
+    "county_name": "Perry",
+    "hh_income_35": 48306
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "hh_income_35": 48125
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "hh_income_35": 48000
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "hh_income_35": 47983
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "hh_income_35": 47963
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "hh_income_35": 47857
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "hh_income_35": 47856
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "hh_income_35": 47682
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "hh_income_35": 47558
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "hh_income_35": 47476
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "hh_income_35": 47405
+  },
+  "42103": {
+    "county_name": "Pike",
+    "hh_income_35": 47233
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "hh_income_35": 47227
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "hh_income_35": 46956
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "hh_income_35": 46696
+  },
+  "42083": {
+    "county_name": "McKean",
+    "hh_income_35": 46655
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "hh_income_35": 46437
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "hh_income_35": 46296
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "hh_income_35": 46249
+  },
+  "42049": {
+    "county_name": "Erie",
+    "hh_income_35": 46140
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "hh_income_35": 46129
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "hh_income_35": 45849
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "hh_income_35": 45779
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "hh_income_35": 45707
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "hh_income_35": 45691
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "hh_income_35": 45670
+  },
+  "42013": {
+    "county_name": "Blair",
+    "hh_income_35": 45549
+  },
+  "42123": {
+    "county_name": "Warren",
+    "hh_income_35": 45261
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "hh_income_35": 44875
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "hh_income_35": 44096
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "hh_income_35": 43981
+  },
+  "42121": {
+    "county_name": "Venango",
+    "hh_income_35": 43979
+  },
+  "42101": {
+    "county_name": "Philadelphia",
+    "hh_income_35": 35115
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "hh_income_35": 52634
+  },
+  "42053": {
+    "county_name": "Forest",
+    "hh_income_35": 46206
+  }
+}
