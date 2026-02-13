@@ -1,0 +1,270 @@
+{
+  "42101": {
+    "county_name": "Philadelphia",
+    "jail_pct": 3.3
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "jail_pct": 2.5
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "jail_pct": 1.4
+  },
+  "42133": {
+    "county_name": "York",
+    "jail_pct": 1.4
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "jail_pct": 1.4
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "jail_pct": 1.3
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "jail_pct": 1.3
+  },
+  "42121": {
+    "county_name": "Venango",
+    "jail_pct": 1.3
+  },
+  "42099": {
+    "county_name": "Perry",
+    "jail_pct": 1.3
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "jail_pct": 1.3
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "jail_pct": 1.3
+  },
+  "42013": {
+    "county_name": "Blair",
+    "jail_pct": 1.2
+  },
+  "42123": {
+    "county_name": "Warren",
+    "jail_pct": 1.2
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "jail_pct": 1.2
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "jail_pct": 1.2
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "jail_pct": 1.2
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "jail_pct": 1.2
+  },
+  "42103": {
+    "county_name": "Pike",
+    "jail_pct": 1.1
+  },
+  "42011": {
+    "county_name": "Berks",
+    "jail_pct": 1.1
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "jail_pct": 1.1
+  },
+  "42049": {
+    "county_name": "Erie",
+    "jail_pct": 1.1
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "jail_pct": 1.1
+  },
+  "42001": {
+    "county_name": "Adams",
+    "jail_pct": 1.1
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "jail_pct": 1.1
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "jail_pct": 1.0
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "jail_pct": 1.0
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "jail_pct": 1.0
+  },
+  "42059": {
+    "county_name": "Greene",
+    "jail_pct": 1.0
+  },
+  "42019": {
+    "county_name": "Butler",
+    "jail_pct": 1.0
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "jail_pct": 1.0
+  },
+  "42047": {
+    "county_name": "Elk",
+    "jail_pct": 0.9
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "jail_pct": 0.9
+  },
+  "42029": {
+    "county_name": "Chester",
+    "jail_pct": 0.9
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "jail_pct": 0.9
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "jail_pct": 0.9
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "jail_pct": 0.9
+  },
+  "42093": {
+    "county_name": "Montour",
+    "jail_pct": 0.9
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "jail_pct": 0.8
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "jail_pct": 0.8
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "jail_pct": 0.8
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "jail_pct": 0.8
+  },
+  "42083": {
+    "county_name": "McKean",
+    "jail_pct": 0.8
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "jail_pct": 0.8
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "jail_pct": 0.8
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "jail_pct": 0.8
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "jail_pct": 0.8
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "jail_pct": 0.8
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "jail_pct": 0.8
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "jail_pct": 0.8
+  },
+  "42091": {
+    "county_name": "Montgomery",
+    "jail_pct": 0.8
+  },
+  "42017": {
+    "county_name": "Bucks",
+    "jail_pct": 0.7
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "jail_pct": 0.7
+  },
+  "42105": {
+    "county_name": "Potter",
+    "jail_pct": 0.7
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "jail_pct": 0.7
+  },
+  "42119": {
+    "county_name": "Union",
+    "jail_pct": 0.7
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "jail_pct": 0.7
+  },
+  "42027": {
+    "county_name": "Centre",
+    "jail_pct": 0.7
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "jail_pct": 0.7
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "jail_pct": 0.7
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "jail_pct": 0.6
+  },
+  "42125": {
+    "county_name": "Washington",
+    "jail_pct": 0.6
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "jail_pct": 0.5
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "jail_pct": 0.5
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "jail_pct": 0.5
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "jail_pct": 0.5
+  },
+  "42053": {
+    "county_name": "Forest",
+    "jail_pct": 1.7
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "jail_pct": 0.5
+  }
+}
