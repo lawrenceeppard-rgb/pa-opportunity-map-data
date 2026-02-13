@@ -1,0 +1,270 @@
+{
+  "42119": {
+    "county_name": "Union",
+    "married_pct": 61.8
+  },
+  "42105": {
+    "county_name": "Potter",
+    "married_pct": 60.8
+  },
+  "42067": {
+    "county_name": "Juniata",
+    "married_pct": 60.7
+  },
+  "42109": {
+    "county_name": "Snyder",
+    "married_pct": 60.3
+  },
+  "42009": {
+    "county_name": "Bedford",
+    "married_pct": 60.2
+  },
+  "42031": {
+    "county_name": "Clarion",
+    "married_pct": 59.3
+  },
+  "42111": {
+    "county_name": "Somerset",
+    "married_pct": 58.6
+  },
+  "42087": {
+    "county_name": "Mifflin",
+    "married_pct": 58.5
+  },
+  "42063": {
+    "county_name": "Indiana",
+    "married_pct": 58.4
+  },
+  "42071": {
+    "county_name": "Lancaster",
+    "married_pct": 58.2
+  },
+  "42065": {
+    "county_name": "Jefferson",
+    "married_pct": 57.8
+  },
+  "42117": {
+    "county_name": "Tioga",
+    "married_pct": 57.6
+  },
+  "42019": {
+    "county_name": "Butler",
+    "married_pct": 57.6
+  },
+  "42061": {
+    "county_name": "Huntingdon",
+    "married_pct": 57.0
+  },
+  "42005": {
+    "county_name": "Armstrong",
+    "married_pct": 57.0
+  },
+  "42047": {
+    "county_name": "Elk",
+    "married_pct": 56.8
+  },
+  "42055": {
+    "county_name": "Franklin",
+    "married_pct": 56.8
+  },
+  "42041": {
+    "county_name": "Cumberland",
+    "married_pct": 56.6
+  },
+  "42075": {
+    "county_name": "Lebanon",
+    "married_pct": 56.6
+  },
+  "42057": {
+    "county_name": "Fulton",
+    "married_pct": 56.5
+  },
+  "42027": {
+    "county_name": "Centre",
+    "married_pct": 56.2
+  },
+  "42001": {
+    "county_name": "Adams",
+    "married_pct": 56.2
+  },
+  "42039": {
+    "county_name": "Crawford",
+    "married_pct": 56.0
+  },
+  "42129": {
+    "county_name": "Westmoreland",
+    "married_pct": 55.9
+  },
+  "42099": {
+    "county_name": "Perry",
+    "married_pct": 55.9
+  },
+  "42093": {
+    "county_name": "Montour",
+    "married_pct": 55.7
+  },
+  "42033": {
+    "county_name": "Clearfield",
+    "married_pct": 55.6
+  },
+  "42021": {
+    "county_name": "Cambria",
+    "married_pct": 55.4
+  },
+  "42015": {
+    "county_name": "Bradford",
+    "married_pct": 55.1
+  },
+  "42123": {
+    "county_name": "Warren",
+    "married_pct": 55.1
+  },
+  "42125": {
+    "county_name": "Washington",
+    "married_pct": 55.0
+  },
+  "42131": {
+    "county_name": "Wyoming",
+    "married_pct": 54.8
+  },
+  "42059": {
+    "county_name": "Greene",
+    "married_pct": 54.7
+  },
+  "42083": {
+    "county_name": "McKean",
+    "married_pct": 54.5
+  },
+  "42115": {
+    "county_name": "Susquehanna",
+    "married_pct": 54.3
+  },
+  "42121": {
+    "county_name": "Venango",
+    "married_pct": 54.2
+  },
+  "42113": {
+    "county_name": "Sullivan",
+    "married_pct": 55.8
+  },
+  "42035": {
+    "county_name": "Clinton",
+    "married_pct": 54.0
+  },
+  "42029": {
+    "county_name": "Chester",
+    "married_pct": 54.0
+  },
+  "42085": {
+    "county_name": "Mercer",
+    "married_pct": 53.9
+  },
+  "42133": {
+    "county_name": "York",
+    "married_pct": 53.8
+  },
+  "42073": {
+    "county_name": "Lawrence",
+    "married_pct": 53.5
+  },
+  "42017": {
+    "county_name": "Bucks",
+    "married_pct": 53.5
+  },
+  "42127": {
+    "county_name": "Wayne",
+    "married_pct": 53.4
+  },
+  "42037": {
+    "county_name": "Columbia",
+    "married_pct": 53.3
+  },
+  "42091": {
+    "county_name": "Montgomery",
+    "married_pct": 53.2
+  },
+  "42013": {
+    "county_name": "Blair",
+    "married_pct": 53.2
+  },
+  "42007": {
+    "county_name": "Beaver",
+    "married_pct": 52.8
+  },
+  "42097": {
+    "county_name": "Northumberland",
+    "married_pct": 52.7
+  },
+  "42053": {
+    "county_name": "Forest",
+    "married_pct": 52.7
+  },
+  "42081": {
+    "county_name": "Lycoming",
+    "married_pct": 52.5
+  },
+  "42011": {
+    "county_name": "Berks",
+    "married_pct": 51.9
+  },
+  "42023": {
+    "county_name": "Cameron",
+    "married_pct": 51.8
+  },
+  "42051": {
+    "county_name": "Fayette",
+    "married_pct": 51.6
+  },
+  "42025": {
+    "county_name": "Carbon",
+    "married_pct": 51.6
+  },
+  "42095": {
+    "county_name": "Northampton",
+    "married_pct": 51.3
+  },
+  "42107": {
+    "county_name": "Schuylkill",
+    "married_pct": 51.3
+  },
+  "42049": {
+    "county_name": "Erie",
+    "married_pct": 51.0
+  },
+  "42077": {
+    "county_name": "Lehigh",
+    "married_pct": 50.5
+  },
+  "42069": {
+    "county_name": "Lackawanna",
+    "married_pct": 50.2
+  },
+  "42003": {
+    "county_name": "Allegheny",
+    "married_pct": 49.3
+  },
+  "42079": {
+    "county_name": "Luzerne",
+    "married_pct": 48.8
+  },
+  "42103": {
+    "county_name": "Pike",
+    "married_pct": 48.1
+  },
+  "42045": {
+    "county_name": "Delaware",
+    "married_pct": 47.5
+  },
+  "42043": {
+    "county_name": "Dauphin",
+    "married_pct": 46.4
+  },
+  "42089": {
+    "county_name": "Monroe",
+    "married_pct": 45.3
+  },
+  "42101": {
+    "county_name": "Philadelphia",
+    "married_pct": 29.0
+  }
+}
