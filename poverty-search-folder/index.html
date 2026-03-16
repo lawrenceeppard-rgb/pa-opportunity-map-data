@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Neighborhood Poverty Rates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:    #F7F4EF;
+      --ink:      #1C1C1E;
+      --ink-soft: #4A4A52;
+      --accent:   #2B4B6F;
+      --accent-lt:#D4E4F2;
+      --low:      #1A6B3C;
+      --low-bg:   #E8F5EE;
+      --mid:      #8B6914;
+      --mid-bg:   #FEF6E0;
+      --high:     #9B2335;
+      --high-bg:  #FCEAED;
+      --border:   #DDD8D0;
+      --shadow:   0 4px 32px rgba(28,28,30,0.09);
+      --r:        14px;
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--cream);
+      font-family: 'Outfit', sans-serif;
+      color: var(--ink);
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Decorative top band */
+    .top-band {
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent) 0%, #4A7FA8 50%, var(--accent) 100%);
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0 24px 80px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding-top: clamp(60px, 10vh, 120px);
+      padding-bottom: 48px;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    .eyebrow {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    /* Search card */
+    .search-card {
+      width: 100%;
+      max-width: 660px;
+      background: #fff;
+      border-radius: var(--r);
+      box-shadow: var(--shadow), 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15.5px;
+      font-weight: 300;
+      color: var(--ink);
+      padding: 12px 14px;
+      caret-color: var(--accent);
+    }
+    .search-input::placeholder { color: #A8A49E; }
+
+    .search-btn {
+      flex-shrink: 0;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 12px 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .search-btn:hover { background: #1e3851; }
+    .search-btn:active { transform: scale(0.98); }
+
+    .search-hint {
+      margin-top: 12px;
+      font-size: 12.5px;
+      font-weight: 300;
+      color: #A8A49E;
+      text-align: center;
+    }
+    .search-hint span { color: #C0BAB2; margin: 0 6px; }
+
+    /* Loading state */
+    .loading-wrap {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-top: 36px;
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-weight: 300;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Result card */
+    .result-card {
+      display: none;
+      width: 100%;
+      max-width: 660px;
+      margin-top: 24px;
+      background: #fff;
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-top {
+      padding: 28px 32px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .result-location {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .result-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .result-address {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.2;
+      max-width: 360px;
+    }
+    .result-subloc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    /* Rate badge */
+    .rate-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+    .rate-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.6rem;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .rate-pct { font-size: 1.6rem; font-weight: 300; margin-left: 2px; }
+    .rate-sub {
+      font-size: 11.5px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* Colors */
+    .rate-low  { color: var(--low);  }
+    .rate-mid  { color: var(--mid);  }
+    .rate-high { color: var(--high); }
+
+    /* Bar */
+    .result-bar-wrap {
+      padding: 22px 32px 26px;
+    }
+    .bar-track {
+      width: 100%;
+      height: 8px;
+      background: #EDE9E3;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .bar-fill.low  { background: linear-gradient(90deg, #2A8A55, var(--low)); }
+    .bar-fill.mid  { background: linear-gradient(90deg, #C8921A, var(--mid)); }
+    .bar-fill.high { background: linear-gradient(90deg, #C9394E, var(--high)); }
+
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 300;
+      color: #B0AAA2;
+    }
+
+    /* Context chip */
+    .context-chips {
+      display: flex;
+      gap: 8px;
+      padding: 0 32px 26px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 12.5px;
+      font-weight: 400;
+      line-height: 1;
+    }
+    .chip-low  { background: var(--low-bg);  color: var(--low);  }
+    .chip-mid  { background: var(--mid-bg);  color: var(--mid);  }
+    .chip-high { background: var(--high-bg); color: var(--high); }
+    .chip-info { background: var(--accent-lt); color: var(--accent); }
+    .chip-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.7;
+    }
+
+    /* Note */
+    .result-note {
+      margin: 0 32px 24px;
+      padding: 14px 16px;
+      background: #F7F4EF;
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    /* Error card */
+    .error-card {
+      display: none;
+      width: 100%;
+      max-width: 660px;
+      margin-top: 24px;
+      background: #fff;
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 30px 32px;
+      animation: slideUp 0.3s ease;
+    }
+    .error-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .error-msg {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .error-suggestions {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .suggestion-pill {
+      display: inline-block;
+      background: var(--accent-lt);
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background 0.15s;
+      align-self: flex-start;
+    }
+    .suggestion-pill:hover { background: #BFD9EE; }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      padding-top: 60px;
+      font-size: 12px;
+      font-weight: 300;
+      color: #B0AAA2;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    /* Init loading */
+    #init-loading {
+      position: fixed;
+      inset: 0;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 100;
+      transition: opacity 0.4s, visibility 0.4s;
+    }
+    #init-loading.hidden { opacity: 0; visibility: hidden; }
+    .init-spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .init-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--ink-soft);
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 480px) {
+      .result-top { flex-direction: column; }
+      .rate-badge { align-items: flex-start; }
+      .rate-sub { text-align: left; }
+      .result-bar-wrap, .context-chips, .result-note { padding-left: 20px; padding-right: 20px; }
+      .result-top { padding: 22px 20px 18px; }
+    }
+
+    /* QR Code section */
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 48px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      width: 100%;
+      max-width: 660px;
+    }
+    .qr-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .qr-wrap {
+      padding: 16px;
+      background: #F7F4EF;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: inline-flex;
+    }
+    .qr-img {
+      width: 130px;
+      height: 130px;
+      display: block;
+      image-rendering: pixelated;
+    }
+    .qr-url {
+      font-size: 11px;
+      font-weight: 300;
+      color: #B0AAA2;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Init loading overlay -->
+<div id="init-loading">
+  <div class="init-spinner"></div>
+  <div class="init-text">Loading poverty data&hellip;</div>
+</div>
+
+<div class="top-band"></div>
+
+<div class="page-wrap">
+  <div class="hero">
+    <div class="eyebrow">U.S. Census Data</div>
+    <h1>Search <em>Neighborhood</em><br>Poverty Rates</h1>
+    <p class="subtitle">Look up the poverty rate for any U.S. neighborhood by street address or ZIP code.</p>
+  </div>
+
+  <!-- Search -->
+  <div class="search-card" id="search-card">
+    <input
+      type="text"
+      id="search-input"
+      class="search-input"
+      placeholder="Search by address or ZIP code"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="search-btn" id="search-btn">Search</button>
+  </div>
+  <div class="search-hint">
+    Try: <em>123 Main St, Philadelphia PA</em><span>·</span><em>17257</em><span>·</span><em>90210</em>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-wrap" id="loading">
+    <div class="spinner"></div>
+    <span>Looking up location&hellip;</span>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="result-card">
+    <div class="result-top">
+      <div class="result-location">
+        <div class="result-label" id="res-label">Census Tract</div>
+        <div class="result-address" id="res-address">—</div>
+        <div class="result-subloc" id="res-subloc"></div>
+      </div>
+      <div class="rate-badge">
+        <div class="rate-number" id="res-rate">—<span class="rate-pct">%</span></div>
+        <div class="rate-sub">poverty rate</div>
+      </div>
+    </div>
+    <div class="result-bar-wrap">
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-fill" style="width:0%"></div>
+      </div>
+      <div class="bar-labels">
+        <span>0%</span><span>National avg ~13%</span><span>40%+</span>
+      </div>
+    </div>
+    <div class="context-chips" id="context-chips"></div>
+    <div class="result-note" id="result-note"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-card" id="error-card">
+    <div class="error-title">No results found</div>
+    <div class="error-msg" id="error-msg">We couldn't find a match for that location. Try adding a state abbreviation, or search by county name.</div>
+    <div class="error-suggestions" id="error-suggestions"></div>
+  </div>
+
+  
+  <!-- QR Code -->
+  <div class="qr-section">
+    <div class="qr-label">Scan to open</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,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IpIDQERyAIhIDgARyQEgcm37wK1p3rUnHtWOmRsTdt731gaBW1sAZu6eWJt5JtdmHvPM/QJr7nIAiEgOABHJASAiOQBEJAeAiOQAEJEcACKSA0BEcgCIfN4+gNq5We5bk8Az33d9rs5Nxc+cA3+9LQA7r3zub2f+QteeeMw73OUAEJEcACKSA0BEcgCISA4AEckBICI5AEQkB4CI5AAQebvtA2szZ9dnTomfm6ifOXF9a6L+nCdeOfZH/OqJv0F3OQBEJAeAiOQAEJEcACKSA0BEcgCISA4AEckBICI5AEQ+fr6/rrzxE+dmb+0mmGlnWvv1vqOZs+u3vqNz+wVmfgszj3nmzgt3OQBEJAeAiOQAEJEcACKSA0BEcgCISA4AEckBICI5AEQ+z7306+0XOPe3M6eXZ5p5NmZOtu94vU90zrn/G693rtzlABCRHAAikgNARHIAiEgOABHJASAiOQBEJAeAiOQAEPn4+f66fQwvwhPOf9/Oudp55bWZWy1uHdWtb2HHE39lM8/VOe5yAIhIDgARyQEgIjkARCQHgIjkABCRHAAikgNARHIAiHyee+knPpd77dy87q1J4HPz52u3XvnWM+rXZk6235rVP/d/44nXxo6dz3vumN3lABCRHAAikgNARHIAiEgOABHJASAiOQBEJAeAiOQAEDm4fWDt1kTu2rmJ651Z31t7HGbOn986VzOv2HNmzszPNPNczdz/4i4HgIjkABCRHAAikgNARHIAiEgOABHJASAiOQBEJAeAyLXtA2tPnCG/9ez0WzsCdszcLzBzWnvHrav99XZP3Lo2nriLYc1dDgARyQEgIjkARCQHgIjkABCRHAAikgNARHIAiEgOAJGh2wdez8yno6+dmwOf+cz2W7P65yb512bO6j9x18atXQxP5C4HgIjkABCRHAAikgNARHIAiEgOABHJASAiOQBEJAeAiO0Df4yp6T/1vufc2sXwxCfYz7yeb32DO5742z/HXQ4AEckBICI5AEQkB4CI5AAQkRwAIpIDQERyAIhIDgCRodsHnjitvbYzy31rTvjctPatGfJzc+C3Xvnct3DuPJ975Z0dEOd+Zeeu9idylwNARHIAiEgOABHJASAiOQBEJAeAiOQAEJEcACKSA0Dk4+f769BLv97c7BN3Itya1b/l1kQ9v3rimby1A+Lc3oqd9z33v85dDgARyQEgIjkARCQHgIjkABCRHAAikgNARHIAiEgOAJGD2wcA4FfucgCISA4AEckBICI5AEQkB4CI5AAQkRwAIpIDQERyAIhIDgARyQEgIjkARCQHgIjkABCRHAAikgNARHIAiEgOABHJASAiOQBEJAeAiOQAEJEcACKSA0BEcgCISA4AEckBICI5AEQkB4DI/wDlK6PSAJPUWgAAAABJRU5ErkJggg==" alt="QR code for Neighborhood Poverty Rate Search" class="qr-img" />
+    </div>
+    <div class="qr-url">lawrenceeppard-rgb.github.io/<br>pa-opportunity-map-data/poverty-search-folder/</div>
+  </div>
+
+<div class="footer">
+    Data: American Community Survey 5-Year Estimates (2020–2024) &middot; U.S. Census Bureau<br>
+    Poverty rates reflect the share of residents with income below the federal poverty threshold.
+  </div>
+</div>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────────────
+let povertyData = null; // { tracts, countyFips, countyNames }
+let placeData = null;  // city/town → { name, rate }
+let zipData = null;    // zip code → rate
+
+// ─── Load data ────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const [r1, r2, r3] = await Promise.all([
+      fetch('./poverty_data.json'),
+      fetch('./place_data.json'),
+      fetch('./zip_data.json')
+    ]);
+    if (!r1.ok || !r2.ok || !r3.ok) throw new Error('fetch failed');
+    [povertyData, placeData, zipData] = await Promise.all([r1.json(), r2.json(), r3.json()]);
+    document.getElementById('init-loading').classList.add('hidden');
+    document.getElementById('search-input').focus();
+  } catch(e) {
+    document.getElementById('init-loading').innerHTML =
+      '<div style="color:#9B2335;font-family:Outfit,sans-serif;font-size:14px;text-align:center;padding:20px">' +
+      'Could not load poverty data.<br>Make sure poverty_data.json and place_data.json are in the same folder as this page.</div>';
+  }
+}
+
+// ─── FCC API: lat/lon → Census tract FIPS ─────────────────────────────────
+async function getTractFromLatLon(lat, lon) {
+  const url = `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lon}&censusYear=2020&format=json`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('FCC error');
+  const data = await res.json();
+  if (data.status !== 'OK') return null;
+  const fips = data.Block?.FIPS;
+  if (!fips || fips.length < 11) return null;
+  return {
+    stateFips:  fips.slice(0, 2),
+    countyFips: fips.slice(2, 5),
+    tractFips:  fips.slice(5, 11),
+  };
+}
+
+// ─── Geocoder A: Census Bureau (best for street addresses) ────────────────
+async function geocodeCensus(query) {
+  const url = `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress` +
+    `?address=${encodeURIComponent(query)}&benchmark=Public_AR_Current&format=json`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const m = data?.result?.addressMatches?.[0];
+  if (!m) return null;
+  return { matchedAddress: m.matchedAddress, lat: m.coordinates.y, lon: m.coordinates.x };
+}
+
+// ─── Geocoder B: Nominatim/OSM (best for city/town/place names) ───────────
+async function geocodeNominatim(query) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=us`;
+  const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data || data.length === 0) return null;
+  const r = data[0];
+  return { matchedAddress: r.display_name, lat: parseFloat(r.lat), lon: parseFloat(r.lon) };
+}
+
+// ─── Combined: try Census first, then Nominatim, then get tract via FCC ───
+async function geocodeAddress(query) {
+  let loc = null;
+
+  // Try Census geocoder first (handles street addresses well)
+  try { loc = await geocodeCensus(query); } catch(e) {}
+
+  // If Census failed, try Nominatim (handles city/place names well)
+  if (!loc) {
+    try { loc = await geocodeNominatim(query); } catch(e) {}
+  }
+
+  if (!loc) return null;
+
+  // Get tract from FCC using the lat/lon
+  let tract = null;
+  try { tract = await getTractFromLatLon(loc.lat, loc.lon); } catch(e) {}
+
+  return {
+    matchedAddress: loc.matchedAddress,
+    tract: tract,
+    county: tract ? { STATE: tract.stateFips, COUNTY: tract.countyFips } : null
+  };
+}
+
+// ─── County name search (state-aware) ─────────────────────────────────────
+function searchCountyByName(query, stateAbbr) {
+  const q = query.toLowerCase().trim();
+  const keys = Object.keys(povertyData.countyNames);
+  const sf = stateAbbr ? ', ' + stateAbbr.toLowerCase() : null;
+  const ok = k => !sf || k.endsWith(sf);
+
+  // Exact full match (e.g. "franklin county, pa")
+  if (povertyData.countyNames[q] !== undefined && ok(q))
+    return { name2: q, avg: povertyData.countyNames[q], match: 'exact' };
+
+  // With "county" appended
+  const withCounty = q.includes('county') ? q : q + ' county';
+  const a = keys.find(k => k === withCounty && ok(k));
+  if (a) return { name2: a, avg: povertyData.countyNames[a], match: 'county' };
+
+  // Match county name portion only (before the comma+state)
+  const b = keys.find(k => {
+    const part = k.replace(/, .+$/, '');
+    return (part === q || part === withCounty) && ok(k);
+  });
+  if (b) return { name2: b, avg: povertyData.countyNames[b], match: 'county-part' };
+
+  return null;
+}
+
+// ─── Compute county avg from fips ─────────────────────────────────────────
+function countyAvgFromFips(stateFips, countyFips) {
+  const key = String(stateFips).padStart(2,'0') + String(countyFips).padStart(3,'0');
+  return povertyData.countyFips[key] ?? null;
+}
+
+// ─── Rate color tier ──────────────────────────────────────────────────────
+function rateTier(r) {
+  if (r < 10) return 'low';
+  if (r < 20) return 'mid';
+  return 'high';
+}
+function tierLabel(t) {
+  return { low: 'Below Average Poverty', mid: 'Moderate Poverty', high: 'High Poverty' }[t];
+}
+
+// ─── Show result ──────────────────────────────────────────────────────────
+function showResult({ label, address, subloc, rate, note }) {
+  const tier = rateTier(rate);
+  const pct = Math.min((rate / 40) * 100, 100);
+
+  document.getElementById('res-label').textContent = label;
+  document.getElementById('res-address').textContent = address;
+  document.getElementById('res-subloc').textContent = subloc || '';
+
+  const rateEl = document.getElementById('res-rate');
+  rateEl.className = `rate-number rate-${tier}`;
+  rateEl.innerHTML = `${rate.toFixed(1)}<span class="rate-pct">%</span>`;
+
+  const bar = document.getElementById('bar-fill');
+  bar.className = `bar-fill ${tier}`;
+  setTimeout(() => { bar.style.width = pct + '%'; }, 50);
+
+  const chips = document.getElementById('context-chips');
+  chips.innerHTML = `
+    <div class="chip chip-${tier}"><div class="chip-dot"></div>${tierLabel(tier)}</div>
+    <div class="chip chip-info"><div class="chip-dot"></div>2024 ACS Data</div>
+  `;
+
+  document.getElementById('result-note').textContent = note;
+
+  hide('error-card');
+  show('result-card');
+}
+
+function showError(msg, suggestions = []) {
+  document.getElementById('error-msg').textContent = msg;
+  const s = document.getElementById('error-suggestions');
+  s.innerHTML = suggestions.map(t =>
+    `<div class="suggestion-pill" onclick="fillAndSearch('${t}')">${t}</div>`
+  ).join('');
+  hide('result-card');
+  show('error-card');
+}
+
+function fillAndSearch(text) {
+  document.getElementById('search-input').value = text;
+  doSearch();
+}
+
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+// ─── Extract state abbreviation from end of query ─────────────────────────
+function extractState(q) {
+  const m = q.match(/,\s*([A-Za-z]{2})\s*$/);
+  return m ? m[1].toUpperCase() : null;
+}
+
+// ─── Place (city/town) lookup from place_data.json ────────────────────────
+function lookupPlace(q) {
+  if (!placeData) return null;
+  const key = q.toLowerCase().trim();
+
+  // 1. Direct match: "detroit, mi"
+  if (placeData[key]) return placeData[key];
+
+  // 2. Strip zip code: "shippensburg, pa 17257" → "shippensburg, pa"
+  const noZip = key.replace(/,?\s*\d{5}(-\d{4})?$/, '').trim();
+  if (noZip !== key && placeData[noZip]) return placeData[noZip];
+
+  // 3. No state provided (e.g. "detroit") — find first match by city name alone
+  // Only do this if there's no comma in the query (pure city name, no state)
+  if (!key.includes(',')) {
+    const cityKey = key + ', ';
+    const match = Object.keys(placeData).find(k => k.startsWith(cityKey));
+    if (match) return placeData[match];
+  }
+
+  return null;
+}
+
+// ─── Zip code detection and lookup ───────────────────────────────────────
+function looksLikeZip(q) {
+  return /^\d{5}(-\d{4})?$/.test(q.trim());
+}
+function lookupZip(q) {
+  if (!zipData) return null;
+  const zip = q.trim().slice(0, 5);
+  const rate = zipData[zip];
+  return rate !== undefined ? { zip, rate } : null;
+}
+
+// ─── Detect if query looks like a street address (has a leading number) ───
+function looksLikeAddress(q) {
+  return /^\d+\s/.test(q.trim());
+}
+
+// ─── Show county result from FIPS key ─────────────────────────────────────
+function showCountyFromFips(st, co, via) {
+  const countyInfo = povertyData.countyFips[st + co];
+  if (!countyInfo) return false;
+  showResult({
+    label: 'County Average',
+    address: countyInfo.name,
+    subloc: `Average of ${countyInfo.tracts} census tracts${via ? ' · via "' + via + '"' : ''}`,
+    rate: countyInfo.avg,
+    note: `City and town boundaries don't always align with census tracts. This shows the average poverty rate for ${countyInfo.name} (${countyInfo.tracts} tracts). For a specific neighborhood, try a full street address. Data from the 2017–2021 American Community Survey.`
+  });
+  return true;
+}
+
+// ─── Main search ──────────────────────────────────────────────────────────
+async function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  if (!povertyData) { alert('Data is still loading, please wait a moment.'); return; }
+
+  hide('result-card');
+  hide('error-card');
+  document.getElementById('loading').style.display = 'flex';
+
+  const done = () => { document.getElementById('loading').style.display = 'none'; };
+
+  try {
+    const state = extractState(q);
+
+    // ── Step 0: Zip code lookup ──────────────────────────────────────────────
+    if (looksLikeZip(q)) {
+      const z = lookupZip(q);
+      if (z) {
+        done();
+        showResult({
+          label: 'ZIP Code ' + z.zip,
+          address: 'ZIP Code ' + z.zip,
+          subloc: '2024 ACS estimate',
+          rate: z.rate,
+          note: `ZIP code ${z.zip} has a poverty rate of ${z.rate.toFixed(1)}% based on the 2024 American Community Survey. ZIP code boundaries may span multiple neighborhoods. For a specific address's census tract, search a full street address. Data from the 2024 ACS.`
+        });
+        return;
+      } else {
+        done();
+        showError(`No poverty data found for ZIP code ${q.trim().slice(0,5)}.`, ['Franklin County, PA', 'Philadelphia, PA']);
+        return;
+      }
+    }
+
+    // ── Step 1: If query contains "county", do direct county name lookup ──────
+    if (q.toLowerCase().includes('county')) {
+      const m = searchCountyByName(q, state);
+      if (m) {
+        done();
+        showResult({
+          label: 'County Average',
+          address: toTitleCase(m.name2),
+          subloc: 'Average across all census tracts in this county',
+          rate: m.avg,
+          note: `Average poverty rate across all census tracts in ${toTitleCase(m.name2)}. Individual neighborhoods vary. Data from the 2017–2021 American Community Survey.`
+        });
+        return;
+      }
+    }
+
+    // ── Step 2: City/town direct lookup from place_data.json ────────────────
+    if (!looksLikeAddress(q)) {
+      const place = lookupPlace(q);
+      if (place) {
+        done();
+        showResult({
+          label: 'City / Town',
+          address: place.name,
+          subloc: `2023 ACS estimate · searched "${q}"`,
+          rate: place.rate,
+          note: `${place.name} has a poverty rate of ${place.rate.toFixed(1)}% based on the 2023 American Community Survey. This is the city or town boundary rate, not a county average. For a specific neighborhood, search a full street address.`
+        });
+        return;
+      }
+    }
+
+    // ── Step 3: Geocode the query (Census for addresses, Nominatim for cities) ─
+    let geo = null;
+    try { geo = await geocodeAddress(q); } catch(e) { console.warn('geocode error', e); }
+
+    if (geo && geo.tract) {
+      const { stateFips: st, countyFips: co, tractFips: tr } = geo.tract;
+      const countyInfo = povertyData.countyFips[st + co];
+      done();
+
+      if (looksLikeAddress(q)) {
+        // ── Street address: show the specific census tract ──────────────────
+        const tractKey = st + co + tr;
+        const rate = povertyData.tracts[tractKey];
+        if (rate !== undefined) {
+          const addrParts = geo.matchedAddress.split(',');
+          showResult({
+            label: 'Census Tract ' + tr,
+            address: addrParts.slice(0, 2).join(',').trim(),
+            subloc: addrParts.slice(2).join(',').trim(),
+            rate,
+            note: `This census tract has a poverty rate of ${rate.toFixed(1)}%. The surrounding county (${countyInfo?.name || ''}) averages ${countyInfo?.avg ?? '?'}%. Data from the 2017–2021 American Community Survey.`
+          });
+        } else if (countyInfo) {
+          showResult({
+            label: 'County Average',
+            address: countyInfo.name,
+            subloc: 'Tract-level data unavailable — showing county average',
+            rate: countyInfo.avg,
+            note: `Exact tract data was unavailable. Showing the county average for ${countyInfo.name} (${countyInfo.tracts} tracts). Data from the 2017–2021 American Community Survey.`
+          });
+        } else {
+          showError('Location found but poverty data is unavailable for this area.', ['Try searching by county name']);
+        }
+      } else {
+        // ── City / town / place: show county average (not a single random tract) ──
+        // A geocoded point from a city name lands on one arbitrary tract,
+        // which is meaningless. County average is far more representative.
+        if (countyInfo) {
+          showResult({
+            label: 'County Average',
+            address: countyInfo.name,
+            subloc: `Average of ${countyInfo.tracts} census tracts · Located via "${q}"`,
+            rate: countyInfo.avg,
+            note: `City and town poverty data is shown at the county level because municipal boundaries don't align neatly with census tracts. ${countyInfo.name} contains ${countyInfo.tracts} census tracts. For a specific neighborhood's poverty rate, search a full street address. Data from the 2017–2021 American Community Survey.`
+          });
+        } else {
+          showError('Location found but poverty data is unavailable for this area.', ['Try searching by county name']);
+        }
+      }
+      return;
+    }
+
+    // Geocoded but no tract (FCC failed) — still try to show county
+    if (geo && !geo.tract && geo.county) {
+      const st = String(geo.county.STATE).padStart(2, '0');
+      const co = String(geo.county.COUNTY).padStart(3, '0');
+      done();
+      if (showCountyFromFips(st, co, q)) return;
+    }
+
+    // ── Step 4: If it was an address and geocode failed, retry as city+state ──
+    if (looksLikeAddress(q) && state) {
+      // Extract "City, ST" from "123 Some St, City, ST"
+      const parts = q.split(',').map(s => s.trim());
+      if (parts.length >= 3) {
+        const cityState = parts.slice(-2).join(', ');
+        let geo2 = null;
+        try { geo2 = await geocodeAddress(cityState); } catch(e) {}
+        if (geo2 && geo2.tract) {
+          const { stateFips: st, countyFips: co } = geo2.tract;
+          done();
+          if (showCountyFromFips(st, co, cityState)) return;
+        }
+      }
+    }
+
+    // ── Step 5: State-gated county name fallback (no fuzzy cross-state guesses) 
+    if (state) {
+      const m = searchCountyByName(q, state);
+      if (m) {
+        done();
+        showResult({
+          label: 'County Average',
+          address: toTitleCase(m.name2),
+          subloc: `Nearest county for "${q}"`,
+          rate: m.avg,
+          note: `Could not geocode precisely. Showing county-level poverty rate for ${toTitleCase(m.name2)}. For tract-level data, search a specific street address. Data from the 2017–2021 American Community Survey.`
+        });
+        return;
+      }
+    }
+
+    done();
+    showError(
+      `No results found for "${q}". Try a full street address, or search by county name (e.g., "Franklin County, PA").`,
+      ['Franklin County, PA', 'Philadelphia, PA', '1600 Pennsylvania Ave NW, Washington DC']
+    );
+
+  } catch(e) {
+    console.error(e);
+    done();
+    showError('A network error occurred. Please check your connection and try again.');
+  }
+}
+
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
+}
+
+// ─── Events ───────────────────────────────────────────────────────────────
+document.getElementById('search-btn').addEventListener('click', doSearch);
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+// ─── Init ─────────────────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
