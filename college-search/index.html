@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search College Graduation Rates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:    #F2F0EC;
+      --ink:      #1C1C1E;
+      --ink-soft: #4A4A52;
+      --accent:   #3D6B4F;
+      --accent-lt:#D4EAD9;
+      --accent-dk:#2A4D38;
+      --low:      #9B5A1A;
+      --low-bg:   #FEF0E0;
+      --mid:      #2D6A8C;
+      --mid-bg:   #E0F0F8;
+      --high:     #2A6B3C;
+      --high-bg:  #E4F3E8;
+      --border:   #DDD8D0;
+      --shadow:   0 4px 32px rgba(28,28,30,0.09);
+      --r:        14px;
+    }
+
+    html, body { min-height: 100vh; background: var(--cream); font-family: 'Outfit', sans-serif; color: var(--ink); }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .top-band {
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-dk) 0%, #5E9B72 50%, var(--accent-dk) 100%);
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0 24px 80px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding-top: clamp(50px, 8vh, 100px);
+      padding-bottom: 44px;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    /* Grad cap SVG icon */
+    .grad-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 22px;
+      opacity: 0.18;
+    }
+    .grad-icon svg {
+      width: 72px;
+      height: 72px;
+      fill: var(--accent-dk);
+    }
+
+    .eyebrow {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    /* Search card */
+    .search-card {
+      width: 100%;
+      max-width: 660px;
+      background: #fff;
+      border-radius: var(--r);
+      box-shadow: var(--shadow), 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15.5px;
+      font-weight: 300;
+      color: var(--ink);
+      padding: 12px 14px;
+      caret-color: var(--accent);
+    }
+    .search-input::placeholder { color: #A8A49E; }
+
+    .search-btn {
+      flex-shrink: 0;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 12px 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .search-btn:hover { background: var(--accent-dk); }
+    .search-btn:active { transform: scale(0.98); }
+
+    .search-hint {
+      margin-top: 12px;
+      font-size: 12.5px;
+      font-weight: 300;
+      color: #A8A49E;
+      text-align: center;
+    }
+    .search-hint span { color: #C0BAB2; margin: 0 6px; }
+
+    /* Loading */
+    .loading-wrap {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-top: 36px;
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-weight: 300;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Result card */
+    .result-card {
+      display: none;
+      width: 100%;
+      max-width: 660px;
+      margin-top: 24px;
+      background: #fff;
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-top {
+      padding: 28px 32px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .result-location { display: flex; flex-direction: column; gap: 4px; }
+    .result-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .result-address {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.2;
+      max-width: 360px;
+    }
+    .result-subloc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    .rate-badge { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+    .rate-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.6rem;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .rate-pct { font-size: 1.6rem; font-weight: 300; margin-left: 2px; }
+    .rate-sub { font-size: 11.5px; font-weight: 300; color: var(--ink-soft); margin-top: 4px; text-align: right; }
+
+    .rate-low  { color: var(--low);  }
+    .rate-mid  { color: var(--mid);  }
+    .rate-high { color: var(--high); }
+
+    /* Bar */
+    .result-bar-wrap { padding: 22px 32px 26px; }
+    .bar-track {
+      width: 100%;
+      height: 8px;
+      background: #EDE9E3;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .bar-fill.low  { background: linear-gradient(90deg, #C8761A, var(--low)); }
+    .bar-fill.mid  { background: linear-gradient(90deg, #3A8AAF, var(--mid)); }
+    .bar-fill.high { background: linear-gradient(90deg, #3A9B5A, var(--high)); }
+
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 300;
+      color: #B0AAA2;
+    }
+
+    .context-chips { display: flex; gap: 8px; padding: 0 32px 26px; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 12.5px;
+      font-weight: 400;
+      line-height: 1;
+    }
+    .chip-low  { background: var(--low-bg);  color: var(--low);  }
+    .chip-mid  { background: var(--mid-bg);  color: var(--mid);  }
+    .chip-high { background: var(--high-bg); color: var(--high); }
+    .chip-info { background: var(--accent-lt); color: var(--accent); }
+    .chip-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.7; }
+
+    .result-note {
+      margin: 0 32px 24px;
+      padding: 14px 16px;
+      background: #F2F0EC;
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    /* Error card */
+    .error-card {
+      display: none;
+      width: 100%;
+      max-width: 660px;
+      margin-top: 24px;
+      background: #fff;
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 30px 32px;
+      animation: slideUp 0.3s ease;
+    }
+    .error-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; color: var(--ink); margin-bottom: 8px; }
+    .error-msg { font-size: 14px; font-weight: 300; color: var(--ink-soft); line-height: 1.6; }
+    .error-suggestions { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+    .suggestion-pill {
+      display: inline-block;
+      background: var(--accent-lt);
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background 0.15s;
+      align-self: flex-start;
+    }
+    .suggestion-pill:hover { background: #BFD9C7; }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      padding-top: 60px;
+      font-size: 12px;
+      font-weight: 300;
+      color: #B0AAA2;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    /* Init loading */
+    #init-loading {
+      position: fixed;
+      inset: 0;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 100;
+      transition: opacity 0.4s, visibility 0.4s;
+    }
+    #init-loading.hidden { opacity: 0; visibility: hidden; }
+    .init-spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .init-text { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300; color: var(--ink-soft); }
+
+    @media (max-width: 480px) {
+      .result-top { flex-direction: column; }
+      .rate-badge { align-items: flex-start; }
+      .rate-sub { text-align: left; }
+      .result-bar-wrap, .context-chips, .result-note { padding-left: 20px; padding-right: 20px; }
+      .result-top { padding: 22px 20px 18px; }
+    }
+
+    /* QR Code section */
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 48px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      width: 100%;
+      max-width: 660px;
+    }
+    .qr-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .qr-wrap {
+      padding: 16px;
+      background: #F2F0EC;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: inline-flex;
+    }
+    .qr-img {
+      width: 130px;
+      height: 130px;
+      display: block;
+      image-rendering: pixelated;
+    }
+    .qr-url {
+      font-size: 11px;
+      font-weight: 300;
+      color: #B0AAA2;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="init-loading">
+  <div class="init-spinner"></div>
+  <div class="init-text">Loading education data&hellip;</div>
+</div>
+
+<div class="top-band"></div>
+
+<div class="page-wrap">
+  <div class="hero">
+
+    <!-- Grad cap silhouette -->
+    <div class="grad-icon">
+      <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <!-- Mortarboard top -->
+        <polygon points="50,5 95,28 50,51 5,28" />
+        <!-- Cap brim -->
+        <ellipse cx="50" cy="28" rx="45" ry="8" opacity="0.25"/>
+        <!-- Left side of gown body -->
+        <path d="M25,32 Q18,55 20,72 Q30,68 35,72 Q38,55 35,35 Z" />
+        <!-- Right side of gown body -->
+        <path d="M75,32 Q82,55 80,72 Q70,68 65,72 Q62,55 65,35 Z" />
+        <!-- Tassel cord -->
+        <line x1="50" y1="5" x2="72" y2="14" stroke-width="2.5" stroke="currentColor" fill="none"/>
+        <!-- Tassel hang -->
+        <line x1="72" y1="14" x2="72" y2="44" stroke-width="2" stroke="currentColor" fill="none"/>
+        <!-- Tassel end tuft -->
+        <rect x="69" y="44" width="6" height="9" rx="1"/>
+        <line x1="70" y1="53" x2="69" y2="60" stroke-width="1.5" stroke="currentColor" fill="none"/>
+        <line x1="72" y1="53" x2="72" y2="62" stroke-width="1.5" stroke="currentColor" fill="none"/>
+        <line x1="74" y1="53" x2="75" y2="60" stroke-width="1.5" stroke="currentColor" fill="none"/>
+      </svg>
+    </div>
+
+    <div class="eyebrow">U.S. Census Data</div>
+    <h1>Search <em>Educational</em><br>Attainment Rates</h1>
+    <p class="subtitle">Look up the college graduation rate for any U.S. neighborhood by street address or ZIP code.</p>
+  </div>
+
+  <!-- Search -->
+  <div class="search-card">
+    <input
+      type="text"
+      id="search-input"
+      class="search-input"
+      placeholder="Search by address or ZIP code"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="search-btn" id="search-btn">Search</button>
+  </div>
+  <div class="search-hint">
+    Try: <em>123 Main St, Philadelphia PA</em><span>·</span><em>17257</em><span>·</span><em>90210</em>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-wrap" id="loading">
+    <div class="spinner"></div>
+    <span>Looking up location&hellip;</span>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="result-card">
+    <div class="result-top">
+      <div class="result-location">
+        <div class="result-label" id="res-label">ZIP Code</div>
+        <div class="result-address" id="res-address">—</div>
+        <div class="result-subloc" id="res-subloc"></div>
+      </div>
+      <div class="rate-badge">
+        <div class="rate-number" id="res-rate">—<span class="rate-pct">%</span></div>
+        <div class="rate-sub">bachelor's degree or higher</div>
+      </div>
+    </div>
+    <div class="result-bar-wrap">
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-fill" style="width:0%"></div>
+      </div>
+      <div class="bar-labels">
+        <span>0%</span><span>National avg ~35%</span><span>100%</span>
+      </div>
+    </div>
+    <div class="context-chips" id="context-chips"></div>
+    <div class="result-note" id="result-note"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-card" id="error-card">
+    <div class="error-title">No results found</div>
+    <div class="error-msg" id="error-msg">We couldn't find a match. Try a 5-digit ZIP code or a full street address with state.</div>
+    <div class="error-suggestions" id="error-suggestions"></div>
+  </div>
+
+  
+  <!-- QR Code -->
+  <div class="qr-section">
+    <div class="qr-label">Scan to open</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,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BQAAEBBXAAAAAXEFAAAQEFcAAACBz+kBdnK5XX/92+f9EU7y9zvtflesnKsVK3t02sxT93uaHd8bO/5dmJp56hn0rvu37fjemNrfHddqR75cAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABD6nB3i3y+36698+74+jrrvy29NMrdXK2eB1O67z1Jn03niPHfd36m/ZlNPud8Vp9zvF/yrv4csVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABA4OPn+2t6Bv7D5Xb99W+f98d2151y2v3uaMdnYcVp52pqnVdM7dGOz8Jpa7Wj087Vju+cKac9Cyt8uQIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAh8/Hx/Tc+wjcvt+uvfPu+PcJK/345rtePMK6bud+W6U6bud8fr8rodn4UpO55J+/v3c67eY8d1XuHLFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQODj5/treoZtXG7XX//2eX9sd90drazVjnbcX+f5dTuu1WnvyR3fOTuu84od92jFju/JHffotPO847ma4ssVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABA4OPn+2t6hre63K6//u3z/ggned3KzKfZcY9WZt7xPK+wzq877b0xtb9TnOfXede957orzPxv2/EZXOHLFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQOBzeoB3e94fI9e93K6//q2Z/35T93vaOu/otOfotPeV6/79rNV7nHaep/Z3x3fsaXy5AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACHz8fH9Nz3CEy+06PcIfe94fv/7t1P1Ozbxy3RU7nqsVU+u8YsdztWLHZ3/Kjs/vju9YZ/J1O57JFc7V6077W7bClysAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAIDAx8/31/QMb3W5XUeu+7w/Rq67cr9TM09xNl63MvPUOq+Yut/TrnuaHdd5x/fVitPuF/4np/1PuMKXKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgMDn9ADv9rw/pkd4q6n7vdyuv/7tysxT193Rafe7Ysdzddr+7vje2PFc7TjzaZzJf9uO63zas+/LFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQODj5/treoZtXG7Xkes+749f/9bMr5uaeeW6U9zvv80evW5qrXZ8Bj1Hr9txrfwNfd1p76vT+HIFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQ+Jwe4N0ut+vIdZ/3x1HXXVnnqZmnTK3V1LPgbLzHjmfDe/J1O+7vih2f/R3fdSsz73iedzxXO858Gl+uAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAp/TA7zb8/749W8vt2s4yd9v5X6n1nnluiumrnvamZxif1932rO/4x6tmNrfHc/GFGv1HtaZ/4kvVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAIHP6QH4N11u11//9nl/hJO8bseZV6zMPLVWO+6RtXrPdVfud8WOz/6UHfd3x+d3xWn3u6Md1+q096QvVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAIGPn++v6Rm2cbldp0f4Y8/7Y3qEP7ayziv3a39fN7VHK5yr1+24R7xu6jyfdq5Ou98pO57n087kaXy5AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACHz8fH9Nz/BWl9t1eoQ/9rw/pkf4Yzuu8xT7+7qVtTrtTFqrv9/UHu14Nrwn+Zfs+OzzOl+uAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAh8/31/TM0Dmcrv++rfP+2Pkuit2nHlHK+s8ZcczOcVavW7qHbtix3fdaWt12rOwox33aIovVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAIHP6QHe7XK7To/Af3jeH9Mj/LHTZp56jnZc5yk77u/KdafOxo5n0v6+57qnrfNp97ujqf09bZ19uQIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAiIKwAAgIC4AgAACIgrAACAgLgCAAAIiCsAAICAuAIAAAh8Tg+wk+f9MT3CNi6368h1V/ZoZebTrrvitOdoap13dNrZmLLj+2qF6/7b3O/r/D16D1+uAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAp/TA5zicrtOj/DHnvfH9Ah/bGqdV667ss5T97vj2Vhx2v6u2HHmKTs+v1PP/tQzuMJ743U7zrzitL+hp/HlCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAIPA5PQD8LZ73x/QIbzV1v5fb9de/XZl5x+vuaMfnaGqPps7VaWfytP1dcdrzu+PfwRU7nskd+XIFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQ+JweAErP++PXv73cruEkr1uZecrKWp12vzua2qOpc3Xa/e74rttx5h2v693+HjuuFa/z5QoAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACAgrgAAAALiCgAAICCuAAAAAuIKAAAgIK4AAAAC4goAACDwOT3AKZ73x/QI/IeVPbrcriO/3dHK/U49R1PXnVqrqTO548wrnOfX7fh+npp55bqewffYca14nS9XAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAgY+f76/pGd7qcrtOj8B/eN4f0yMcYeVZWNkjz+B7TO2Rs8Hfxpl8jx3fOSumzsaO93va/3W+XAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAATEFQAAQEBcAQAABMQVAABAQFwBAAAExBUAAEBAXAEAAAQ+fr6/pmcAAADYni9XAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAAXEFAAAQEFcAAAABcQUAABAQVwAAAAFxBQAAEBBXAAAAgf8HdcvK5ubgkj4AAAAASUVORK5CYII=" alt="QR code for College Graduation Rate Search" class="qr-img" />
+    </div>
+    <div class="qr-url">lawrenceeppard-rgb.github.io/<br>pa-opportunity-map-data/college-search/</div>
+  </div>
+
+<div class="footer">
+    Data: American Community Survey 5-Year Estimates (2024) &middot; U.S. Census Bureau<br>
+    Rates reflect adults 25 and older with a bachelor's degree or higher, by ZIP code tabulation area.
+  </div>
+</div>
+
+<script>
+let gradData = null;     // zip → rate
+let gradTractData = null; // { tracts, countyFips }
+
+// ─── Load data ────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch('./grad_zip_data.json'),
+      fetch('./grad_tract_data.json')
+    ]);
+    if (!r1.ok || !r2.ok) throw new Error('fetch failed');
+    [gradData, gradTractData] = await Promise.all([r1.json(), r2.json()]);
+    document.getElementById('init-loading').classList.add('hidden');
+    document.getElementById('search-input').focus();
+  } catch(e) {
+    document.getElementById('init-loading').innerHTML =
+      '<div style="color:#9B5A1A;font-family:Outfit,sans-serif;font-size:14px;text-align:center;padding:20px">' +
+      'Could not load education data.<br>Make sure grad_zip_data.json and grad_tract_data.json are in the same folder.</div>';
+  }
+}
+
+// ─── Geocoders ────────────────────────────────────────────────────────────
+async function geocodeCensus(query) {
+  const url = `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress` +
+    `?address=${encodeURIComponent(query)}&benchmark=Public_AR_Current&format=json`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const m = data?.result?.addressMatches?.[0];
+  if (!m) return null;
+  return { matchedAddress: m.matchedAddress, lat: m.coordinates.y, lon: m.coordinates.x };
+}
+
+async function geocodeNominatim(query) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=us`;
+  const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data || data.length === 0) return null;
+  return { matchedAddress: data[0].display_name, lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+}
+
+// ─── FCC: lat/lon → Census tract FIPS ────────────────────────────────────
+async function getTractFromLatLon(lat, lon) {
+  const url = `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lon}&censusYear=2020&format=json`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (data.status !== 'OK') return null;
+  const fips = data.Block?.FIPS;
+  if (!fips || fips.length < 11) return null;
+  return { stateFips: fips.slice(0,2), countyFips: fips.slice(2,5), tractFips: fips.slice(5,11) };
+}
+
+// ─── Nominatim reverse geocode → ZIP (fallback) ───────────────────────────
+async function getZipFromLatLon(lat, lon) {
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+  const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const zip = data?.address?.postcode?.slice(0, 5);
+  return (zip && zip.length === 5 && /^\d{5}$/.test(zip)) ? zip : null;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────
+function looksLikeZip(q) { return /^\d{5}(-\d{4})?$/.test(q.trim()); }
+function looksLikeAddress(q) { return /^\d+\s/.test(q.trim()); }
+
+function rateTier(r) {
+  if (r < 20) return 'low';
+  if (r < 50) return 'mid';
+  return 'high';
+}
+function tierLabel(t) {
+  return { low: 'Below Average Attainment', mid: 'Moderate Attainment', high: 'High Attainment' }[t];
+}
+
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+function showResult({ label, address, subloc, rate, note }) {
+  const tier = rateTier(rate);
+  const pct = Math.min(rate, 100);
+
+  document.getElementById('res-label').textContent = label;
+  document.getElementById('res-address').textContent = address;
+  document.getElementById('res-subloc').textContent = subloc || '';
+
+  const rateEl = document.getElementById('res-rate');
+  rateEl.className = `rate-number rate-${tier}`;
+  rateEl.innerHTML = `${rate.toFixed(1)}<span class="rate-pct">%</span>`;
+
+  const bar = document.getElementById('bar-fill');
+  bar.className = `bar-fill ${tier}`;
+  setTimeout(() => { bar.style.width = pct + '%'; }, 50);
+
+  document.getElementById('context-chips').innerHTML = `
+    <div class="chip chip-${tier}"><div class="chip-dot"></div>${tierLabel(tier)}</div>
+    <div class="chip chip-info"><div class="chip-dot"></div>2024 ACS Data</div>
+  `;
+
+  document.getElementById('result-note').textContent = note;
+  hide('error-card');
+  show('result-card');
+}
+
+function showError(msg, suggestions = []) {
+  document.getElementById('error-msg').textContent = msg;
+  document.getElementById('error-suggestions').innerHTML = suggestions.map(t =>
+    `<div class="suggestion-pill" onclick="fillAndSearch('${t}')">${t}</div>`
+  ).join('');
+  hide('result-card');
+  show('error-card');
+}
+
+function fillAndSearch(text) {
+  document.getElementById('search-input').value = text;
+  doSearch();
+}
+
+// ─── Main search ──────────────────────────────────────────────────────────
+async function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  if (!gradData) { alert('Data is still loading, please wait.'); return; }
+
+  hide('result-card');
+  hide('error-card');
+  document.getElementById('loading').style.display = 'flex';
+  const done = () => { document.getElementById('loading').style.display = 'none'; };
+
+  try {
+    // ── Step 1: ZIP code direct lookup ────────────────────────────────────
+    if (looksLikeZip(q)) {
+      const zip = q.trim().slice(0, 5);
+      const rate = gradData[zip];
+      done();
+      if (rate !== undefined) {
+        showResult({
+          label: 'ZIP Code ' + zip,
+          address: 'ZIP Code ' + zip,
+          subloc: '2024 ACS estimate',
+          rate,
+          note: `In ZIP code ${zip}, ${rate.toFixed(1)}% of adults age 25 and older hold a bachelor's degree or higher. The national average is approximately 35%. Data from the 2024 American Community Survey.`
+        });
+      } else {
+        showError(`No education data found for ZIP code ${zip}.`, ['17257', '19103', '10001']);
+      }
+      return;
+    }
+
+    // ── Step 2: Geocode address → tract (preferred) or ZIP (fallback) ────────
+    let loc = null;
+    try { loc = await geocodeCensus(q); } catch(e) {}
+    if (!loc) { try { loc = await geocodeNominatim(q); } catch(e) {} }
+
+    if (loc) {
+      // Try tract-level first (for street addresses)
+      if (looksLikeAddress(q)) {
+        let tract = null;
+        try { tract = await getTractFromLatLon(loc.lat, loc.lon); } catch(e) {}
+        if (tract && gradTractData) {
+          const { stateFips: st, countyFips: co, tractFips: tr } = tract;
+          const tractKey = st + co + tr;
+          const rate = gradTractData.tracts?.[tractKey];
+          const countyInfo = gradTractData.countyFips?.[st + co];
+          if (rate !== undefined) {
+            done();
+            const addrParts = loc.matchedAddress.split(',');
+            showResult({
+              label: 'Census Tract ' + tr,
+              address: addrParts.slice(0, 2).join(',').trim(),
+              subloc: addrParts.slice(2).join(',').trim(),
+              rate,
+              note: `In this census tract, ${rate.toFixed(1)}% of adults age 25 and older hold a bachelor's degree or higher. The surrounding county (${countyInfo?.name || ''}) averages ${countyInfo?.avg ?? '?'}%. The national average is approximately 35%. Data from the 2024 American Community Survey.`
+            });
+            return;
+          }
+        }
+      }
+
+      // Fallback: ZIP-level
+      const zip = await getZipFromLatLon(loc.lat, loc.lon);
+      if (zip) {
+        const rate = gradData[zip];
+        done();
+        if (rate !== undefined) {
+          const addrParts = loc.matchedAddress.split(',');
+          showResult({
+            label: 'ZIP Code ' + zip,
+            address: looksLikeAddress(q) ? addrParts.slice(0,2).join(',').trim() : 'ZIP Code ' + zip,
+            subloc: looksLikeAddress(q) ? addrParts.slice(2).join(',').trim() : `Located via "${q}"`,
+            rate,
+            note: `ZIP code ${zip} has a college graduation rate of ${rate.toFixed(1)}% among adults 25 and older. The national average is approximately 35%. Data from the 2024 American Community Survey.`
+          });
+        } else {
+          showError(`Found the location but no education data is available for ZIP ${zip}.`, ['Try a nearby ZIP code']);
+        }
+        return;
+      }
+    }
+
+    done();
+    showError(
+      `No results found for "${q}". Try a 5-digit ZIP code or a full street address with state abbreviation.`,
+      ['17257', '19103', '90210', '123 Main St, Philadelphia PA']
+    );
+
+  } catch(e) {
+    console.error(e);
+    done();
+    showError('A network error occurred. Please check your connection and try again.');
+  }
+}
+
+document.getElementById('search-btn').addEventListener('click', doSearch);
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+loadData();
+</script>
+</body>
+</html>
