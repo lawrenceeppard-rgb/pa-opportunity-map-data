@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Upward Mobility Rates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:    #F5F0E8;
+      --ink:      #1C1C1E;
+      --ink-soft: #4A4A52;
+      --accent:   #8B4A1C;
+      --accent-lt:#F5E0CF;
+      --accent-dk:#6B3512;
+      --low:      #9B2335;
+      --low-bg:   #FCEAED;
+      --mid:      #7A6010;
+      --mid-bg:   #FBF3D8;
+      --high:     #1A6B3C;
+      --high-bg:  #E4F3E8;
+      --border:   #DDD5C8;
+      --shadow:   0 4px 32px rgba(28,28,30,0.09);
+      --r:        14px;
+    }
+
+    html, body { min-height: 100vh; background: var(--cream); font-family: 'Outfit', sans-serif; color: var(--ink); }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .top-band {
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-dk) 0%, #C4723A 50%, var(--accent-dk) 100%);
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0 24px 80px;
+    }
+
+    .hero {
+      text-align: center;
+      padding-top: clamp(50px, 8vh, 100px);
+      padding-bottom: 44px;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    /* Ladder silhouette */
+    .ladder-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 22px;
+      opacity: 0.15;
+    }
+    .ladder-icon svg {
+      width: 52px;
+      height: 80px;
+      fill: var(--accent-dk);
+    }
+
+    .eyebrow {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+    h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+    .subtitle {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .search-card {
+      width: 100%;
+      max-width: 660px;
+      background: #fff;
+      border-radius: var(--r);
+      box-shadow: var(--shadow), 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15.5px;
+      font-weight: 300;
+      color: var(--ink);
+      padding: 12px 14px;
+      caret-color: var(--accent);
+    }
+    .search-input::placeholder { color: #A8A49E; }
+
+    .search-btn {
+      flex-shrink: 0;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 12px 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .search-btn:hover { background: var(--accent-dk); }
+    .search-btn:active { transform: scale(0.98); }
+
+    .search-hint {
+      margin-top: 12px;
+      font-size: 12.5px;
+      font-weight: 300;
+      color: #A8A49E;
+      text-align: center;
+    }
+    .search-hint span { color: #C0BAB2; margin: 0 6px; }
+
+    .loading-wrap {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-top: 36px;
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-weight: 300;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .result-card {
+      display: none;
+      width: 100%;
+      max-width: 660px;
+      margin-top: 24px;
+      background: #fff;
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-top {
+      padding: 28px 32px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .result-location { display: flex; flex-direction: column; gap: 4px; }
+    .result-label { font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+    .result-address {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.2;
+      max-width: 360px;
+    }
+    .result-subloc { font-size: 13px; font-weight: 300; color: var(--ink-soft); margin-top: 2px; }
+
+    .rate-badge { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+    .rate-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.6rem;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .rate-pct { font-size: 1.6rem; font-weight: 300; margin-left: 2px; }
+    .rate-sub { font-size: 11.5px; font-weight: 300; color: var(--ink-soft); margin-top: 4px; text-align: right; }
+
+    .rate-low  { color: var(--low);  }
+    .rate-mid  { color: var(--mid);  }
+    .rate-high { color: var(--high); }
+
+    .result-bar-wrap { padding: 22px 32px 26px; }
+    .bar-track { width: 100%; height: 8px; background: #EDE5D8; border-radius: 99px; overflow: hidden; margin-bottom: 6px; }
+    .bar-fill { height: 100%; border-radius: 99px; transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .bar-fill.low  { background: linear-gradient(90deg, #C93A50, var(--low)); }
+    .bar-fill.mid  { background: linear-gradient(90deg, #B89020, var(--mid)); }
+    .bar-fill.high { background: linear-gradient(90deg, #2A9B5A, var(--high)); }
+    .bar-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 300; color: #B0AAA2; }
+
+    .context-chips { display: flex; gap: 8px; padding: 0 32px 26px; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 99px;
+      font-size: 12.5px; font-weight: 400; line-height: 1;
+    }
+    .chip-low  { background: var(--low-bg);  color: var(--low);  }
+    .chip-mid  { background: var(--mid-bg);  color: var(--mid);  }
+    .chip-high { background: var(--high-bg); color: var(--high); }
+    .chip-info { background: var(--accent-lt); color: var(--accent); }
+    .chip-dot  { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.7; }
+
+    .result-note {
+      margin: 0 32px 24px;
+      padding: 14px 16px;
+      background: #F5F0E8;
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px; font-weight: 300; color: var(--ink-soft); line-height: 1.55;
+    }
+
+    .error-card {
+      display: none;
+      width: 100%; max-width: 660px; margin-top: 24px;
+      background: #fff; border-radius: var(--r);
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      padding: 30px 32px;
+      animation: slideUp 0.3s ease;
+    }
+    .error-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; color: var(--ink); margin-bottom: 8px; }
+    .error-msg   { font-size: 14px; font-weight: 300; color: var(--ink-soft); line-height: 1.6; }
+    .error-suggestions { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+    .suggestion-pill {
+      display: inline-block; background: var(--accent-lt); color: var(--accent);
+      border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 400;
+      cursor: pointer; transition: background 0.15s; align-self: flex-start;
+    }
+    .suggestion-pill:hover { background: #EAC9AD; }
+
+    /* QR Code section */
+    .qr-section {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      margin-top: 48px; padding-top: 40px;
+      border-top: 1px solid var(--border);
+      width: 100%; max-width: 660px;
+    }
+    .qr-label { font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+    .qr-wrap { padding: 16px; background: #F5F0E8; border-radius: 12px; border: 1px solid var(--border); display: inline-flex; }
+    .qr-img  { width: 130px; height: 130px; display: block; image-rendering: pixelated; }
+    .qr-url  { font-size: 11px; font-weight: 300; color: #B0AAA2; text-align: center; line-height: 1.6; }
+
+    .footer {
+      margin-top: auto; padding-top: 60px;
+      font-size: 12px; font-weight: 300; color: #B0AAA2;
+      text-align: center; line-height: 1.7;
+    }
+
+    #init-loading {
+      position: fixed; inset: 0; background: var(--cream);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; z-index: 100;
+      transition: opacity 0.4s, visibility 0.4s;
+    }
+    #init-loading.hidden { opacity: 0; visibility: hidden; }
+    .init-spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .init-text { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300; color: var(--ink-soft); }
+
+    @media (max-width: 480px) {
+      .result-top { flex-direction: column; }
+      .rate-badge { align-items: flex-start; }
+      .rate-sub   { text-align: left; }
+      .result-bar-wrap, .context-chips, .result-note { padding-left: 20px; padding-right: 20px; }
+      .result-top { padding: 22px 20px 18px; }
+    }
+
+    /* QR Code section */
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 48px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      width: 100%;
+      max-width: 660px;
+    }
+    .qr-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .qr-wrap {
+      padding: 16px;
+      background: #F5F0E8;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: inline-flex;
+    }
+    .qr-img {
+      width: 130px;
+      height: 130px;
+      display: block;
+      image-rendering: pixelated;
+    }
+    .qr-url {
+      font-size: 11px;
+      font-weight: 300;
+      color: #B0AAA2;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="init-loading">
+  <div class="init-spinner"></div>
+  <div class="init-text">Loading mobility data&hellip;</div>
+</div>
+
+<div class="top-band"></div>
+
+<div class="page-wrap">
+  <div class="hero">
+
+    <!-- Ladder silhouette -->
+    <div class="ladder-icon">
+      <svg viewBox="0 0 52 80" xmlns="http://www.w3.org/2000/svg">
+        <!-- Left rail -->
+        <rect x="4"  y="2" width="7" height="76" rx="3"/>
+        <!-- Right rail -->
+        <rect x="41" y="2" width="7" height="76" rx="3"/>
+        <!-- Rungs - 6 evenly spaced -->
+        <rect x="4"  y="10" width="44" height="6" rx="2"/>
+        <rect x="4"  y="24" width="44" height="6" rx="2"/>
+        <rect x="4"  y="38" width="44" height="6" rx="2"/>
+        <rect x="4"  y="52" width="44" height="6" rx="2"/>
+        <rect x="4"  y="66" width="44" height="6" rx="2"/>
+      </svg>
+    </div>
+
+    <div class="eyebrow">Opportunity Atlas &middot; Harvard / Census</div>
+    <h1>Search <em>Upward Mobility</em><br>Rates</h1>
+    <p class="subtitle">Look up the share of people raised in each neighborhood who reached the top 20% of incomes in adulthood, by address or ZIP code.</p>
+  </div>
+
+  <!-- Search -->
+  <div class="search-card">
+    <input
+      type="text"
+      id="search-input"
+      class="search-input"
+      placeholder="Search by address or ZIP code"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="search-btn" id="search-btn">Search</button>
+  </div>
+  <div class="search-hint">
+    Try: <em>123 Main St, Chambersburg PA</em><span>·</span><em>17257</em><span>·</span><em>90210</em>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-wrap" id="loading">
+    <div class="spinner"></div>
+    <span id="loading-text">Looking up location&hellip;</span>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="result-card">
+    <div class="result-top">
+      <div class="result-location">
+        <div class="result-label" id="res-label">Census Tract</div>
+        <div class="result-address" id="res-address">—</div>
+        <div class="result-subloc" id="res-subloc"></div>
+      </div>
+      <div class="rate-badge">
+        <div class="rate-number" id="res-rate">—<span class="rate-pct">%</span></div>
+        <div class="rate-sub">reached top 20% income</div>
+      </div>
+    </div>
+    <div class="result-bar-wrap">
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-fill" style="width:0%"></div>
+      </div>
+      <div class="bar-labels">
+        <span>0%</span><span>National avg ~20%</span><span>68%+</span>
+      </div>
+    </div>
+    <div class="context-chips" id="context-chips"></div>
+    <div class="result-note" id="result-note"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-card" id="error-card">
+    <div class="error-title">No results found</div>
+    <div class="error-msg" id="error-msg">We couldn't find mobility data for that location.</div>
+    <div class="error-suggestions" id="error-suggestions"></div>
+  </div>
+
+  
+  <!-- QR Code -->
+  <div class="qr-section">
+    <div class="qr-label">Scan to open</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,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" alt="QR code for Upward Mobility Rate Search" class="qr-img" />
+    </div>
+    <div class="qr-url">lawrenceeppard-rgb.github.io/<br>pa-opportunity-map-data/upward-mobility/</div>
+  </div>
+
+<div class="footer">
+    Data: Opportunity Atlas &middot; Chetty, Friedman, Hendren, Jones &amp; Porter (2018)<br>
+    Rates reflect children raised in each census tract (1978–1983 birth cohorts) who reached the top 20% of the national income distribution by their mid-30s.
+  </div>
+</div>
+
+<script>
+let mobilityData = null; // tract FIPS (11-digit) → { rate, name }
+
+// ─── Load data ────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const res = await fetch('./mobility_data.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    mobilityData = await res.json();
+    document.getElementById('init-loading').classList.add('hidden');
+    document.getElementById('search-input').focus();
+  } catch(e) {
+    console.error('Load error:', e);
+    document.getElementById('init-loading').innerHTML =
+      '<div style="color:#9B2335;font-family:Outfit,sans-serif;font-size:14px;text-align:center;padding:20px">' +
+      'Could not load mobility data.<br>Make sure mobility_data.json is in the same folder as this page.<br><small>' + e + '</small></div>';
+  }
+}
+
+// ─── Geocoders ────────────────────────────────────────────────────────────
+async function geocodeCensus(query) {
+  const url = `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress` +
+    `?address=${encodeURIComponent(query)}&benchmark=Public_AR_Current&format=json`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const m = data?.result?.addressMatches?.[0];
+  if (!m) return null;
+  return { matchedAddress: m.matchedAddress, lat: m.coordinates.y, lon: m.coordinates.x };
+}
+
+async function geocodeNominatim(query) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=us`;
+  const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data || data.length === 0) return null;
+  return { matchedAddress: data[0].display_name, lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+}
+
+// ─── FCC: lat/lon → Census tract FIPS ────────────────────────────────────
+async function getTractFromLatLon(lat, lon) {
+  const url = `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lon}&censusYear=2020&format=json`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (data.status !== 'OK') return null;
+  const fips = data.Block?.FIPS;
+  if (!fips || fips.length < 11) return null;
+  return fips.slice(0, 11); // 11-digit tract FIPS
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────
+function looksLikeZip(q) { return /^\d{5}(-\d{4})?$/.test(q.trim()); }
+function looksLikeAddress(q) { return /^\d+\s/.test(q.trim()); }
+
+function rateTier(r) {
+  if (r < 15) return 'low';
+  if (r < 30) return 'mid';
+  return 'high';
+}
+function tierLabel(t) {
+  return {
+    low:  'Low Upward Mobility',
+    mid:  'Moderate Upward Mobility',
+    high: 'High Upward Mobility'
+  }[t];
+}
+
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+function showResult({ label, address, subloc, rate, note }) {
+  const tier = rateTier(rate);
+  const pct  = Math.min((rate / 68) * 100, 100);
+
+  document.getElementById('res-label').textContent   = label;
+  document.getElementById('res-address').textContent = address;
+  document.getElementById('res-subloc').textContent  = subloc || '';
+
+  const rateEl = document.getElementById('res-rate');
+  rateEl.className = `rate-number rate-${tier}`;
+  rateEl.innerHTML = `${rate.toFixed(1)}<span class="rate-pct">%</span>`;
+
+  const bar = document.getElementById('bar-fill');
+  bar.className = `bar-fill ${tier}`;
+  setTimeout(() => { bar.style.width = pct + '%'; }, 50);
+
+  document.getElementById('context-chips').innerHTML = `
+    <div class="chip chip-${tier}"><div class="chip-dot"></div>${tierLabel(tier)}</div>
+    <div class="chip chip-info"><div class="chip-dot"></div>Opportunity Atlas</div>
+  `;
+
+  document.getElementById('result-note').textContent = note;
+  hide('error-card');
+  show('result-card');
+}
+
+function showError(msg, suggestions = []) {
+  document.getElementById('error-msg').textContent = msg;
+  document.getElementById('error-suggestions').innerHTML = suggestions.map(t =>
+    `<div class="suggestion-pill" onclick="fillAndSearch('${t}')">${t}</div>`
+  ).join('');
+  hide('result-card');
+  show('error-card');
+}
+
+function fillAndSearch(text) {
+  document.getElementById('search-input').value = text;
+  doSearch();
+}
+
+function setLoadingText(t) {
+  const el = document.getElementById('loading-text');
+  if (el) el.textContent = t;
+}
+
+// ─── Main search ──────────────────────────────────────────────────────────
+async function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  if (!mobilityData) { alert('Data is still loading, please wait.'); return; }
+
+  hide('result-card');
+  hide('error-card');
+  document.getElementById('loading').style.display = 'flex';
+  const done = () => { document.getElementById('loading').style.display = 'none'; };
+
+  try {
+
+    // ── ZIP code: geocode to centroid → FCC tract ────────────────────────
+    if (looksLikeZip(q)) {
+      const zip = q.trim().slice(0, 5);
+      setLoadingText('Locating ZIP code…');
+
+      // Geocode the ZIP to a lat/lon centroid
+      let loc = null;
+      try { loc = await geocodeCensus(zip); } catch(e) {}
+      if (!loc) { try { loc = await geocodeNominatim(zip + ', USA'); } catch(e) {} }
+
+      if (loc) {
+        setLoadingText('Finding census tract…');
+        let tractFips = null;
+        try { tractFips = await getTractFromLatLon(loc.lat, loc.lon); } catch(e) {}
+
+        if (tractFips) {
+          const rate = mobilityData[tractFips];
+          done();
+          if (rate !== undefined) {
+            showResult({
+              label: `ZIP Code ${zip}`,
+              address: `ZIP Code ${zip}`,
+              subloc: `Census tract at ZIP centroid`,
+              rate,
+              note: `In the census tract at the center of ZIP code ${zip}, ${rate.toFixed(1)}% of children raised there reached the top 20% of national incomes by their mid-30s. Other tracts within this ZIP may vary. For a specific address's tract, search a full street address. Data from the Opportunity Atlas (Chetty et al., 2018).`
+            });
+          } else {
+            showError(
+              `ZIP code ${zip} was found but upward mobility data is not available for this census tract.`,
+              ['Try a nearby ZIP code or full street address']
+            );
+          }
+          return;
+        }
+      }
+
+      done();
+      showError(`Could not locate ZIP code ${zip}. Please check the ZIP and try again.`, ['17257', '19103', '10001']);
+      return;
+    }
+
+    // ── Address: geocode → FCC → exact tract ───────────────────────────────
+    setLoadingText('Looking up location…');
+    let loc = null;
+    try { loc = await geocodeCensus(q); } catch(e) {}
+    if (!loc) { try { loc = await geocodeNominatim(q); } catch(e) {} }
+
+    if (loc) {
+      setLoadingText('Finding census tract…');
+      let tractFips = null;
+      try { tractFips = await getTractFromLatLon(loc.lat, loc.lon); } catch(e) {}
+
+      if (tractFips) {
+        const rate = mobilityData[tractFips];
+        done();
+        if (rate !== undefined) {
+          const addrParts = loc.matchedAddress.split(',');
+          showResult({
+            label: `Census Tract`,
+            address: looksLikeAddress(q) ? addrParts.slice(0, 2).join(',').trim() : addrParts[0].trim(),
+            subloc:  looksLikeAddress(q) ? addrParts.slice(2).join(',').trim() : `Census tract ${tractFips}`,
+            rate: rate,
+            note: `In this census tract, ${rate.toFixed(1)}% of children raised there reached the top 20% of national incomes by their mid-30s. The national average is approximately 20%. Data from the Opportunity Atlas (Chetty, Friedman, Hendren, Jones & Porter, 2018).`
+          });
+        } else {
+          showError(
+            'Location found, but upward mobility data is not available for this census tract. Some rural or sparsely populated tracts are not covered.',
+            ['Try a nearby ZIP code']
+          );
+        }
+        return;
+      }
+    }
+
+    done();
+    showError(
+      `No results found for "${q}". Try a 5-digit ZIP code or a full street address with state.`,
+      ['17257', '19103', '90210', '123 Main St, Philadelphia PA']
+    );
+
+  } catch(e) {
+    console.error(e);
+    done();
+    showError('A network error occurred. Please check your connection and try again.');
+  }
+}
+
+document.getElementById('search-btn').addEventListener('click', doSearch);
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+loadData();
+</script>
+</body>
+</html>
