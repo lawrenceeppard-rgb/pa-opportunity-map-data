@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🎄 Wheel of Fortune — Christmas Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root {
+  --bg: #040f06;
+  --surface: #0a1f0c;
+  --surface2: #0f2a12;
+  --pine: #0d3318;
+  --gold: #f5c518;
+  --gold-dark: #b8921a;
+  --red: #c0392b;
+  --red-light: #e74c3c;
+  --green: #27ae60;
+  --text: #f0f7f0;
+  --text-dim: #5a8a5e;
+  --radius: 12px;
+  --tile-bg: #081408;
+  --tile-border: #1a4020;
+  --silver: #c8dac8;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; overflow-x:hidden; }
+body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+#app { min-height:100vh; position:relative; z-index:1; }
+
+/* SNOW */
+.snowfield { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.flake {
+  position:absolute; top:-20px; color:rgba(255,255,255,.6);
+  font-size:1rem; animation:fall linear infinite;
+  user-select:none;
+}
+@keyframes fall {
+  0%   { transform:translateY(0) rotate(0deg); opacity:.7; }
+  100% { transform:translateY(110vh) rotate(360deg); opacity:0; }
+}
+
+/* TOAST */
+#toast {
+  position:fixed; bottom:24px; left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--gold); color:#111;
+  font-family:'Fredoka One',cursive; font-size:1rem;
+  padding:10px 24px; border-radius:100px;
+  z-index:9999; transition:transform .3s ease;
+  pointer-events:none; white-space:nowrap;
+  box-shadow:0 4px 24px rgba(0,0,0,.6);
+}
+#toast.show { transform:translateX(-50%) translateY(0); }
+
+/* BUTTONS */
+.btn {
+  font-family:'Fredoka One',cursive; font-size:1.1rem;
+  padding:13px 24px; border:none; border-radius:var(--radius);
+  cursor:pointer; transition:all .15s; letter-spacing:.4px;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+}
+.btn:active:not(:disabled) { transform:scale(.97); }
+.btn:disabled { opacity:.35; cursor:not-allowed; }
+.btn-gold  { background:var(--gold); color:#111; box-shadow:0 4px 20px rgba(245,197,24,.3); }
+.btn-gold:hover:not(:disabled)  { background:#ffd84a; }
+.btn-pine  { background:var(--pine); color:var(--text); border:2px solid rgba(39,174,96,.3); }
+.btn-pine:hover:not(:disabled)  { background:#145022; border-color:var(--green); }
+.btn-red   { background:var(--red); color:#fff; }
+.btn-red:hover:not(:disabled)   { background:var(--red-light); }
+.btn-green { background:var(--green); color:#fff; }
+.btn-green:hover:not(:disabled) { background:#2ecc71; }
+.btn-sm  { font-size:.88rem; padding:7px 14px; border-radius:8px; }
+.btn-lg  { font-size:1.4rem; padding:16px 36px; }
+.w-full  { width:100%; }
+
+/* INPUTS */
+.form-group { display:flex; flex-direction:column; gap:7px; width:100%; }
+label { font-size:.75rem; font-weight:800; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; }
+input[type="text"] {
+  background:var(--surface2); border:2px solid rgba(255,255,255,.07);
+  border-radius:var(--radius); color:var(--text);
+  font-family:'Nunito',sans-serif; font-size:1rem; padding:11px 15px;
+  width:100%; outline:none; transition:border-color .2s;
+}
+input:focus { border-color:var(--gold); }
+
+/* CHRISTMAS LOGO */
+.xmas-logo {
+  font-family:'Mountains of Christmas',cursive; font-weight:700;
+  color:var(--gold);
+  text-shadow:0 0 40px rgba(245,197,24,.5), 3px 3px 0 var(--gold-dark);
+  line-height:1.05;
+  text-align:center;
+}
+.xmas-sub {
+  font-family:'Fredoka One',cursive;
+  color:var(--text-dim); letter-spacing:4px; text-transform:uppercase;
+}
+
+/* PROGRESS DOTS */
+.progress-dots { display:flex; gap:10px; justify-content:center; align-items:center; }
+.pdot {
+  width:32px; height:32px; border-radius:50%;
+  border:2px solid rgba(255,255,255,.18);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Fredoka One',cursive; font-size:.85rem;
+  transition:all .3s;
+}
+.pdot.done     { background:var(--green); border-color:var(--green); color:#fff; }
+.pdot.active   { background:var(--gold); border-color:var(--gold); color:#111; box-shadow:0 0 16px rgba(245,197,24,.5); }
+.pdot.upcoming { color:var(--text-dim); }
+
+/* LEADERBOARD */
+.lb-strip {
+  background:var(--surface); border:1px solid rgba(245,197,24,.15);
+  border-radius:var(--radius); padding:10px 14px;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
+.lb-title {
+  font-family:'Fredoka One',cursive; font-size:.8rem;
+  color:var(--text-dim); text-transform:uppercase; letter-spacing:1px;
+  flex-shrink:0; white-space:nowrap;
+}
+.lb-players { display:flex; gap:8px; flex-wrap:wrap; flex:1; }
+.lb-card {
+  background:var(--pine); border:2px solid rgba(255,255,255,.08);
+  border-radius:10px; padding:6px 12px; text-align:center;
+  min-width:80px; transition:all .25s; position:relative;
+}
+.lb-card.lead {
+  border-color:var(--gold);
+  background:rgba(245,197,24,.1);
+  box-shadow:0 0 16px rgba(245,197,24,.25);
+}
+.lb-card.active-turn {
+  border-color:var(--green);
+  box-shadow:0 0 12px rgba(39,174,96,.3);
+}
+.lb-name { font-family:'Fredoka One',cursive; font-size:.82rem; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lb-card.lead .lb-name { color:var(--gold); }
+.lb-total { font-size:1.1rem; font-weight:800; color:var(--silver); }
+.lb-round { font-size:.7rem; color:var(--text-dim); }
+.lb-crown { position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-size:.85rem; }
+
+/* PUZZLE BOARD */
+.board {
+  background:var(--surface); border:2px solid rgba(245,197,24,.12);
+  border-radius:var(--radius); padding:16px 14px;
+  display:flex; flex-direction:column; gap:8px; align-items:center;
+}
+.board-row { display:flex; flex-wrap:wrap; justify-content:center; gap:4px; align-items:center; }
+.board-word { display:flex; gap:4px; }
+.word-gap { width:10px; }
+.tile {
+  width:40px; height:48px;
+  background:var(--tile-bg); border:2px solid var(--tile-border);
+  border-radius:6px; display:flex; align-items:center; justify-content:center;
+  font-family:'Fredoka One',cursive; font-size:1.3rem; color:transparent;
+  transition:all .25s;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.4);
+}
+.tile.lit {
+  background:var(--gold); color:#111;
+  border-color:var(--gold-dark);
+  box-shadow:0 0 12px rgba(245,197,24,.4), inset 0 -3px 0 rgba(0,0,0,.2);
+  animation:flip .28s ease;
+}
+@keyframes flip { 0%{transform:scaleY(0)} 100%{transform:scaleY(1)} }
+@media(max-width:580px) { .tile{width:28px;height:36px;font-size:.9rem} .word-gap{width:6px} }
+
+/* STATUS */
+.status {
+  font-family:'Fredoka One',cursive; font-size:1.1rem;
+  background:var(--surface); padding:11px 16px; border-radius:var(--radius);
+  border-left:4px solid var(--gold); min-height:48px;
+  display:flex; align-items:center;
+}
+.cat-banner {
+  font-family:'Fredoka One',cursive; font-size:.95rem; color:var(--gold);
+  text-align:center; background:var(--surface);
+  padding:7px 18px; border-radius:var(--radius);
+  border:1px solid rgba(245,197,24,.2);
+}
+.guessed-bar { font-size:.8rem; color:var(--text-dim); text-align:center; }
+.g-letter { display:inline-block; background:rgba(255,255,255,.07); padding:1px 5px; border-radius:4px; margin:2px; font-weight:800; font-size:.78rem; }
+
+/* WHEEL */
+#wheel-canvas {
+  border-radius:50%;
+  box-shadow:0 0 60px rgba(245,197,24,.15), 0 0 120px rgba(0,0,0,.7);
+  max-width:100%; height:auto; display:block;
+}
+.spin-badge {
+  font-family:'Fredoka One',cursive; font-size:1.2rem;
+  padding:9px 26px; border-radius:100px; min-width:160px; text-align:center;
+  min-height:42px; display:flex; align-items:center; justify-content:center;
+}
+.sb-dollar   { background:var(--gold); color:#111; }
+.sb-bankrupt { background:#3a0000; color:#ff7070; border:2px solid #aa0000; }
+.sb-lose     { background:#2a2a2a; color:#999; }
+.sb-free     { background:var(--green); color:#fff; }
+.sb-empty    { background:transparent; border:2px solid rgba(255,255,255,.05); color:transparent; }
+
+/* HOST GAME LAYOUT */
+.host-game {
+  display:grid; grid-template-rows:auto auto 1fr auto;
+  min-height:100vh; padding:10px; gap:10px;
+}
+.hg-top { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.hg-controls { display:flex; gap:8px; flex-wrap:wrap; }
+.hg-body { display:grid; grid-template-columns:1fr 340px; gap:14px; align-items:start; }
+@media(max-width:820px) { .hg-body { grid-template-columns:1fr; } }
+.hg-left { display:flex; flex-direction:column; gap:10px; }
+.hg-right { display:flex; flex-direction:column; align-items:center; gap:10px; }
+
+/* PLAYER GAME */
+.player-game {
+  display:flex; flex-direction:column; gap:12px;
+  padding:14px; max-width:520px; margin:0 auto; min-height:100vh;
+}
+.turn-banner {
+  text-align:center; font-family:'Fredoka One',cursive; font-size:1.1rem;
+  padding:11px; border-radius:var(--radius);
+}
+.turn-banner.mine { background:rgba(245,197,24,.12); border:2px solid var(--gold); color:var(--gold); }
+.turn-banner.wait { background:var(--surface); color:var(--text-dim); }
+
+/* KEYBOARD */
+.keys { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; max-width:320px; margin:0 auto; }
+.key {
+  width:44px; height:44px; border-radius:8px;
+  border:2px solid rgba(255,255,255,.16);
+  background:var(--surface2); color:var(--text);
+  font-family:'Fredoka One',cursive; font-size:1.2rem;
+  cursor:pointer; transition:all .12s;
+  display:flex; align-items:center; justify-content:center;
+}
+.key:hover:not(:disabled) { background:var(--green); border-color:var(--green); }
+.key:disabled { opacity:.18; cursor:not-allowed; }
+.key.vowel-key { border-color:rgba(192,57,43,.5); color:#e74c3c; }
+.key.vowel-key:hover:not(:disabled) { background:#c0392b; border-color:#c0392b; color:#fff; }
+
+/* MODAL */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:1000; display:flex; align-items:center; justify-content:center; padding:24px; }
+.modal { background:var(--surface); border:2px solid rgba(245,197,24,.25); border-radius:var(--radius); padding:26px; max-width:400px; width:100%; }
+.modal h3 { font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--gold); margin-bottom:14px; }
+.modal-btns { display:flex; gap:10px; margin-top:16px; justify-content:flex-end; }
+
+/* SCREENS */
+.landing {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:32px 24px; text-align:center;
+  background:radial-gradient(ellipse at 50% 30%, #0d3318 0%, var(--bg) 70%);
+}
+.center-screen {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:24px; gap:16px; max-width:400px; margin:0 auto;
+}
+.lobby {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:24px; gap:18px; text-align:center;
+}
+.room-code {
+  font-family:'Mountains of Christmas',cursive; font-size:clamp(3rem,10vw,5rem);
+  color:var(--gold); letter-spacing:8px;
+  text-shadow:0 0 40px rgba(245,197,24,.4);
+}
+.code-label { font-size:.8rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:2px; }
+.chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:500px; }
+.chip { background:var(--surface2); border:2px solid rgba(39,174,96,.3); border-radius:100px; padding:7px 16px; font-family:'Fredoka One',cursive; }
+.chip.me { border-color:var(--gold); background:rgba(245,197,24,.1); color:var(--gold); }
+
+/* BETWEEN ROUNDS */
+.between-screen {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:24px; gap:20px; text-align:center;
+  background:radial-gradient(ellipse at 50% 30%, #0d3318 0%, var(--bg) 70%);
+}
+.podium { display:flex; align-items:flex-end; gap:6px; justify-content:center; margin:10px 0; }
+.podium-slot { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.podium-name { font-family:'Fredoka One',cursive; font-size:.85rem; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.podium-score { font-family:'Fredoka One',cursive; font-size:1rem; color:var(--gold); }
+.podium-bar {
+  border-radius:8px 8px 0 0; width:72px;
+  display:flex; align-items:flex-end; justify-content:center; padding-bottom:6px;
+  font-size:1.6rem; min-height:60px;
+}
+.podium-bar.p1 { background:linear-gradient(180deg,#c9921a,#7a5800); min-height:100px; }
+.podium-bar.p2 { background:linear-gradient(180deg,#5a8a5a,#1a3a1a); min-height:75px; }
+.podium-bar.p3 { background:linear-gradient(180deg,#6b3a2a,#2a1008); min-height:55px; }
+
+/* FINAL */
+.final-screen {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:24px; gap:18px; text-align:center;
+}
+.winner-name {
+  font-family:'Mountains of Christmas',cursive; font-weight:700;
+  font-size:clamp(2.5rem,8vw,5rem); color:var(--gold);
+  text-shadow:0 0 50px rgba(245,197,24,.5), 3px 3px 0 var(--gold-dark);
+}
+.full-lb { width:100%; max-width:480px; border-collapse:collapse; }
+.full-lb th { font-family:'Fredoka One',cursive; color:var(--text-dim); font-size:.78rem; text-transform:uppercase; letter-spacing:1px; padding:9px 16px; border-bottom:2px solid rgba(255,255,255,.08); }
+.full-lb td { font-family:'Fredoka One',cursive; font-size:1.05rem; padding:10px 16px; }
+.full-lb tr:nth-child(even) td { background:var(--surface); }
+.full-lb tr:first-child td { color:var(--gold); }
+
+.flex-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.flex-col { display:flex; flex-direction:column; gap:10px; }
+</style>
+</head>
+<body>
+
+<!-- Snowflakes -->
+<div class="snowfield" id="snow"></div>
+
+<div id="app"></div>
+<div id="toast"></div>
+
+<script>
+// ============================================================
+// CHRISTMAS PUZZLES (4 rounds)
+// ============================================================
+const XMAS_PUZZLES = [
+  { puzzle:'JINGLE ALL THE WAY',         category:'PHRASE',      emoji:'🔔' },
+  { puzzle:'RUDOLPH THE RED NOSED REINDEER', category:'CHARACTER', emoji:'🦌' },
+  { puzzle:'CHESTNUTS ROASTING ON AN OPEN FIRE', category:'PHRASE', emoji:'🌰' },
+  { puzzle:'ALL I WANT FOR CHRISTMAS IS YOU',  category:'SONG TITLE', emoji:'🎶' },
+];
+const TOTAL_ROUNDS = XMAS_PUZZLES.length;
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+const VOWEL_COST = 250;
+const VOWELS = new Set(['A','E','I','O','U']);
+const CONSONANTS = 'BCDFGHJKLMNPQRSTVWXYZ'.split('');
+const PEER_PFX = 'xwof-';
+
+const WEDGES = [
+  {label:'$300',     value:300,         color:'#8b2020'},
+  {label:'$500',     value:500,         color:'#1a5e1a'},
+  {label:'BANKRUPT', value:'BANKRUPT',  color:'#060606', textColor:'#ff5555'},
+  {label:'$600',     value:600,         color:'#145a32'},
+  {label:'$400',     value:400,         color:'#6b1a1a'},
+  {label:'$900',     value:900,         color:'#0e4020'},
+  {label:'LOSE\nTURN',value:'LOSE_A_TURN',color:'#1a1a1a'},
+  {label:'$700',     value:700,         color:'#8b2020'},
+  {label:'$250',     value:250,         color:'#1e5c30'},
+  {label:'$800',     value:800,         color:'#6b1a1a'},
+  {label:'BANKRUPT', value:'BANKRUPT',  color:'#060606', textColor:'#ff5555'},
+  {label:'$1000',    value:1000,        color:'#911a1a'},
+  {label:'$350',     value:350,         color:'#1a6b35'},
+  {label:'FREE\nSPIN',value:'FREE_SPIN',color:'#996600', textColor:'#fff8dc'},
+  {label:'$450',     value:450,         color:'#145a32'},
+  {label:'$1500',    value:1500,        color:'#6b0e0e'},
+  {label:'$550',     value:550,         color:'#0e4020'},
+  {label:'$2000',    value:2000,        color:'#7a0a0a'},
+  {label:'$650',     value:650,         color:'#1a6b35'},
+  {label:'$1200',    value:1200,        color:'#0f3d18'},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const S = {
+  screen:'landing',
+  peer:null, roomCode:'', isHost:false, myName:'',
+  hostConn:null, playerConns:{},
+
+  // multi-round
+  roundIdx:0,
+
+  // per-round (synced)
+  puzzle:'', category:'', emoji:'', revealed:[],
+  players:{}, playerOrder:[], currentPlayerIdx:0,
+  phase:'spin',
+  spinResult:null,
+  lastMsg:'',
+
+  // local
+  spinning:false, wheelAngle:0,
+};
+
+// ============================================================
+// SNOW
+// ============================================================
+function makeSnow() {
+  const sf = document.getElementById('snow');
+  if(!sf) return;
+  const glyphs = ['❄','❅','❆','✦','·'];
+  for(let i=0;i<28;i++){
+    const d = document.createElement('div');
+    d.className = 'flake';
+    d.textContent = glyphs[i%glyphs.length];
+    d.style.left = (Math.random()*100)+'%';
+    d.style.animationDuration = (6+Math.random()*10)+'s';
+    d.style.animationDelay = (-Math.random()*14)+'s';
+    d.style.fontSize = (.6+Math.random()*.8)+'rem';
+    d.style.opacity = (.3+Math.random()*.5);
+    sf.appendChild(d);
+  }
+}
+
+// ============================================================
+// NETWORKING
+// ============================================================
+function genCode(){ return Array.from({length:4},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ'[Math.floor(Math.random()*24)]).join(''); }
+
+function startHost(){
+  S.isHost=true; S.roomCode=genCode();
+  S.players={}; S.playerOrder=[];
+  S.playerConns={};
+  loadRound(0);
+  if(S.peer){try{S.peer.destroy();}catch{} S.peer=null;}
+  S.peer=new Peer(PEER_PFX+S.roomCode);
+  S.peer.on('open',()=>{ S.screen='host-lobby'; render(); });
+  S.peer.on('connection',conn=>{
+    conn.on('data',data=>hostReceive(conn,data));
+    conn.on('close',()=>{
+      const name=Object.keys(S.playerConns).find(n=>S.playerConns[n]===conn);
+      if(name){
+        delete S.playerConns[name];
+        toast(`${name} left`);
+        if(S.screen==='host-game'&&currentPlayer()===name){ S.lastMsg=`${name} left. Next player.`; advancePlayer(); broadcastState(); }
+        render();
+      }
+    });
+  });
+  S.peer.on('error',e=>toast('Error: '+e.type));
+}
+
+function loadRound(idx){
+  const p=XMAS_PUZZLES[idx];
+  S.roundIdx=idx;
+  S.puzzle=p.puzzle; S.category=p.category; S.emoji=p.emoji;
+  S.revealed=[]; S.currentPlayerIdx=0; S.phase='spin'; S.spinResult=null;
+  S.wheelAngle=0; S.spinning=false;
+  S.lastMsg=`Round ${idx+1}: ${currentPlayer()||'first player'}'s turn — spin!`;
+  // reset round scores
+  S.playerOrder.forEach(n=>{ if(S.players[n]) S.players[n].roundScore=0; });
+}
+
+function startPlayer(code,name){
+  S.isHost=false; S.myName=name.trim(); S.roomCode=code.toUpperCase().trim();
+  S.screen='player-joining'; render();
+  if(S.peer){try{S.peer.destroy();}catch{} S.peer=null;}
+  S.peer=new Peer();
+  S.peer.on('open',()=>{
+    const conn=S.peer.connect(PEER_PFX+S.roomCode,{reliable:true});
+    S.hostConn=conn;
+    conn.on('open',()=>conn.send({type:'join',name:S.myName}));
+    conn.on('data',data=>playerReceive(data));
+    conn.on('close',()=>{ toast('Disconnected'); S.screen='player-join'; render(); });
+    conn.on('error',()=>{ toast('Could not connect'); S.screen='player-join'; render(); });
+  });
+  S.peer.on('error',()=>{ toast('Room not found'); S.screen='player-join'; render(); });
+}
+
+function hostReceive(conn,data){
+  if(data.type==='join'){
+    const name=(data.name||'').trim().slice(0,20);
+    if(!name){conn.send({type:'error',msg:'Name required'});return;}
+    if(S.screen!=='host-lobby'){conn.send({type:'error',msg:'Game in progress'});return;}
+    S.playerConns[name]=conn;
+    if(!S.players[name]) S.players[name]={roundScore:0,totalScore:0};
+    if(!S.playerOrder.includes(name)) S.playerOrder.push(name);
+    conn.send({type:'joined',name});
+    broadcastState(); render(); return;
+  }
+  if(data.type==='action'){
+    if(S.screen!=='host-game') return;
+    const sender=Object.keys(S.playerConns).find(n=>S.playerConns[n]===conn);
+    if(sender!==currentPlayer()){conn.send({type:'error',msg:"Not your turn"});return;}
+    doAction(data.action, data.payload||{});
+  }
+}
+
+function playerReceive(data){
+  switch(data.type){
+    case 'joined': S.screen='player-lobby'; render(); break;
+    case 'state':  applyState(data.game); break;
+    case 'error':  toast(data.msg); break;
+  }
+}
+
+function broadcastState(){
+  const g=getGameState();
+  Object.values(S.playerConns).forEach(c=>{try{c.send({type:'state',game:g});}catch{}});
+}
+
+function getGameState(){
+  return {
+    puzzle:S.puzzle, category:S.category, emoji:S.emoji, revealed:S.revealed,
+    players:S.players, playerOrder:S.playerOrder, currentPlayerIdx:S.currentPlayerIdx,
+    phase:S.phase, spinResult:S.spinResult, lastMsg:S.lastMsg,
+    roundIdx:S.roundIdx, hostScreen:S.screen,
+  };
+}
+
+function applyState(g){
+  S.puzzle=g.puzzle; S.category=g.category; S.emoji=g.emoji; S.revealed=g.revealed;
+  S.players=g.players; S.playerOrder=g.playerOrder; S.currentPlayerIdx=g.currentPlayerIdx;
+  S.phase=g.phase; S.spinResult=g.spinResult; S.lastMsg=g.lastMsg;
+  S.roundIdx=g.roundIdx;
+  if(g.hostScreen==='host-lobby')    S.screen='player-lobby';
+  else if(g.hostScreen==='host-game')    S.screen='player-game';
+  else if(g.hostScreen==='host-between') S.screen='player-between';
+  else if(g.hostScreen==='host-final')   S.screen='player-final';
+  render();
+}
+
+// ============================================================
+// GAME LOGIC
+// ============================================================
+function currentPlayer(){ return S.playerOrder[S.currentPlayerIdx]||''; }
+
+function advancePlayer(){
+  S.currentPlayerIdx=(S.currentPlayerIdx+1)%Math.max(S.playerOrder.length,1);
+  S.phase='spin'; S.spinResult=null;
+}
+
+function countIn(letter){ return S.puzzle.split('').filter(c=>c===letter).length; }
+
+function isSolved(){
+  return S.puzzle.split('').every(c=>c===' '||S.revealed.includes(c));
+}
+
+function doSolve(playerName){
+  S.puzzle.split('').forEach(c=>{if(c!==' '&&!S.revealed.includes(c))S.revealed.push(c);});
+  S.players[playerName].totalScore+=S.players[playerName].roundScore;
+  S.lastMsg=`🎉 ${playerName} solved the puzzle!`;
+  S.phase='solved';
+  if(S.roundIdx+1 >= TOTAL_ROUNDS){ S.screen='host-final'; }
+  else { S.screen='host-between'; }
+  broadcastState(); render();
+}
+
+function doAction(action,payload){
+  const cp=currentPlayer(); if(!cp) return;
+  switch(action){
+    case 'spin': {
+      if(S.phase!=='spin'||S.spinning) return;
+      S.lastMsg=`${cp} is spinning…`;
+      broadcastState(); render(); animateSpin(); break;
+    }
+    case 'guess': {
+      if(S.phase!=='guess') return;
+      const ltr=(payload.letter||'').toUpperCase();
+      if(!ltr||VOWELS.has(ltr)||S.revealed.includes(ltr)) return;
+      S.revealed.push(ltr);
+      const cnt=countIn(ltr);
+      if(cnt>0){
+        const earn=cnt*S.spinResult;
+        S.players[cp].roundScore+=earn;
+        S.lastMsg=`${cp} found "${ltr}" (×${cnt}) → +$${earn.toLocaleString()}`;
+        S.phase='spin'; S.spinResult=null;
+        if(isSolved()){doSolve(cp);return;}
+      } else {
+        S.lastMsg=`"${ltr}" not in puzzle. Next player!`;
+        advancePlayer();
+      }
+      broadcastState(); render(); break;
+    }
+    case 'buy-vowel': {
+      if(S.phase!=='spin') return;
+      const v=(payload.letter||'').toUpperCase();
+      if(!v||!VOWELS.has(v)||S.revealed.includes(v)) return;
+      if(S.players[cp].roundScore<VOWEL_COST){toast(`Need $${VOWEL_COST}`);return;}
+      S.players[cp].roundScore-=VOWEL_COST;
+      S.revealed.push(v);
+      const cnt=countIn(v);
+      if(cnt>0){
+        S.lastMsg=`${cp} bought "${v}" — ${cnt} found!`;
+        S.phase='spin';
+        if(isSolved()){doSolve(cp);return;}
+      } else {
+        S.lastMsg=`${cp} bought "${v}" — not in puzzle. Next player!`;
+        advancePlayer();
+      }
+      broadcastState(); render(); break;
+    }
+    case 'solve': {
+      if(S.phase==='solved') return;
+      const ans=(payload.answer||'').toUpperCase().replace(/\s+/g,' ').trim();
+      if(ans===S.puzzle.trim()){ doSolve(cp); }
+      else {
+        S.lastMsg=`${cp} guessed wrong. Next player!`;
+        advancePlayer(); broadcastState(); render();
+      }
+      break;
+    }
+    case 'pass': {
+      S.lastMsg=`${cp} passed. Next player!`;
+      advancePlayer(); broadcastState(); render(); break;
+    }
+  }
+}
+
+function resolveSpin(wedgeIdx){
+  const w=WEDGES[wedgeIdx];
+  S.spinResult=w.value;
+  const cp=currentPlayer();
+  if(w.value==='BANKRUPT'){
+    S.players[cp].roundScore=0;
+    S.lastMsg=`💸 BANKRUPT! ${cp} loses their round earnings. Next player.`;
+    S.spinResult=null; advancePlayer(); broadcastState(); render();
+  } else if(w.value==='LOSE_A_TURN'){
+    S.lastMsg=`😬 Lose a Turn! ${cp} misses this turn.`;
+    S.spinResult=null; advancePlayer(); broadcastState(); render();
+  } else if(w.value==='FREE_SPIN'){
+    S.lastMsg=`🎡 FREE SPIN! ${cp} spins again!`;
+    S.phase='spin'; broadcastState(); render();
+    setTimeout(()=>animateSpin(),700);
+  } else {
+    S.lastMsg=`${cp} landed on $${w.value.toLocaleString()}! Pick a consonant.`;
+    S.phase='guess'; broadcastState(); render();
+  }
+}
+
+// ============================================================
+// WHEEL
+// ============================================================
+function drawWheel(){
+  const canvas=document.getElementById('wheel-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const cx=W/2, cy=H/2;
+  const R=Math.min(W,H)/2-10;
+  const n=WEDGES.length, aw=(2*Math.PI)/n;
+  const rot=S.wheelAngle*Math.PI/180;
+  ctx.clearRect(0,0,W,H);
+  // Gold ring
+  ctx.beginPath(); ctx.arc(cx,cy,R+8,0,2*Math.PI);
+  ctx.fillStyle='#8a6500'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx,cy,R+5,0,2*Math.PI);
+  ctx.fillStyle=S.spinning?'#ffd84a':'#f5c518'; ctx.fill();
+  // Wedges
+  for(let i=0;i<n;i++){
+    const sa=i*aw-Math.PI/2+rot, ea=(i+1)*aw-Math.PI/2+rot, ma=(sa+ea)/2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R,sa,ea); ctx.closePath();
+    ctx.fillStyle=WEDGES[i].color; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1.5; ctx.stroke();
+    const lr=R*.67, lx=cx+Math.cos(ma)*lr, ly=cy+Math.sin(ma)*lr;
+    ctx.save(); ctx.translate(lx,ly); ctx.rotate(ma+Math.PI/2);
+    const tc=WEDGES[i].textColor||'#f0f0f0';
+    const raw=WEDGES[i].label.replace('\n','');
+    const fs=raw.length>5?9:11;
+    ctx.font=`bold ${fs}px Nunito,sans-serif`;
+    ctx.fillStyle=tc; ctx.textAlign='center'; ctx.textBaseline='middle';
+    const lines=WEDGES[i].label.split('\n');
+    if(lines.length>1){ctx.fillText(lines[0],0,-6.5);ctx.fillText(lines[1],0,6.5);}
+    else ctx.fillText(lines[0],0,0);
+    ctx.restore();
+  }
+  // Rim dots
+  for(let i=0;i<n;i++){
+    const a=i*aw-Math.PI/2+rot, dx=cx+Math.cos(a)*(R+2), dy=cy+Math.sin(a)*(R+2);
+    ctx.beginPath(); ctx.arc(dx,dy,3,0,2*Math.PI);
+    ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fill();
+  }
+  // Hub
+  ctx.beginPath(); ctx.arc(cx,cy,22,0,2*Math.PI);
+  ctx.fillStyle='#040f06'; ctx.fill();
+  ctx.strokeStyle='#f5c518'; ctx.lineWidth=3; ctx.stroke();
+  ctx.fillStyle='#f5c518'; ctx.font='bold 16px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('★',cx,cy);
+  // Pointer
+  const py=cy-R-6;
+  ctx.beginPath(); ctx.moveTo(cx,py+22); ctx.lineTo(cx-10,py); ctx.lineTo(cx+10,py); ctx.closePath();
+  ctx.fillStyle='#f5c518'; ctx.fill(); ctx.strokeStyle='#040f06'; ctx.lineWidth=2.5; ctx.stroke();
+}
+
+function animateSpin(){
+  if(S.spinning) return;
+  S.spinning=true;
+  const n=WEDGES.length, wDeg=360/n;
+  const tWedge=Math.floor(Math.random()*n);
+  const D=(tWedge+0.5)*wDeg;
+  const minRot=(5+Math.floor(Math.random()*4))*360;
+  const k=Math.ceil((S.wheelAngle+minRot+D)/360);
+  const targetAngle=-D+k*360;
+  const dur=3000+Math.random()*1200;
+  const t0=performance.now(), a0=S.wheelAngle;
+  function ease(t){ return 1-Math.pow(1-t,3.5); }
+  function frame(now){
+    const el=now-t0, t=Math.min(el/dur,1);
+    S.wheelAngle=a0+(targetAngle-a0)*ease(t);
+    drawWheel();
+    if(t<1){ requestAnimationFrame(frame); }
+    else { S.wheelAngle=targetAngle; S.spinning=false; drawWheel(); resolveSpin(tWedge); }
+  }
+  requestAnimationFrame(frame);
+}
+
+// ============================================================
+// LAYOUT HELPERS
+// ============================================================
+function layoutPuzzle(text){
+  if(!text) return [];
+  const words=text.toUpperCase().split(' '), rows=[], MAX=13;
+  let row=[], len=0;
+  for(const w of words){
+    const need=len===0?w.length:w.length+1;
+    if(len+need<=MAX||row.length===0){row.push(w);len+=(row.length===1?w.length:need);}
+    else{rows.push(row);row=[w];len=w.length;}
+  }
+  if(row.length) rows.push(row);
+  return rows;
+}
+
+function renderBoard(puzzle,revealed){
+  if(!puzzle) return '<div class="board"><div style="padding:20px;color:var(--text-dim)">No puzzle</div></div>';
+  const rows=layoutPuzzle(puzzle);
+  let h='<div class="board">';
+  for(const row of rows){
+    h+='<div class="board-row">';
+    for(let i=0;i<row.length;i++){
+      if(i>0) h+='<div class="word-gap"></div>';
+      h+='<div class="board-word">';
+      for(const ch of row[i]){
+        const lit=revealed.includes(ch)||ch===' ';
+        h+=`<div class="tile ${lit?'lit':''}">${lit&&ch!==' '?ch:''}</div>`;
+      }
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+
+function leaderboardStrip(highlightCurrent=false){
+  if(!S.playerOrder.length) return '';
+  const sorted=[...S.playerOrder].sort((a,b)=>(S.players[b]?.totalScore||0)-(S.players[a]?.totalScore||0));
+  const cp=currentPlayer();
+  const maxScore=S.players[sorted[0]]?.totalScore||0;
+  const cards=S.playerOrder.map(n=>{
+    const p=S.players[n]||{roundScore:0,totalScore:0};
+    const isLead=p.totalScore===maxScore&&maxScore>0;
+    const isTurn=highlightCurrent&&n===cp;
+    return `<div class="lb-card ${isLead?'lead':''} ${isTurn?'active-turn':''}">
+      ${isLead?'<div class="lb-crown">👑</div>':''}
+      <div class="lb-name">${esc(n)}</div>
+      <div class="lb-total">$${p.totalScore.toLocaleString()}</div>
+      ${p.roundScore>0?`<div class="lb-round">+$${p.roundScore.toLocaleString()} rnd</div>`:''}
+    </div>`;
+  }).join('');
+  return `<div class="lb-strip">
+    <div class="lb-title">🏆 Scores</div>
+    <div class="lb-players">${cards}</div>
+  </div>`;
+}
+
+function progressDots(){
+  let h='<div class="progress-dots">';
+  for(let i=0;i<TOTAL_ROUNDS;i++){
+    let cls='upcoming';
+    if(i<S.roundIdx) cls='done';
+    else if(i===S.roundIdx) cls='active';
+    const icon=i<S.roundIdx?'✓':(i+1);
+    h+=`<div class="pdot ${cls}">${icon}</div>`;
+    if(i<TOTAL_ROUNDS-1) h+='<div style="width:18px;height:2px;background:rgba(255,255,255,.1);border-radius:1px"></div>';
+  }
+  return h+'</div>';
+}
+
+// ============================================================
+// HTML SCREENS
+// ============================================================
+function htmlLanding(){
+  return `<div class="landing">
+  <div style="font-size:3.5rem;margin-bottom:4px">🎄</div>
+  <div class="xmas-logo" style="font-size:clamp(2.4rem,8vw,4.5rem)">Wheel of Fortune</div>
+  <div class="xmas-sub" style="font-size:.85rem;margin-bottom:6px">Christmas Edition</div>
+  <div style="color:var(--text-dim);font-size:.85rem;margin-bottom:36px">${TOTAL_ROUNDS} rounds · Live multiplayer</div>
+  <div style="display:flex;flex-direction:column;gap:13px;width:100%;max-width:300px">
+    <button class="btn btn-gold btn-lg w-full" id="b-host">🎡 Host a Game</button>
+    <button class="btn btn-pine btn-lg w-full" id="b-join-go">📱 Join a Game</button>
+  </div>
+</div>`;
+}
+
+function htmlJoin(){
+  return `<div class="center-screen">
+  <div class="xmas-logo" style="font-size:1.8rem">🎄 WoF Christmas</div>
+  <div class="form-group">
+    <label>Room Code</label>
+    <input type="text" id="inp-code" placeholder="ABCD" maxlength="4" style="font-size:1.5rem;text-align:center;letter-spacing:8px;text-transform:uppercase">
+  </div>
+  <div class="form-group">
+    <label>Your Name</label>
+    <input type="text" id="inp-name" placeholder="Your name" maxlength="20">
+  </div>
+  <button class="btn btn-gold w-full" id="b-do-join">Join Game</button>
+  <button class="btn btn-pine w-full" id="b-back">← Back</button>
+</div>`;
+}
+
+function htmlJoining(){
+  return `<div class="center-screen">
+  <div class="xmas-logo" style="font-size:1.8rem">Connecting…</div>
+  <div style="color:var(--text-dim)">Joining <strong style="color:var(--gold)">${S.roomCode}</strong></div>
+</div>`;
+}
+
+function htmlHostLobby(){
+  const chips=S.playerOrder.map(n=>`<div class="chip">${esc(n)}</div>`).join('')||'<div style="color:var(--text-dim)">No players yet…</div>';
+  return `<div class="lobby">
+  <div style="font-size:2.5rem">🎄</div>
+  <div class="xmas-logo" style="font-size:2.2rem">WoF Christmas</div>
+  <div class="code-label">Room Code</div>
+  <div class="room-code">${S.roomCode}</div>
+  <div style="font-size:.78rem;color:var(--text-dim)">${location.host}${location.pathname}</div>
+  <div class="chips">${chips}</div>
+  <button class="btn btn-gold btn-lg" id="b-start" ${S.playerOrder.length<1?'disabled':''}>
+    🎄 Start Christmas Special (${S.playerOrder.length} player${S.playerOrder.length!==1?'s':''})
+  </button>
+</div>`;
+}
+
+function htmlPlayerLobby(){
+  const chips=S.playerOrder.map(n=>`<div class="chip ${n===S.myName?'me':''}">${esc(n)}</div>`).join('');
+  return `<div class="lobby">
+  <div style="font-size:2rem">🎄</div>
+  <div class="xmas-logo" style="font-size:1.8rem">WoF Christmas</div>
+  <div class="chip me" style="font-size:1.05rem">${esc(S.myName)}</div>
+  <div style="color:var(--text-dim)">Waiting for host to start…</div>
+  <div class="chips">${chips}</div>
+  <div style="font-size:.78rem;color:var(--text-dim)">Room: <strong style="color:var(--gold)">${S.roomCode}</strong></div>
+</div>`;
+}
+
+function htmlHostGame(){
+  const cp=currentPlayer();
+  let badgeClass='sb-empty', badgeText='&nbsp;';
+  if(S.spinResult!==null){
+    if(S.spinResult==='BANKRUPT'){badgeClass='sb-bankrupt';badgeText='💸 BANKRUPT';}
+    else if(S.spinResult==='LOSE_A_TURN'){badgeClass='sb-lose';badgeText='😬 LOSE A TURN';}
+    else if(S.spinResult==='FREE_SPIN'){badgeClass='sb-free';badgeText='🎡 FREE SPIN';}
+    else{badgeClass='sb-dollar';badgeText=`$${Number(S.spinResult).toLocaleString()}`;}
+  }
+  const guessedBar=S.revealed.length
+    ?'Guessed: '+S.revealed.map(l=>`<span class="g-letter">${l}</span>`).join('')
+    :'No letters guessed yet';
+  const phaseNote=
+    S.phase==='spin'?`<span style="color:var(--text-dim);font-size:.82rem">⏳ <strong>${esc(cp)}</strong>'s turn — waiting for spin</span>`:
+    S.phase==='guess'?`<span style="color:var(--text-dim);font-size:.82rem">🔤 <strong>${esc(cp)}</strong> is guessing a consonant</span>`:
+    `<span style="color:var(--gold)">🎉 Puzzle Solved!</span>`;
+
+  return `<div class="host-game">
+  <div class="hg-top">
+    <div style="font-family:'Fredoka One',cursive;color:var(--gold);font-size:1.1rem">🎄 WoF Christmas</div>
+    ${progressDots()}
+    <div class="hg-controls">
+      <button class="btn btn-pine btn-sm" id="b-skip">Force Skip</button>
+      <button class="btn btn-pine btn-sm" id="b-reveal">Reveal All</button>
+      <button class="btn btn-red btn-sm" id="b-end-round">End Round</button>
+    </div>
+  </div>
+  ${leaderboardStrip(true)}
+  <div class="hg-body">
+    <div class="hg-left">
+      <div class="cat-banner">${S.emoji} Round ${S.roundIdx+1} of ${TOTAL_ROUNDS} · Category: <strong>${esc(S.category)}</strong></div>
+      ${renderBoard(S.puzzle, S.revealed)}
+      <div class="status">${S.lastMsg||'&nbsp;'}</div>
+      <div class="guessed-bar">${guessedBar}</div>
+    </div>
+    <div class="hg-right">
+      <canvas id="wheel-canvas" width="320" height="320"></canvas>
+      <div class="spin-badge ${badgeClass}">${badgeText}</div>
+      ${phaseNote}
+    </div>
+  </div>
+</div>`;
+}
+
+function htmlPlayerGame(){
+  const cp=currentPlayer(), mine=cp===S.myName;
+  const me=S.players[S.myName]||{roundScore:0,totalScore:0};
+  let actionHtml='';
+  if(mine&&S.phase==='spin'){
+    const canVowel=me.roundScore>=VOWEL_COST;
+    actionHtml=`<div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-gold btn-lg w-full" id="act-spin">🎡 SPIN</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-pine w-full" id="act-buy-vowel" ${canVowel?'':'disabled'}>🔤 Vowel ($${VOWEL_COST})</button>
+        <button class="btn btn-pine w-full" id="act-solve">💡 Solve</button>
+      </div>
+      <button class="btn btn-pine btn-sm w-full" id="act-pass">Pass</button>
+    </div>`;
+  } else if(mine&&S.phase==='guess'){
+    const ckeys=CONSONANTS.map(c=>{
+      const used=S.revealed.includes(c);
+      return `<button class="key${used?' disabled':''}" data-ltr="${c}"${used?' disabled':''}>${c}</button>`;
+    }).join('');
+    actionHtml=`<div>
+      <div style="text-align:center;color:var(--gold);font-family:'Fredoka One',cursive;margin-bottom:10px">Pick a consonant:</div>
+      <div class="keys">${ckeys}</div>
+    </div>`;
+  } else if(S.phase==='solved'){
+    actionHtml=`<div style="text-align:center;color:var(--gold);font-family:'Fredoka One',cursive;font-size:1.3rem;padding:12px">🎉 Solved!</div>`;
+  } else {
+    actionHtml=`<div class="turn-banner wait">⏳ ${esc(cp)}'s turn…</div>`;
+  }
+
+  const vowelModal=`<div id="modal-vowel" class="modal-bg" style="display:none">
+    <div class="modal">
+      <h3>Buy a Vowel ($${VOWEL_COST})</h3>
+      <div class="keys">${[...VOWELS].map(v=>{const u=S.revealed.includes(v);return `<button class="key vowel-key${u?' disabled':''}" data-vowel="${v}"${u?' disabled':''}>${v}</button>`;}).join('')}</div>
+      <div class="modal-btns"><button class="btn btn-pine btn-sm" id="vowel-cancel">Cancel</button></div>
+    </div>
+  </div>`;
+  const solveModal=`<div id="modal-solve" class="modal-bg" style="display:none">
+    <div class="modal">
+      <h3>Solve the Puzzle</h3>
+      <div class="form-group"><input type="text" id="solve-inp" placeholder="Type the full answer…" autocorrect="off" autocapitalize="characters"></div>
+      <div class="modal-btns">
+        <button class="btn btn-pine btn-sm" id="solve-cancel">Cancel</button>
+        <button class="btn btn-gold btn-sm" id="solve-submit">Submit!</button>
+      </div>
+    </div>
+  </div>`;
+
+  return `<div class="player-game">
+  <div style="text-align:center;font-family:'Mountains of Christmas',cursive;font-size:1.1rem;color:var(--gold)">🎄 ${esc(S.myName)}</div>
+  <div class="cat-banner">${S.emoji} Round ${S.roundIdx+1}/${TOTAL_ROUNDS} · ${esc(S.category)}</div>
+  ${renderBoard(S.puzzle,S.revealed)}
+  <div class="status" style="font-size:1rem">${S.lastMsg||'&nbsp;'}</div>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <div class="lb-card active"><div class="lb-name">Round</div><div class="lb-total">$${me.roundScore.toLocaleString()}</div></div>
+    <div class="lb-card"><div class="lb-name">Total</div><div class="lb-total" style="color:var(--silver)">$${me.totalScore.toLocaleString()}</div></div>
+  </div>
+  <div class="turn-banner ${mine?'mine':'wait'}">${mine?"⭐ It's your turn!":`Waiting for ${esc(cp)}…`}</div>
+  ${actionHtml}
+  ${vowelModal}${solveModal}
+</div>`;
+}
+
+function buildPodium(sorted){
+  if(!sorted.length) return '';
+  const order=[1,0,2].filter(i=>i<sorted.length);
+  const barCls=['p2','p1','p3'];
+  const medals=['🥈','🥇','🥉'];
+  let h='<div class="podium">';
+  for(let j=0;j<order.length;j++){
+    const i=order[j], n=sorted[i];
+    const p=S.players[n]||{totalScore:0};
+    h+=`<div class="podium-slot">
+      <div class="podium-name">${esc(n)}</div>
+      <div class="podium-score">$${p.totalScore.toLocaleString()}</div>
+      <div class="podium-bar ${barCls[j]}">${medals[j]}</div>
+    </div>`;
+  }
+  return h+'</div>';
+}
+
+function htmlHostBetween(){
+  const next=XMAS_PUZZLES[S.roundIdx+1];
+  const sorted=[...S.playerOrder].sort((a,b)=>(S.players[b]?.totalScore||0)-(S.players[a]?.totalScore||0));
+  return `<div class="between-screen">
+  ${progressDots()}
+  <div style="font-size:2rem">🎄</div>
+  <div class="xmas-logo" style="font-size:2rem">Round ${S.roundIdx+1} Complete!</div>
+  <div style="color:var(--text-dim);font-family:'Fredoka One',cursive;font-size:1rem">The answer was:</div>
+  <div style="font-family:'Fredoka One',cursive;font-size:clamp(1rem,3.5vw,1.6rem);color:var(--gold);
+    background:var(--surface);padding:12px 24px;border-radius:var(--radius);
+    border:2px solid rgba(245,197,24,.25);max-width:700px;word-break:break-word">
+    ${esc(S.puzzle)}
+  </div>
+  ${buildPodium(sorted)}
+  <div style="color:var(--text-dim);font-family:'Fredoka One',cursive">
+    Next up: ${next.emoji} <strong style="color:var(--text)">${next.category}</strong>
+  </div>
+  <button class="btn btn-gold btn-lg" id="b-next-round">▶ Round ${S.roundIdx+2}</button>
+</div>`;
+}
+
+function htmlPlayerBetween(){
+  const sorted=[...S.playerOrder].sort((a,b)=>(S.players[b]?.totalScore||0)-(S.players[a]?.totalScore||0));
+  return `<div class="between-screen">
+  ${progressDots()}
+  <div class="xmas-logo" style="font-size:1.6rem">Round ${S.roundIdx+1} Complete!</div>
+  <div style="color:var(--text-dim);font-family:'Fredoka One',cursive">The answer was:</div>
+  <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--gold);
+    background:var(--surface);padding:10px 20px;border-radius:var(--radius);word-break:break-word">
+    ${esc(S.puzzle)}
+  </div>
+  ${buildPodium(sorted)}
+  <div style="color:var(--text-dim);font-size:.88rem">Waiting for host to start next round…</div>
+</div>`;
+}
+
+function htmlHostFinal(){
+  const sorted=[...S.playerOrder].sort((a,b)=>(S.players[b]?.totalScore||0)-(S.players[a]?.totalScore||0));
+  const winner=sorted[0]||'';
+  const medal=['🥇','🥈','🥉'];
+  const rows=sorted.map((n,i)=>`<tr>
+    <td>${medal[i]||i+1}</td>
+    <td>${esc(n)}</td>
+    <td>$${(S.players[n]?.totalScore||0).toLocaleString()}</td>
+  </tr>`).join('');
+  return `<div class="final-screen">
+  <div style="font-size:3rem">🎄🎊🎄</div>
+  <div style="font-family:'Fredoka One',cursive;color:var(--text-dim);font-size:1rem;letter-spacing:2px;text-transform:uppercase">🏆 Champion</div>
+  <div class="winner-name">${esc(winner)}</div>
+  <div style="color:var(--text-dim);font-family:'Fredoka One',cursive;font-size:1rem">Final Standings</div>
+  <table class="full-lb">
+    <thead><tr><th>#</th><th>Player</th><th>Total $</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+    <button class="btn btn-gold btn-lg" id="b-play-again">🎄 Play Again</button>
+  </div>
+</div>`;
+}
+
+function htmlPlayerFinal(){
+  const sorted=[...S.playerOrder].sort((a,b)=>(S.players[b]?.totalScore||0)-(S.players[a]?.totalScore||0));
+  const winner=sorted[0]||'';
+  const myRank=sorted.indexOf(S.myName)+1;
+  const medal=['🥇','🥈','🥉'];
+  const rows=sorted.map((n,i)=>`<tr>
+    <td>${medal[i]||i+1}</td>
+    <td>${esc(n)}${n===S.myName?' ⭐':''}</td>
+    <td>$${(S.players[n]?.totalScore||0).toLocaleString()}</td>
+  </tr>`).join('');
+  return `<div class="final-screen">
+  <div style="font-size:2.5rem">${myRank===1?'🏆':'🎄'}</div>
+  <div class="winner-name" style="font-size:clamp(1.8rem,6vw,3.5rem)">${esc(winner)}</div>
+  ${myRank===1?`<div style="color:var(--gold);font-family:'Fredoka One',cursive;font-size:1.2rem">That's you! 🎉</div>`:''}
+  <table class="full-lb">
+    <thead><tr><th>#</th><th>Player</th><th>Total</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div style="color:var(--text-dim);font-size:.88rem">Merry Christmas! 🎄</div>
+</div>`;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render(){
+  const app=document.getElementById('app');
+  switch(S.screen){
+    case 'landing':        app.innerHTML=htmlLanding(); break;
+    case 'player-join':    app.innerHTML=htmlJoin(); break;
+    case 'player-joining': app.innerHTML=htmlJoining(); break;
+    case 'host-lobby':     app.innerHTML=htmlHostLobby(); break;
+    case 'player-lobby':   app.innerHTML=htmlPlayerLobby(); break;
+    case 'host-game':      app.innerHTML=htmlHostGame(); requestAnimationFrame(drawWheel); break;
+    case 'player-game':    app.innerHTML=htmlPlayerGame(); break;
+    case 'host-between':   app.innerHTML=htmlHostBetween(); break;
+    case 'player-between': app.innerHTML=htmlPlayerBetween(); break;
+    case 'host-final':     app.innerHTML=htmlHostFinal(); break;
+    case 'player-final':   app.innerHTML=htmlPlayerFinal(); break;
+    default: app.innerHTML=htmlLanding();
+  }
+  bindEvents();
+}
+
+function bindEvents(){
+  switch(S.screen){
+    case 'landing':
+      on('b-host',()=>{ startHost(); });
+      on('b-join-go',()=>{ S.screen='player-join'; render(); });
+      break;
+    case 'player-join':
+      el('inp-code')?.addEventListener('input',e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z]/g,''));
+      on('b-do-join',()=>{
+        const code=v('inp-code').toUpperCase().trim(), name=v('inp-name').trim();
+        if(code.length!==4){toast('Enter 4-letter code');return;}
+        if(!name){toast('Enter your name');return;}
+        startPlayer(code,name);
+      });
+      on('b-back',()=>{ S.screen='landing'; render(); });
+      el('inp-name')?.addEventListener('keydown',e=>{ if(e.key==='Enter') el('b-do-join')?.click(); });
+      break;
+    case 'host-lobby':
+      on('b-start',()=>{
+        if(!S.playerOrder.length){toast('Need at least 1 player');return;}
+        // Reset all total scores for fresh game
+        S.playerOrder.forEach(n=>{S.players[n]={roundScore:0,totalScore:0};});
+        loadRound(0);
+        S.lastMsg=`${currentPlayer()}'s turn — spin the wheel!`;
+        S.screen='host-game'; broadcastState(); render();
+      });
+      break;
+    case 'host-game':
+      on('b-skip',()=>{
+        const cp=currentPlayer();
+        S.lastMsg=`Host skipped ${cp}. Next player.`;
+        advancePlayer(); broadcastState(); render();
+      });
+      on('b-reveal',()=>{
+        if(confirm('Reveal the full answer?')){
+          S.puzzle.split('').forEach(c=>{if(c!==' '&&!S.revealed.includes(c))S.revealed.push(c);});
+          S.lastMsg='Answer revealed by host.'; broadcastState(); render();
+        }
+      });
+      on('b-end-round',()=>{
+        if(confirm('End this round early?')){
+          S.phase='solved';
+          if(S.roundIdx+1>=TOTAL_ROUNDS){ S.screen='host-final'; }
+          else { S.screen='host-between'; }
+          broadcastState(); render();
+        }
+      });
+      drawWheel();
+      break;
+    case 'player-game':
+      on('act-spin',()=>sendAction('spin',{}));
+      on('act-pass',()=>sendAction('pass',{}));
+      on('act-buy-vowel',()=>{ const m=el('modal-vowel'); if(m)m.style.display='flex'; });
+      on('vowel-cancel',()=>{ const m=el('modal-vowel'); if(m)m.style.display='none'; });
+      document.querySelectorAll('[data-vowel]').forEach(b=>b.addEventListener('click',()=>{
+        sendAction('buy-vowel',{letter:b.dataset.vowel});
+        el('modal-vowel').style.display='none';
+      }));
+      on('act-solve',()=>{ const m=el('modal-solve'); if(m)m.style.display='flex'; setTimeout(()=>el('solve-inp')?.focus(),80); });
+      on('solve-cancel',()=>{ el('modal-solve').style.display='none'; });
+      on('solve-submit',()=>{ sendAction('solve',{answer:v('solve-inp')}); el('modal-solve').style.display='none'; });
+      el('solve-inp')?.addEventListener('keydown',e=>{ if(e.key==='Enter') el('solve-submit')?.click(); });
+      document.querySelectorAll('[data-ltr]').forEach(b=>b.addEventListener('click',()=>sendAction('guess',{letter:b.dataset.ltr})));
+      break;
+    case 'host-between':
+      on('b-next-round',()=>{
+        loadRound(S.roundIdx+1);
+        S.lastMsg=`Round ${S.roundIdx+1}! ${currentPlayer()}'s turn — spin!`;
+        S.screen='host-game'; broadcastState(); render();
+      });
+      break;
+    case 'host-final':
+      on('b-play-again',()=>{ S.screen='host-lobby'; render(); });
+      break;
+  }
+}
+
+// ============================================================
+// PLAYER ACTIONS
+// ============================================================
+function sendAction(action,payload){
+  if(!S.hostConn){toast('Not connected');return;}
+  S.hostConn.send({type:'action',action,payload});
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function on(id,fn){ el(id)?.addEventListener('click',fn); }
+function el(id){ return document.getElementById(id); }
+function v(id){ return el(id)?.value||''; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let _tt=null;
+function toast(msg){
+  const t=document.getElementById('toast');
+  if(!t) return;
+  t.textContent=msg; t.classList.add('show');
+  if(_tt) clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+makeSnow();
+render();
+</script>
+</body>
+</html>
